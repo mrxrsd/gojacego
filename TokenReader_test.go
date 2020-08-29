@@ -37,3 +37,73 @@ func TestTokenReader1(test *testing.T) {
 		test.Errorf("Count - expected: 3, got: %d", len(ret))
 	}
 }
+
+func TestTokenReader2(test *testing.T) {
+	reader := NewTokenReader('.')
+	ret, err := reader.Read("(42+31)")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	if len(ret) != 5 {
+		test.Errorf("Count - expected: 5, got: %d", len(ret))
+	}
+}
+
+func TestTokenReader3(test *testing.T) {
+	reader := NewTokenReader('.')
+	ret, err := reader.Read("(42+31.0")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	if len(ret) != 4 {
+		test.Errorf("Count - expected: 4, got: %d", len(ret))
+	}
+}
+
+func TestTokenReader4(test *testing.T) {
+	reader := NewTokenReader('.')
+	ret, err := reader.Read("(42+ 8) *2")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	if len(ret) != 7 {
+		test.Errorf("Count - expected: 7, got: %d", len(ret))
+	}
+}
+
+func TestTokenReader5(test *testing.T) {
+	reader := NewTokenReader('.')
+	ret, err := reader.Read("(42.87+31.0")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	if len(ret) != 4 {
+		test.Errorf("Count - expected: 4, got: %d", len(ret))
+	}
+}
+
+func TestTokenReader6(test *testing.T) {
+	reader := NewTokenReader('.')
+	ret, err := reader.Read("(var+31.0")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	if len(ret) != 4 {
+		test.Errorf("Count - expected: 4, got: %d", len(ret))
+	}
+}

@@ -87,8 +87,12 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 			startPosition := i
 
 			i++
-			for i < runesLength && this.isPartOfVariable(runes[i], false) {
+			for i < runesLength {
+				if !this.isPartOfVariable(runes[i], false) {
+					break
+				}
 				buffer = append(buffer, runes[i])
+				i++
 			}
 
 			ret = append(ret, Token{Type: TEXT,
