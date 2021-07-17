@@ -1,12 +1,9 @@
 package gojacego
 
-/*
-	The type of the token.
-*/
 type TokenType int
 
 const (
-	INTEGER = iota
+	INTEGER TokenType = iota
 	FLOATING_POINT
 	TEXT
 	OPERATION
