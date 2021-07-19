@@ -1,8 +1,5 @@
 package gojacego
 
-type Expression struct {
-	Operation []Operation
-}
 type OperationDataType int
 
 const (

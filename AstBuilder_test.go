@@ -1,10 +1,25 @@
 package gojacego
 
 import (
+	"reflect"
 	"testing"
 )
 
 func TestBuildFormula1(test *testing.T) {
+	astBuilder := NewAstBuilder(false)
+	params := []Token{
+		{Value: 42, Type: INTEGER},
+		{Value: '+', Type: OPERATION},
+		{Value: 8, Type: INTEGER},
+	}
+	op, _ := astBuilder.Build(params)
+
+	if reflect.TypeOf(op).Name() != "MultiplicationOperation" {
+		test.Errorf("expected: MultiplicationOperation, got: %s", reflect.TypeOf(op).Name())
+	}
+}
+
+func TestBuildFormula2(test *testing.T) {
 	astBuilder := NewAstBuilder(false)
 	params := []Token{
 		{Value: '(', Type: LEFT_BRACKET},
@@ -15,9 +30,9 @@ func TestBuildFormula1(test *testing.T) {
 		{Value: '*', Type: OPERATION},
 		{Value: 2, Type: INTEGER},
 	}
-	_, err := astBuilder.Build(params)
+	op, _ := astBuilder.Build(params)
 
-	if !errorContains(err, "formula cannot be empty") {
-		test.Errorf("unexpected error: %v", err)
+	if reflect.TypeOf(op).Name() != "MultiplicationOperation" {
+		test.Errorf("expected: MultiplicationOperation, got: %s", reflect.TypeOf(op).Name())
 	}
 }

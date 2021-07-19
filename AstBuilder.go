@@ -29,9 +29,9 @@ var precedences = map[rune]int{
 
 type AstBuilder struct {
 	caseSensitive  bool
-	resultStack    stack.Stack
-	operatorStack  stack.Stack
-	parameterCount stack.Stack
+	resultStack    *stack.Stack
+	operatorStack  *stack.Stack
+	parameterCount *stack.Stack
 }
 
 func NewAstBuilder(caseSensitive bool) *AstBuilder {
@@ -42,9 +42,9 @@ func NewAstBuilder(caseSensitive bool) *AstBuilder {
 
 	return &AstBuilder{
 		caseSensitive:  caseSensitive,
-		resultStack:    *resultStack,
-		operatorStack:  *operatorStack,
-		parameterCount: *parameterCount,
+		resultStack:    resultStack,
+		operatorStack:  operatorStack,
+		parameterCount: parameterCount,
 	}
 }
 
@@ -62,13 +62,13 @@ func (this AstBuilder) popOperations(untilLeftBracket bool, currentToken *Token)
 		switch token.Type {
 		case OPERATION:
 			t, err := this.convertOperation(token)
-			if err != nil {
+			if err == nil {
 				this.resultStack.Push(t)
 			}
 			break
 		case TEXT:
 			f, err := this.convertFunction(token)
-			if err != nil {
+			if err == nil {
 				this.resultStack.Push(f)
 			}
 			break
@@ -188,7 +188,7 @@ func (this AstBuilder) convertOperation(operationToken Token) (Operation, error)
 	}
 }
 
-func (this AstBuilder) Build(tokens []Token) (*Expression, error) {
+func (this AstBuilder) Build(tokens []Token) (*Operation, error) {
 
 	for _, token := range tokens {
 		val := token.Value
@@ -247,7 +247,7 @@ func (this AstBuilder) Build(tokens []Token) (*Expression, error) {
 					if (isLeftAssociativeOperation(operation1) && precedences[operation1] <= precedences[operation2]) || (precedences[operation1] < precedences[operation2]) {
 						this.operatorStack.Pop()
 						t, err := this.convertOperation(operation2Token)
-						if err != nil {
+						if err == nil {
 							this.resultStack.Push(t)
 						}
 					} else {
@@ -256,7 +256,7 @@ func (this AstBuilder) Build(tokens []Token) (*Expression, error) {
 				} else {
 					this.operatorStack.Pop()
 					t, err := this.convertFunction(operation2Token)
-					if err != nil {
+					if err == nil {
 						this.resultStack.Push(t)
 					}
 				}
@@ -267,7 +267,16 @@ func (this AstBuilder) Build(tokens []Token) (*Expression, error) {
 		}
 	}
 
-	return nil, nil
+	this.popOperations(false, nil)
+
+	err := this.verifyResult()
+
+	if err != nil {
+		return nil, err
+	} else {
+		resultOperation := this.resultStack.Pop().(Operation)
+		return &resultOperation, nil
+	}
 }
 
 func isLeftAssociativeOperation(character rune) bool {
