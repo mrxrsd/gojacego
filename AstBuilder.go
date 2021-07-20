@@ -188,7 +188,7 @@ func (this AstBuilder) convertOperation(operationToken Token) (Operation, error)
 	}
 }
 
-func (this AstBuilder) Build(tokens []Token) (*Operation, error) {
+func (this AstBuilder) Build(tokens []Token) (Operation, error) {
 
 	for _, token := range tokens {
 		val := token.Value
@@ -275,7 +275,7 @@ func (this AstBuilder) Build(tokens []Token) (*Operation, error) {
 		return nil, err
 	} else {
 		resultOperation := this.resultStack.Pop().(Operation)
-		return &resultOperation, nil
+		return resultOperation, nil
 	}
 }
 
