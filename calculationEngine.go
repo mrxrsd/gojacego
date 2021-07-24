@@ -2,49 +2,50 @@ package gojacego
 
 import (
 	"errors"
-	"github.com/mrxrsd/gojacego/cache"
 	"strings"
+
+	"github.com/mrxrsd/gojacego/cache"
 )
 
 type JaceOptions struct {
 	decimalSeparator rune
-	caseSensitive bool
-	optimizeEnabled bool
+	caseSensitive    bool
+	optimizeEnabled  bool
 }
 
 type CalculationEngine struct {
-	cache *cache.Memorycache
-	options *JaceOptions
+	cache     *cache.Memorycache
+	options   *JaceOptions
 	optimizer IOptimizer
-	executor *Interpreter
+	executor  *Interpreter
 }
 
 func NewCalculationEngine(options *JaceOptions) *CalculationEngine {
-	cache:= cache.NewCache()
+	cache := cache.NewCache()
 
 	if options == nil {
 		options = &JaceOptions{
 			decimalSeparator: '.',
-			caseSensitive: false,
+			caseSensitive:    false,
+			optimizeEnabled:  true,
 		}
 	}
 
 	interpreter := &Interpreter{}
 	optimizer := &Optimizer{executor: *interpreter}
 
- 	return &CalculationEngine{
- 		cache: cache,
- 		options: options,
- 		optimizer: optimizer,
- 		executor: interpreter,
+	return &CalculationEngine{
+		cache:     cache,
+		options:   options,
+		optimizer: optimizer,
+		executor:  interpreter,
 	}
 }
 
-
 func (this *CalculationEngine) Calculate(formula string, vars map[string]interface{}) (float64, error) {
 
-	if len(strings.TrimSpace(formula)) == 0{
-		return 0, errors.New("The parameter 'formula' is requred.")
+	if len(strings.TrimSpace(formula)) == 0 {
+		return 0, errors.New("the parameter 'formula' is requred")
 	}
 
 	trimmedFormula := strings.TrimSpace(formula)
@@ -54,41 +55,44 @@ func (this *CalculationEngine) Calculate(formula string, vars map[string]interfa
 		ret, err := this.executor.Execute(item.(Operation), vars)
 		if err != nil {
 			return 0, nil
-		}else{
-			return ret, nil
 		}
+		return ret, nil
 	}
 
 	op, err := this.buildAbstractSyntaxTree(trimmedFormula)
 	if err != nil {
 		return 0, err
 	}
+
+	this.cache.Add(trimmedFormula, op)
+
 	ret, err := this.executor.Execute(op, vars)
 	if err != nil {
 		return 0, nil
-	}else{
-		return ret, nil
 	}
+
+	return ret, nil
 }
 
-func (this *CalculationEngine) buildAbstractSyntaxTree(formula string) (Operation,error) {
+func (this *CalculationEngine) buildAbstractSyntaxTree(formula string) (Operation, error) {
+
 	tokenReader := NewTokenReader(this.options.decimalSeparator)
 	astBuilder := NewAstBuilder(this.options.caseSensitive)
 
 	tokens, err := tokenReader.Read(formula)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	operation, err := astBuilder.Build(tokens)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 
 	if this.options.optimizeEnabled {
 		optimizedOperation := this.optimizer.Optimize(operation)
 		return optimizedOperation, nil
-	}else{
-		return operation, nil
 	}
+
+	return operation, nil
 }
