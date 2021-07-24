@@ -34,3 +34,28 @@ func TestBasicInterpreter1(test *testing.T) {
 		test.Errorf("Expected: 14.0, got: %f", ret)
 	}
 }
+
+func TestBasicInterpreterWithVariables(test *testing.T) {
+	interpreter := &Interpreter{}
+
+	// var1 + 2 * (3 * age)
+
+	parameters := make(map[string]interface{}, 4)
+	parameters["var1"] = 2.0
+	parameters["age"] = 4.0
+
+	ret, _ := interpreter.Execute(
+		NewAddOperation(FloatingPoint,
+			NewVariableOperation("var1"),
+			NewMultiplicationOperation(
+				FloatingPoint,
+				NewConstantOperation(Integer, 2),
+				NewMultiplicationOperation(
+					FloatingPoint,
+					NewConstantOperation(Integer, 3),
+					NewVariableOperation("age")))), parameters)
+
+	if ret != 26.0 {
+		test.Errorf("Expected: 26.0, got: %f", ret)
+	}
+}

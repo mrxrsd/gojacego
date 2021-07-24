@@ -10,7 +10,7 @@ type Interpreter struct {
 	caseSensitive bool
 }
 
-func (*Interpreter) Execute(op Operation, vars FormulaVariables) (float64, error) {
+func (*Interpreter) Execute(op Operation, vars map[string]interface{}) (float64, error) {
 	return execute(op, vars)
 }
 
@@ -30,7 +30,7 @@ func execute(op Operation, vars FormulaVariables) (float64, error) {
 	} else if cop, ok := op.(*VariableOperation); ok {
 
 		variableValue, err := vars.Get(cop.Name)
-		if err != nil {
+		if err == nil {
 			return variableValue.(float64), nil
 		} else {
 			return 0, errors.New("The variable '" + cop.Name + "' used is not defined.")
