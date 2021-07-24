@@ -10,14 +10,23 @@ type Interpreter struct {
 	caseSensitive bool
 }
 
+type Formula func(vars map[string]interface{}) float64
+
 func (*Interpreter) Execute(op Operation, vars map[string]interface{}) (float64, error) {
 	return execute(op, vars)
+}
+
+func (*Interpreter) BuildFormula(op Operation) Formula {
+	return func(vars map[string]interface{}) float64 {
+		ret, _ := execute(op, vars)
+		return ret
+	}
 }
 
 func execute(op Operation, vars FormulaVariables) (float64, error) {
 
 	if op == nil {
-		return 0, errors.New("Operation cannot be nil.")
+		return 0, errors.New("operation cannot be nil")
 	}
 
 	if cop, ok := op.(*ConstantOperation); ok {
