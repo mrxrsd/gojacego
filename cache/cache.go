@@ -1,4 +1,4 @@
-package memorycache
+package cache
 
 import (
 	"fmt"

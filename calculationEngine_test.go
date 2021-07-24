@@ -5,7 +5,7 @@ import (
 )
 
 func TestCalculationFormula1FloatingPoint(test *testing.T) {
-	engine := NewCalculationEngine()
+	engine := NewCalculationEngine(nil)
 	result, _ := engine.Calculate("2.0+3.0", nil)
 
 	if result != 5.0 {
