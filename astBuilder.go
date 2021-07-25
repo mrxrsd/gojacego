@@ -23,8 +23,8 @@ var precedences = map[rune]int{
 	'*': 4,
 	'/': 4,
 	'%': 4,
-	'_': 6,
-	'^': 5,
+	'_': 5,
+	'^': 6,
 }
 
 type AstBuilder struct {

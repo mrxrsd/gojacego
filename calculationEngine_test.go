@@ -91,6 +91,10 @@ func TestCalculationDefaultEngine(t *testing.T) {
 			},
 			expectedResult: 26.0,
 		},
+		{
+			formula:        "-(1*2)^2",
+			expectedResult: -4.0,
+		},
 	}
 
 	for _, test := range scenarios {
@@ -100,7 +104,7 @@ func TestCalculationDefaultEngine(t *testing.T) {
 		}
 
 		if result != test.expectedResult {
-			t.Logf("exptected: %f, got: %f", test.expectedResult, result)
+			t.Logf("expected: %f, got: %f", test.expectedResult, result)
 			t.Fail()
 		}
 	}
