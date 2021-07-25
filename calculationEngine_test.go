@@ -67,6 +67,30 @@ func TestCalculationDefaultEngine(t *testing.T) {
 			formula:        "-(1+2+(3+4))",
 			expectedResult: -10.0,
 		},
+		{
+			formula:        "5+(-(1*2))",
+			expectedResult: 3.0,
+		},
+		{
+			formula:        "5*(-(1*2)*3)",
+			expectedResult: -30.0,
+		},
+		{
+			formula:        "5* -(1*2)",
+			expectedResult: -10.0,
+		},
+		{
+			formula:        "-(1*2)^3",
+			expectedResult: -8.0,
+		},
+		{
+			formula: "var1+2*(3*age)",
+			variables: map[string]interface{}{
+				"var1": 2,
+				"age":  4,
+			},
+			expectedResult: 26.0,
+		},
 	}
 
 	for _, test := range scenarios {
