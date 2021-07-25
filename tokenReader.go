@@ -20,7 +20,7 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 	ret := make([]Token, 0)
 
 	if formula == "" {
-		return nil, errors.New("formula cannot be empty.")
+		return nil, errors.New("formula cannot be empty")
 	}
 
 	runes := []rune(formula)
@@ -109,7 +109,7 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 
 		if runes[i] == this.argumentSeparator {
 			ret = append(ret, Token{Type: ARGUMENT_SEPARATOR,
-				Value:         string(runes[i]),
+				Value:         runes[i],
 				StartPosition: i,
 				Length:        1})
 		} else {
@@ -125,7 +125,7 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 						Length:        1})
 				} else {
 					ret = append(ret, Token{Type: OPERATION,
-						Value:         string(runes[i]),
+						Value:         runes[i],
 						StartPosition: i,
 						Length:        1})
 
@@ -135,14 +135,14 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 			case '(':
 
 				ret = append(ret, Token{Type: LEFT_BRACKET,
-					Value:         string(runes[i]),
+					Value:         runes[i],
 					StartPosition: i,
 					Length:        1})
 				isFormulaSubPart = true
 				break
 			case ')':
 				ret = append(ret, Token{Type: RIGHT_BRACKET,
-					Value:         string(runes[i]),
+					Value:         runes[i],
 					StartPosition: i,
 					Length:        1})
 				isFormulaSubPart = false
@@ -155,7 +155,7 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 						Length:        1})
 				} else {
 					ret = append(ret, Token{Type: OPERATION,
-						Value:         "<",
+						Value:         '<',
 						StartPosition: i,
 						Length:        1})
 				}
@@ -169,7 +169,7 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 						Length:        1})
 				} else {
 					ret = append(ret, Token{Type: OPERATION,
-						Value:         ">",
+						Value:         '>',
 						StartPosition: i,
 						Length:        1})
 				}
@@ -178,7 +178,7 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 			case '!':
 				if i+1 < runesLength && runes[i+1] == '=' {
 					ret = append(ret, Token{Type: OPERATION,
-						Value:         "≠",
+						Value:         '≠',
 						StartPosition: i,
 						Length:        2})
 					i++
@@ -191,7 +191,7 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 			case '&':
 				if i+1 < runesLength && runes[i+1] == '&' {
 					ret = append(ret, Token{Type: OPERATION,
-						Value:         "&",
+						Value:         '&',
 						StartPosition: i,
 						Length:        2})
 					i++
@@ -203,7 +203,7 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 			case '|':
 				if i+1 < runesLength && runes[i+1] == '|' {
 					ret = append(ret, Token{Type: OPERATION,
-						Value:         "|",
+						Value:         '|',
 						StartPosition: i,
 						Length:        2})
 					i++
@@ -215,7 +215,7 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 			case '=':
 				if i+1 < runesLength && runes[i+1] == '=' {
 					ret = append(ret, Token{Type: OPERATION,
-						Value:         "=",
+						Value:         '=',
 						StartPosition: i,
 						Length:        2})
 					i++

@@ -107,3 +107,17 @@ func TestTokenReader6(test *testing.T) {
 		test.Errorf("Count - expected: 4, got: %d", len(ret))
 	}
 }
+
+func TestTokenReader12(test *testing.T) {
+	reader := NewTokenReader('.')
+	ret, err := reader.Read("-2.1")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	if len(ret) != 1 {
+		test.Errorf("Count - expected: 1, got: %d", len(ret))
+	}
+}

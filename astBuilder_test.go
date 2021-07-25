@@ -74,3 +74,45 @@ func TestBuildFormula2(test *testing.T) {
 	}
 
 }
+
+func TestUnaryMinus(test *testing.T) {
+	astBuilder := NewAstBuilder(false)
+	params := []Token{
+		{Value: 5.3, Type: FLOATING_POINT},
+		{Value: '*', Type: OPERATION},
+		{Value: '_', Type: OPERATION},
+		{Value: '(', Type: LEFT_BRACKET},
+		{Value: 5, Type: INTEGER},
+		{Value: '+', Type: OPERATION},
+		{Value: 42, Type: INTEGER},
+		{Value: ')', Type: RIGHT_BRACKET},
+	}
+
+	op, _ := astBuilder.Build(params)
+
+	if reflect.TypeOf(op).String() != "*gojacego.MultiplicationOperation" {
+		test.Errorf("expected: MultiplicationOperation, got: %s", reflect.TypeOf(op).String())
+	}
+
+	multiplication := op.(*MultiplicationOperation)
+
+	multi_one := multiplication.OperationOne.(*ConstantOperation).Value
+	if multi_one != 5.3 {
+		test.Errorf("exptected: 5.3, got: %d", multi_one)
+	}
+
+	unaryMinus := multiplication.OperationTwo.(*UnaryMinusOperation)
+
+	addition := unaryMinus.Operation.(*AddOperation)
+
+	add_one := addition.OperationOne.(*ConstantOperation).Value
+	if add_one != 5 {
+		test.Errorf("exptected: 5, got: %d", add_one)
+	}
+
+	add_two := addition.OperationTwo.(*ConstantOperation).Value
+	if add_two != 42 {
+		test.Errorf("exptected: 42, got: %d", add_one)
+	}
+
+}

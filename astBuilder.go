@@ -112,7 +112,7 @@ func (this AstBuilder) convertOperation(operationToken Token) (Operation, error)
 	var divisor Operation
 	var divident Operation
 
-	switch []rune(operationToken.Value.(string))[0] {
+	switch rune(operationToken.Value.(int32)) {
 	case '+':
 		argument2 = this.resultStack.Pop().(Operation)
 		argument1 = this.resultStack.Pop().(Operation)
@@ -184,7 +184,7 @@ func (this AstBuilder) convertOperation(operationToken Token) (Operation, error)
 		dataType = requiredDataType(argument1, argument2)
 		return NewNotEqualOperation(dataType, argument1, argument2), nil
 	default:
-		return nil, errors.New(fmt.Sprintf("Unknown operation %s", operationToken.Value))
+		return nil, errors.New(fmt.Sprintf("unknown operation %s", operationToken.Value))
 	}
 }
 
@@ -228,7 +228,8 @@ func (this AstBuilder) Build(tokens []Token) (Operation, error) {
 			break
 		case OPERATION:
 			operation1Token := token
-			operation1 := []rune(operation1Token.Value.(string))[0]
+			// operation1 := []rune(operation1Token.Value.(string))[0]
+			operation1 := rune(operation1Token.Value.(int32))
 
 			for this.operatorStack.Len() > 0 && (this.operatorStack.Peek().(Token).Type == OPERATION || this.operatorStack.Peek().(Token).Type == TEXT) {
 
@@ -241,8 +242,8 @@ func (this AstBuilder) Build(tokens []Token) (Operation, error) {
 				}
 
 				if !isFunctionOnTopOfStack {
-					var operation2 rune
-					operation2 = []rune(operation2Token.Value.(string))[0]
+					operation2 := rune(operation2Token.Value.(int32))
+					// operation2 = []rune(operation2Token.Value.(string))[0]
 
 					if (isLeftAssociativeOperation(operation1) && precedences[operation1] <= precedences[operation2]) || (precedences[operation1] < precedences[operation2]) {
 						this.operatorStack.Pop()
