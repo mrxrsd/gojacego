@@ -15,3 +15,19 @@ During the abstract syntax tree creation phase, the tokenized input is converted
 During the optimization phase, the abstract syntax tree is optimized for executing.
 
 ## Examples 
+
+```go
+engine := NewCalculationEngine(&JaceOptions{
+			decimalSeparator: '.',
+			caseSensitive:    false,
+			optimizeEnabled:  true,
+		})
+
+vars := map[string]interface{}{
+   "var1":2,
+   "var2":5
+}
+
+result, _ := engine.Calculate("var1*var2", nil)
+// 10.0
+```
