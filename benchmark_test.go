@@ -4,6 +4,15 @@ import (
 	"testing"
 )
 
+func BenchmarkEvaluationSingle(bench *testing.B) {
+
+	engine := NewCalculationEngine(nil)
+
+	bench.ResetTimer()
+	for i := 0; i < bench.N; i++ {
+		engine.Calculate("1.0", nil)
+	}
+}
 func BenchmarkCalculation(b *testing.B) {
 
 	engine := NewCalculationEngine(nil)

@@ -10,14 +10,14 @@ type Interpreter struct {
 	caseSensitive bool
 }
 
-type Formula func(vars map[string]interface{}) float64
+type Formula func(vars FormulaVariables) float64
 
-func (*Interpreter) Execute(op Operation, vars map[string]interface{}) (float64, error) {
+func (*Interpreter) Execute(op Operation, vars FormulaVariables) (float64, error) {
 	return execute(op, vars)
 }
 
 func (*Interpreter) BuildFormula(op Operation) Formula {
-	return func(vars map[string]interface{}) float64 {
+	return func(vars FormulaVariables) float64 {
 		ret, _ := execute(op, vars)
 		return ret
 	}
@@ -40,7 +40,7 @@ func execute(op Operation, vars FormulaVariables) (float64, error) {
 
 		variableValue, err := vars.Get(cop.Name)
 		if err == nil {
-			return variableValue.(float64), nil
+			return variableValue, nil
 		} else {
 			return 0, errors.New("The variable '" + cop.Name + "' used is not defined.")
 		}

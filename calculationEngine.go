@@ -48,11 +48,13 @@ func (this *CalculationEngine) Calculate(formula string, vars map[string]interfa
 		return 0, errors.New("the parameter 'formula' is requred")
 	}
 
+	formulaVariables := CreateFormulaVariables(vars, this.options.caseSensitive)
+
 	trimmedFormula := strings.TrimSpace(formula)
 	item, found := this.cache.Get(trimmedFormula)
 
 	if found {
-		ret, err := this.executor.Execute(item.(Operation), vars)
+		ret, err := this.executor.Execute(item.(Operation), formulaVariables)
 		if err != nil {
 			return 0, nil
 		}
@@ -66,7 +68,7 @@ func (this *CalculationEngine) Calculate(formula string, vars map[string]interfa
 
 	this.cache.Add(trimmedFormula, op)
 
-	ret, err := this.executor.Execute(op, vars)
+	ret, err := this.executor.Execute(op, formulaVariables)
 	if err != nil {
 		return 0, nil
 	}
