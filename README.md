@@ -26,10 +26,10 @@ engine := NewCalculationEngine(&JaceOptions{
 		})
 
 vars := map[string]interface{}{
-   "var1":2,
-   "var2":5
+   "a":2,
+   "b":5
 }
 
-result, _ := engine.Calculate("var1*var2", nil)
+result, _ := engine.Calculate("a*b", vars)
 // 10.0
 ```
