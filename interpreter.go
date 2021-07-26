@@ -12,18 +12,18 @@ type Interpreter struct {
 
 type Formula func(vars FormulaVariables) float64
 
-func (*Interpreter) Execute(op Operation, vars FormulaVariables) (float64, error) {
-	return execute(op, vars)
+func (*Interpreter) Execute(op Operation, vars FormulaVariables, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry) (float64, error) {
+	return execute(op, vars, functionRegistry, constantRegistry)
 }
 
-func (*Interpreter) BuildFormula(op Operation) Formula {
+func (*Interpreter) BuildFormula(op Operation, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry) Formula {
 	return func(vars FormulaVariables) float64 {
-		ret, _ := execute(op, vars)
+		ret, _ := execute(op, vars, functionRegistry, constantRegistry)
 		return ret
 	}
 }
 
-func execute(op Operation, vars FormulaVariables) (float64, error) {
+func execute(op Operation, vars FormulaVariables, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry) (float64, error) {
 
 	if op == nil {
 		return 0, errors.New("operation cannot be nil")
@@ -46,97 +46,97 @@ func execute(op Operation, vars FormulaVariables) (float64, error) {
 		}
 
 	} else if cop, ok := op.(*MultiplicationOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		return left * right, nil
 	} else if cop, ok := op.(*AddOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		return left + right, nil
 	} else if cop, ok := op.(*SubtractionOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		return left - right, nil
 	} else if cop, ok := op.(*DivisorOperation); ok {
-		left, _ := execute(cop.Dividend, vars)
-		right, _ := execute(cop.Divisor, vars)
+		left, _ := execute(cop.Dividend, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.Divisor, vars, functionRegistry, constantRegistry)
 
 		return left / right, nil
 	} else if cop, ok := op.(*ModuloOperation); ok {
-		left, _ := execute(cop.Dividend, vars)
-		right, _ := execute(cop.Divisor, vars)
+		left, _ := execute(cop.Dividend, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.Divisor, vars, functionRegistry, constantRegistry)
 
 		return math.Mod(left, right), nil
 	} else if cop, ok := op.(*ExponentiationOperation); ok {
-		left, _ := execute(cop.Base, vars)
-		right, _ := execute(cop.Exponent, vars)
+		left, _ := execute(cop.Base, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.Exponent, vars, functionRegistry, constantRegistry)
 
 		return math.Pow(left, right), nil
 	} else if cop, ok := op.(*UnaryMinusOperation); ok {
-		arg, _ := execute(cop.Operation, vars)
+		arg, _ := execute(cop.Operation, vars, functionRegistry, constantRegistry)
 		return -arg, nil
 	} else if cop, ok := op.(*AndOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		if left != 0 && right != 0 {
 			return 1.0, nil
 		}
 		return 0.0, nil
 	} else if cop, ok := op.(*OrOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		if left != 0 || right != 0 {
 			return 1.0, nil
 		}
 		return 0.0, nil
 	} else if cop, ok := op.(*LessThanOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		if left < right {
 			return 1.0, nil
 		}
 		return 0.0, nil
 	} else if cop, ok := op.(*LessOrEqualThanOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		if left <= right {
 			return 1.0, nil
 		}
 		return 0.0, nil
 	} else if cop, ok := op.(*GreaterThanOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		if left > right {
 			return 1.0, nil
 		}
 		return 0.0, nil
 	} else if cop, ok := op.(*GreaterOrEqualThanOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		if left >= right {
 			return 1.0, nil
 		}
 		return 0.0, nil
 	} else if cop, ok := op.(*EqualOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		if left == right {
 			return 1.0, nil
 		}
 		return 0.0, nil
 	} else if cop, ok := op.(*NotEqualOperation); ok {
-		left, _ := execute(cop.OperationOne, vars)
-		right, _ := execute(cop.OperationTwo, vars)
+		left, _ := execute(cop.OperationOne, vars, functionRegistry, constantRegistry)
+		right, _ := execute(cop.OperationTwo, vars, functionRegistry, constantRegistry)
 
 		if left != right {
 			return 1.0, nil
@@ -144,8 +144,15 @@ func execute(op Operation, vars FormulaVariables) (float64, error) {
 		return 0.0, nil
 	} else if cop, ok := op.(*FunctionOperation); ok {
 
-		return 0.0, fmt.Errorf("Not implemented %T", cop)
+		fn, _ := functionRegistry.Get(cop.Name)
+		arguments := make([]float64, len(cop.Arguments))
+
+		for idx, fnParam := range cop.Arguments {
+			arg, _ := execute(fnParam, vars, functionRegistry, constantRegistry)
+			arguments[idx] = arg
+		}
+		return fn.function(arguments...)
 	}
 
-	return 0.0, fmt.Errorf("Not implemented %T", op)
+	return 0.0, fmt.Errorf("not implemented %T", op)
 }

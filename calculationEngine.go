@@ -2,7 +2,6 @@ package gojacego
 
 import (
 	"errors"
-	"math"
 	"strings"
 
 	"github.com/mrxrsd/gojacego/cache"
@@ -13,14 +12,16 @@ type JaceOptions struct {
 	caseSensitive    bool
 	optimizeEnabled  bool
 	defaultConstants bool
+	defaultFunctions bool
 }
 
 type CalculationEngine struct {
 	cache            *cache.Memorycache
 	options          *JaceOptions
-	optimizer        IOptimizer
+	optimizer        *Optimizer
 	executor         *Interpreter
 	constantRegistry *ConstantRegistry
+	functionRegistry *FunctionRegistry
 }
 
 func NewCalculationEngine(options *JaceOptions) *CalculationEngine {
@@ -32,16 +33,21 @@ func NewCalculationEngine(options *JaceOptions) *CalculationEngine {
 			caseSensitive:    false,
 			optimizeEnabled:  true,
 			defaultConstants: true,
+			defaultFunctions: true,
 		}
 	}
 
 	interpreter := &Interpreter{}
 	optimizer := &Optimizer{executor: *interpreter}
 	constantRegistry := NewConstantRegistry(options.caseSensitive)
+	functionRegistry := NewFunctionRegistry(options.caseSensitive)
 
 	if options.defaultConstants {
-		constantRegistry.RegisterConstant("e", math.E, false)
-		constantRegistry.RegisterConstant("pi", math.Pi, false)
+		RegistryDefaultConstants(constantRegistry)
+	}
+
+	if options.defaultFunctions {
+		RegistryDefaultFunctions(functionRegistry)
 	}
 
 	return &CalculationEngine{
@@ -50,6 +56,7 @@ func NewCalculationEngine(options *JaceOptions) *CalculationEngine {
 		optimizer:        optimizer,
 		executor:         interpreter,
 		constantRegistry: constantRegistry,
+		functionRegistry: functionRegistry,
 	}
 }
 
@@ -65,7 +72,7 @@ func (this *CalculationEngine) Calculate(formula string, vars map[string]interfa
 	item, found := this.cache.Get(trimmedFormula)
 
 	if found {
-		ret, err := this.executor.Execute(item.(Operation), formulaVariables)
+		ret, err := this.executor.Execute(item.(Operation), formulaVariables, this.functionRegistry, this.constantRegistry)
 		if err != nil {
 			return 0, nil
 		}
@@ -79,7 +86,7 @@ func (this *CalculationEngine) Calculate(formula string, vars map[string]interfa
 
 	this.cache.Add(trimmedFormula, op)
 
-	ret, err := this.executor.Execute(op, formulaVariables)
+	ret, err := this.executor.Execute(op, formulaVariables, this.functionRegistry, this.constantRegistry)
 	if err != nil {
 		return 0, nil
 	}
@@ -90,7 +97,7 @@ func (this *CalculationEngine) Calculate(formula string, vars map[string]interfa
 func (this *CalculationEngine) buildAbstractSyntaxTree(formula string) (Operation, error) {
 
 	tokenReader := NewTokenReader(this.options.decimalSeparator)
-	astBuilder := NewAstBuilder(this.options.caseSensitive, this.constantRegistry)
+	astBuilder := NewAstBuilder(this.options.caseSensitive, this.functionRegistry, this.constantRegistry)
 
 	tokens, err := tokenReader.Read(formula)
 	if err != nil {
@@ -103,7 +110,7 @@ func (this *CalculationEngine) buildAbstractSyntaxTree(formula string) (Operatio
 	}
 
 	if this.options.optimizeEnabled {
-		optimizedOperation := this.optimizer.Optimize(operation)
+		optimizedOperation := this.optimizer.Optimize(operation, this.functionRegistry, this.constantRegistry)
 		return optimizedOperation, nil
 	}
 

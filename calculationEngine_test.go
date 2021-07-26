@@ -14,9 +14,9 @@ type CalculationTestScenario struct {
 
 func TestCalculationFormula1FloatingPoint(test *testing.T) {
 	engine := NewCalculationEngine(nil)
-	result, _ := engine.Calculate("-(1+2+(3+4))", nil)
+	result, _ := engine.Calculate("sin(14)", nil)
 
-	if result != 5.0 {
+	if result != math.Sin(14) {
 		test.Errorf("exptected: 5.0, got: %f", result)
 	}
 }
@@ -128,12 +128,16 @@ func TestCalculationDefaultEngine(t *testing.T) {
 			},
 			expectedResult: 3.0,
 		},
+		{
+			formula:        "sin(14)",
+			expectedResult: math.Sin(14),
+		},
 	}
 
 	for _, test := range scenarios {
 		result, err := engine.Calculate(test.formula, test.variables)
 		if err != nil {
-			t.Logf("Error: %s", err.Error())
+			t.Logf("test:%s => Error: %s", test.formula, err.Error())
 		}
 
 		if test.fnCallback != nil {

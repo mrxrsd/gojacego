@@ -33,9 +33,10 @@ type AstBuilder struct {
 	operatorStack    *stack.Stack
 	parameterCount   *stack.Stack
 	constantRegistry *ConstantRegistry
+	functionRegistry *FunctionRegistry
 }
 
-func NewAstBuilder(caseSensitive bool, constantRegistry *ConstantRegistry) *AstBuilder {
+func NewAstBuilder(caseSensitive bool, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry) *AstBuilder {
 
 	resultStack := stack.New()
 	operatorStack := stack.New()
@@ -47,6 +48,7 @@ func NewAstBuilder(caseSensitive bool, constantRegistry *ConstantRegistry) *AstB
 		operatorStack:    operatorStack,
 		parameterCount:   parameterCount,
 		constantRegistry: constantRegistry,
+		functionRegistry: functionRegistry,
 	}
 }
 
@@ -102,6 +104,30 @@ func (this AstBuilder) verifyResult() error {
 }
 
 func (this AstBuilder) convertFunction(operationToken Token) (Operation, error) {
+
+	functionName := operationToken.Value.(string)
+
+	if item, found := this.functionRegistry.Get(functionName); found {
+
+		var numberOfParameters int
+		if true {
+			numberOfParameters = this.parameterCount.Pop().(int)
+		} else {
+			// fixed parameter
+		}
+
+		operations := make([]Operation, numberOfParameters)
+		for i := 0; i < numberOfParameters; i++ {
+			operations[i] = this.resultStack.Pop().(Operation)
+		}
+
+		// vscode reverse
+		for i, j := 0, len(operations)-1; i < j; i, j = i+1, j-1 {
+			operations[i], operations[j] = operations[j], operations[i]
+		}
+
+		return NewFunctionOperation(FloatingPoint, functionName, operations, item.isIdempotent), nil
+	}
 
 	return nil, nil
 }
@@ -204,8 +230,9 @@ func (this AstBuilder) Build(tokens []Token) (Operation, error) {
 			break
 		case TEXT:
 			tokenText := token.Value.(string)
-			if false {
-				// FUNCTION REGISTRY
+			if _, found := this.functionRegistry.Get(tokenText); found {
+				this.operatorStack.Push(token)
+				this.parameterCount.Push(1)
 			} else {
 
 				if val, found := this.constantRegistry.Get(tokenText); found {

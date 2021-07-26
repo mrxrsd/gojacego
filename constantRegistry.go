@@ -1,6 +1,9 @@
 package gojacego
 
-import "strings"
+import (
+	"math"
+	"strings"
+)
 
 type ConstantRegistry struct {
 	caseSensitive bool
@@ -51,4 +54,9 @@ func (this *ConstantRegistry) convertConstantName(name string) string {
 	}
 
 	return strings.ToLower(name)
+}
+
+func RegistryDefaultConstants(registry *ConstantRegistry) {
+	registry.RegisterConstant("e", math.E, false)
+	registry.RegisterConstant("pi", math.Pi, false)
 }
