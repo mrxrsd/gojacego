@@ -29,14 +29,14 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 	isScientific := false
 
 	for i := 0; i < runesLength; i++ {
-		if this.isPartOfNumeric(runes[i], true, isFormulaSubPart) {
+		if this.isPartOfNumeric(runes[i], true, false, isFormulaSubPart) {
 			buffer := make([]rune, 0)
 			buffer = append(buffer, runes[i])
 			startPosition := i
 
 			i++
 			for i < runesLength {
-				if !this.isPartOfNumeric(runes[i], false, isFormulaSubPart) {
+				if !this.isPartOfNumeric(runes[i], false, runes[i-1] == '-', isFormulaSubPart) {
 					break
 				}
 
@@ -72,6 +72,8 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 						Value:         '_',
 						StartPosition: startPosition,
 						Length:        i - startPosition})
+				} else {
+					// TODO parse exception
 				}
 			}
 
@@ -247,8 +249,8 @@ func (this TokenReader) isUnaryMinus(currentToken rune, tokens []Token) bool {
 	}
 }
 
-func (this TokenReader) isPartOfNumeric(character rune, isFirstCharacter bool, isFormulaSubPart bool) bool {
-	return character == this.decimalSeparator || (character >= '0' && character <= '9') || (isFormulaSubPart && isFirstCharacter && character == '-') || (!isFirstCharacter && character == 'e') || (!isFirstCharacter && character == 'E')
+func (this TokenReader) isPartOfNumeric(character rune, isFirstCharacter bool, afterMinus bool, isFormulaSubPart bool) bool {
+	return character == this.decimalSeparator || (character >= '0' && character <= '9') || (isFormulaSubPart && isFirstCharacter && character == '-') || (!isFirstCharacter && !afterMinus && character == 'e') || (!isFirstCharacter && character == 'E')
 }
 
 func (this TokenReader) isPartOfVariable(character rune, isFirstCharacter bool) bool {

@@ -1,6 +1,7 @@
 package gojacego
 
 import (
+	"math"
 	"testing"
 )
 
@@ -8,6 +9,7 @@ type CalculationTestScenario struct {
 	formula        string
 	variables      map[string]interface{}
 	expectedResult float64
+	fnCallback     func(float64) float64
 }
 
 func TestCalculationFormula1FloatingPoint(test *testing.T) {
@@ -95,6 +97,37 @@ func TestCalculationDefaultEngine(t *testing.T) {
 			formula:        "-(1*2)^2",
 			expectedResult: -4.0,
 		},
+		{
+			formula:        "2*pi",
+			expectedResult: 2 * math.Pi,
+		},
+		{
+			formula:        "2*pI",
+			expectedResult: 2 * math.Pi,
+		},
+		{
+			formula:        "1+2-3*4/5+6-7*8/9+0",
+			expectedResult: 0.378,
+			fnCallback: func(f float64) float64 {
+				return math.Round(f*1000) / 1000
+			},
+		},
+		{
+			formula: "var1 < var2",
+			variables: map[string]interface{}{
+				"var1": 2,
+				"var2": 4.2,
+			},
+			expectedResult: 1.0,
+		},
+		{
+			formula: "v_var1 + v_var2",
+			variables: map[string]interface{}{
+				"v_var1": 1,
+				"v_var2": 2.0,
+			},
+			expectedResult: 3.0,
+		},
 	}
 
 	for _, test := range scenarios {
@@ -103,8 +136,12 @@ func TestCalculationDefaultEngine(t *testing.T) {
 			t.Logf("Error: %s", err.Error())
 		}
 
+		if test.fnCallback != nil {
+			result = test.fnCallback(result)
+		}
+
 		if result != test.expectedResult {
-			t.Logf("expected: %f, got: %f", test.expectedResult, result)
+			t.Logf("test: %s => expected: %f, got: %f", test.formula, test.expectedResult, result)
 			t.Fail()
 		}
 	}

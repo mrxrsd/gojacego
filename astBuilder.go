@@ -28,23 +28,25 @@ var precedences = map[rune]int{
 }
 
 type AstBuilder struct {
-	caseSensitive  bool
-	resultStack    *stack.Stack
-	operatorStack  *stack.Stack
-	parameterCount *stack.Stack
+	caseSensitive    bool
+	resultStack      *stack.Stack
+	operatorStack    *stack.Stack
+	parameterCount   *stack.Stack
+	constantRegistry *ConstantRegistry
 }
 
-func NewAstBuilder(caseSensitive bool) *AstBuilder {
+func NewAstBuilder(caseSensitive bool, constantRegistry *ConstantRegistry) *AstBuilder {
 
 	resultStack := stack.New()
 	operatorStack := stack.New()
 	parameterCount := stack.New()
 
 	return &AstBuilder{
-		caseSensitive:  caseSensitive,
-		resultStack:    resultStack,
-		operatorStack:  operatorStack,
-		parameterCount: parameterCount,
+		caseSensitive:    caseSensitive,
+		resultStack:      resultStack,
+		operatorStack:    operatorStack,
+		parameterCount:   parameterCount,
+		constantRegistry: constantRegistry,
 	}
 }
 
@@ -184,7 +186,7 @@ func (this AstBuilder) convertOperation(operationToken Token) (Operation, error)
 		dataType = requiredDataType(argument1, argument2)
 		return NewNotEqualOperation(dataType, argument1, argument2), nil
 	default:
-		return nil, errors.New(fmt.Sprintf("unknown operation %s", operationToken.Value))
+		return nil, fmt.Errorf("unknown operation %s", operationToken.Value)
 	}
 }
 
@@ -206,8 +208,9 @@ func (this AstBuilder) Build(tokens []Token) (Operation, error) {
 				// FUNCTION REGISTRY
 			} else {
 
-				if false {
+				if val, found := this.constantRegistry.Get(tokenText); found {
 					// constant registry
+					this.resultStack.Push(NewConstantOperation(FloatingPoint, val))
 				} else {
 					if !this.caseSensitive {
 						tokenText = strings.ToLower(tokenText)

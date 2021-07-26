@@ -2,6 +2,7 @@ package gojacego
 
 import (
 	"errors"
+	"math"
 	"strings"
 
 	"github.com/mrxrsd/gojacego/cache"
@@ -11,13 +12,15 @@ type JaceOptions struct {
 	decimalSeparator rune
 	caseSensitive    bool
 	optimizeEnabled  bool
+	defaultConstants bool
 }
 
 type CalculationEngine struct {
-	cache     *cache.Memorycache
-	options   *JaceOptions
-	optimizer IOptimizer
-	executor  *Interpreter
+	cache            *cache.Memorycache
+	options          *JaceOptions
+	optimizer        IOptimizer
+	executor         *Interpreter
+	constantRegistry *ConstantRegistry
 }
 
 func NewCalculationEngine(options *JaceOptions) *CalculationEngine {
@@ -28,24 +31,32 @@ func NewCalculationEngine(options *JaceOptions) *CalculationEngine {
 			decimalSeparator: '.',
 			caseSensitive:    false,
 			optimizeEnabled:  true,
+			defaultConstants: true,
 		}
 	}
 
 	interpreter := &Interpreter{}
 	optimizer := &Optimizer{executor: *interpreter}
+	constantRegistry := NewConstantRegistry(options.caseSensitive)
+
+	if options.defaultConstants {
+		constantRegistry.RegisterConstant("e", math.E, false)
+		constantRegistry.RegisterConstant("pi", math.Pi, false)
+	}
 
 	return &CalculationEngine{
-		cache:     cache,
-		options:   options,
-		optimizer: optimizer,
-		executor:  interpreter,
+		cache:            cache,
+		options:          options,
+		optimizer:        optimizer,
+		executor:         interpreter,
+		constantRegistry: constantRegistry,
 	}
 }
 
 func (this *CalculationEngine) Calculate(formula string, vars map[string]interface{}) (float64, error) {
 
 	if len(strings.TrimSpace(formula)) == 0 {
-		return 0, errors.New("the parameter 'formula' is requred")
+		return 0, errors.New("the parameter 'formula' is required")
 	}
 
 	formulaVariables := CreateFormulaVariables(vars, this.options.caseSensitive)
@@ -79,7 +90,7 @@ func (this *CalculationEngine) Calculate(formula string, vars map[string]interfa
 func (this *CalculationEngine) buildAbstractSyntaxTree(formula string) (Operation, error) {
 
 	tokenReader := NewTokenReader(this.options.decimalSeparator)
-	astBuilder := NewAstBuilder(this.options.caseSensitive)
+	astBuilder := NewAstBuilder(this.options.caseSensitive, this.constantRegistry)
 
 	tokens, err := tokenReader.Read(formula)
 	if err != nil {
