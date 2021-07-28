@@ -142,9 +142,27 @@ result, _ := engine.Calculate("addTwo(2)", nil)
 
 ```
 
-### Compile Time Constants (W.I.P)
+### Compile Time Constants
 
-Variables as defined in a formula can be replaced by a constant value at compile time. This feature is useful in case that a number of the parameters don't frequently change and that the formula needs to be executed many times.
+Variables as defined in a formula can be replaced by a constant value at compile time. This feature is useful in case that a number of the parameters don't frequently change and that the formula needs to be executed many times. Thusfore is better because constants could be optimizated.
+
+
+```go
+
+consts := map[string]interface{}{
+   "a":1,
+}
+formula := engine.BuildWithConstants("a+b+c", consts)
+// It's the same as 'engine.Build("1+b+c")' but without dealing with string replace
+
+vars := map[string]interface{}{
+   "b":2,
+   "c":5
+}
+
+result, := formula(vars)
+// 8.0
+```
 
 ## Benchmark (W.I.P)
 
