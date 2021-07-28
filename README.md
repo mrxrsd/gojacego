@@ -18,6 +18,10 @@ During the optimization phase, the abstract syntax tree is optimized for executi
 
 ## Getting Started 
 
+Gojacego can be used in a couple of ways:
+
+To directly execute a given mathematical formula using the provided variables:
+
 ```go
 engine := NewCalculationEngine(&JaceOptions{
 			decimalSeparator: '.',
@@ -32,6 +36,27 @@ vars := map[string]interface{}{
 }
 
 result, _ := engine.Calculate("a*b", vars)
+// 10.0
+```
+
+To build a Func accepting a dictionary as input containing the values for each variable:
+
+```go
+engine := NewCalculationEngine(&JaceOptions{
+			decimalSeparator: '.',
+			argumentSeparator: ',',
+			caseSensitive:    false,
+			optimizeEnabled:  true,
+		})
+
+formula := engine.Build("a*b")
+
+vars := map[string]interface{}{
+   "a":2,
+   "b":5
+}
+
+result, := formula(vars)
 // 10.0
 ```
 
