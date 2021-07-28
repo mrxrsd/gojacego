@@ -143,6 +143,22 @@ func TestCalculationDefaultEngine(t *testing.T) {
 				return math.Round(f*1000) / 1000
 			},
 		},
+		{
+			formula: "requests_made > requests_succeeded",
+			variables: map[string]interface{}{
+				"requests_made":      99.0,
+				"requests_succeeded": 90.0,
+			},
+			expectedResult: 1.0,
+		},
+		{
+			formula: "(requests_made * requests_succeeded / 100) >= 90",
+			variables: map[string]interface{}{
+				"requests_made":      99.0,
+				"requests_succeeded": 90.0,
+			},
+			expectedResult: 0.0,
+		},
 	}
 
 	for _, test := range scenarios {
