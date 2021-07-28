@@ -96,6 +96,10 @@ func (this *CalculationEngine) Calculate(formula string, vars map[string]interfa
 	return ret, nil
 }
 
+func (this *CalculationEngine) AddFunction(name string, body Delegate, isIdempotent bool) {
+	this.functionRegistry.RegisterFunction(name, body, true, isIdempotent)
+}
+
 func (this *CalculationEngine) buildAbstractSyntaxTree(formula string) (Operation, error) {
 
 	tokenReader := NewTokenReader(this.options.decimalSeparator, this.options.argumentSeparador)

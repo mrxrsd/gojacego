@@ -161,3 +161,17 @@ func TestCalculationDefaultEngine(t *testing.T) {
 		}
 	}
 }
+
+func TestCustomFunctions(test *testing.T) {
+	engine := NewCalculationEngine(nil)
+
+	engine.AddFunction("addTwo", func(arguments ...float64) (float64, error) {
+		return arguments[0] + 2, nil
+	}, true)
+
+	result, _ := engine.Calculate("addTwo(2)", nil)
+
+	if result != 4 {
+		test.Errorf("exptected: 4.0, got: %f", result)
+	}
+}
