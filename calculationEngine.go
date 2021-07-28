@@ -62,38 +62,71 @@ func NewCalculationEngine(options *JaceOptions) *CalculationEngine {
 	}
 }
 
-func (this *CalculationEngine) Calculate(formula string, vars map[string]interface{}) (float64, error) {
+func (this *CalculationEngine) Calculate(formulaText string, vars map[string]interface{}) (float64, error) {
 
-	if len(strings.TrimSpace(formula)) == 0 {
+	if len(strings.TrimSpace(formulaText)) == 0 {
 		return 0, errors.New("the parameter 'formula' is required")
 	}
 
 	formulaVariables := CreateFormulaVariables(vars, this.options.caseSensitive)
 
-	trimmedFormula := strings.TrimSpace(formula)
-	item, found := this.cache.Get(trimmedFormula)
+	item, found := this.cache.Get(formulaText)
 
 	if found {
-		ret, err := this.executor.Execute(item.(Operation), formulaVariables, this.functionRegistry, this.constantRegistry)
-		if err != nil {
-			return 0, nil
-		}
-		return ret, nil
+		formula := item.(Formula)
+		return formula(formulaVariables), nil
 	}
 
-	op, err := this.buildAbstractSyntaxTree(trimmedFormula)
+	op, err := this.buildAbstractSyntaxTree(formulaText)
 	if err != nil {
 		return 0, err
 	}
 
-	this.cache.Add(trimmedFormula, op)
+	formula := this.buildFormula(formulaText, op)
 
-	ret, err := this.executor.Execute(op, formulaVariables, this.functionRegistry, this.constantRegistry)
-	if err != nil {
-		return 0, nil
+	return formula(formulaVariables), nil
+}
+
+func (this *CalculationEngine) generateFormulaCacheKey(formulaText string) string {
+	return formulaText
+}
+
+func (this *CalculationEngine) getFormula(formulaText string) Formula {
+
+	item, found := this.cache.Get(formulaText)
+	if found {
+		return item.(Formula)
+	}
+	return nil
+}
+
+func (this *CalculationEngine) buildFormula(formulaText string, operation Operation) Formula {
+	key := this.generateFormulaCacheKey(formulaText)
+	formula := this.executor.BuildFormula(operation, this.functionRegistry, this.constantRegistry)
+	this.cache.Add(key, formula)
+
+	return formula
+
+}
+
+func (this *CalculationEngine) Build(formulaText string) (Formula, error) {
+
+	if len(strings.TrimSpace(formulaText)) == 0 {
+		return nil, errors.New("the parameter 'formula' is required")
 	}
 
-	return ret, nil
+	item, found := this.cache.Get(formulaText)
+
+	if found {
+		return item.(Formula), nil
+	}
+
+	op, err := this.buildAbstractSyntaxTree(formulaText)
+	if err != nil {
+		return nil, err
+	}
+
+	return this.buildFormula(formulaText, op), nil
 }
 
 func (this *CalculationEngine) AddFunction(name string, body Delegate, isIdempotent bool) {

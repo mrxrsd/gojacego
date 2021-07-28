@@ -14,7 +14,7 @@ type CalculationTestScenario struct {
 
 func TestCalculationFormula1FloatingPoint(test *testing.T) {
 	engine := NewCalculationEngine(nil)
-	result, _ := engine.Calculate("sin(14)", nil)
+	result, _ := engine.Calculate("2*pi", nil)
 
 	if result != math.Sin(14) {
 		test.Errorf("exptected: 5.0, got: %f", result)

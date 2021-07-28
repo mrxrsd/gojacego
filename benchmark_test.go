@@ -4,20 +4,24 @@ import (
 	"testing"
 )
 
-func BenchmarkEvaluationSingle(bench *testing.B) {
+func BenchmarkEvaluationNumericLiteral(bench *testing.B) {
 
 	engine := NewCalculationEngine(nil)
+	formula, _ := engine.Build("(2) > (1)")
 
 	bench.ResetTimer()
 	for i := 0; i < bench.N; i++ {
-		engine.Calculate("1.0", nil)
+		formula(nil)
 	}
 }
+
 func BenchmarkCalculation(b *testing.B) {
 
 	engine := NewCalculationEngine(nil)
+	formula, _ := engine.Build("2.0+3.0")
+
 	for i := 0; i < 10000000; i++ {
-		engine.Calculate("2.0+3.0", nil)
+		formula(nil)
 	}
 
 }
