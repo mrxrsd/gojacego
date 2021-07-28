@@ -14,7 +14,11 @@ type CalculationTestScenario struct {
 
 func TestDebug(test *testing.T) {
 	engine := NewCalculationEngine()
-	engine.Calculate("2*pi", nil)
+	result, _ := engine.Calculate("2*pi", nil)
+
+	if result != 1 {
+
+	}
 
 }
 
@@ -286,6 +290,25 @@ func TestCustomFunctions(test *testing.T) {
 
 	if result != 4 {
 		test.Errorf("exptected: 4.0, got: %f", result)
+	}
+}
+
+func TestCompiledConstants(test *testing.T) {
+	engine := NewCalculationEngine()
+
+	constants := map[string]interface{}{
+		"a": 1.0,
+	}
+	var fn, _ = engine.BuildWithConstants("a+b+c", constants)
+
+	input := map[string]float64{
+		"b": 2.0,
+		"c": 3.0,
+	}
+	result := fn(input)
+
+	if result != 6 {
+		test.Errorf("exptected: 6.0, got: %f", result)
 	}
 }
 

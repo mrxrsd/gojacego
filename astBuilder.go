@@ -28,27 +28,29 @@ var precedences = map[rune]int{
 }
 
 type AstBuilder struct {
-	caseSensitive    bool
-	resultStack      *stack.Stack
-	operatorStack    *stack.Stack
-	parameterCount   *stack.Stack
-	constantRegistry *ConstantRegistry
-	functionRegistry *FunctionRegistry
+	caseSensitive            bool
+	resultStack              *stack.Stack
+	operatorStack            *stack.Stack
+	parameterCount           *stack.Stack
+	constantRegistry         *ConstantRegistry
+	compiledConstantRegistry *ConstantRegistry
+	functionRegistry         *FunctionRegistry
 }
 
-func NewAstBuilder(caseSensitive bool, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry) *AstBuilder {
+func NewAstBuilder(caseSensitive bool, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry, compiledConstantRegistry *ConstantRegistry) *AstBuilder {
 
 	resultStack := stack.New()
 	operatorStack := stack.New()
 	parameterCount := stack.New()
 
 	return &AstBuilder{
-		caseSensitive:    caseSensitive,
-		resultStack:      resultStack,
-		operatorStack:    operatorStack,
-		parameterCount:   parameterCount,
-		constantRegistry: constantRegistry,
-		functionRegistry: functionRegistry,
+		caseSensitive:            caseSensitive,
+		resultStack:              resultStack,
+		operatorStack:            operatorStack,
+		parameterCount:           parameterCount,
+		constantRegistry:         constantRegistry,
+		functionRegistry:         functionRegistry,
+		compiledConstantRegistry: compiledConstantRegistry,
 	}
 }
 
@@ -234,6 +236,14 @@ func (this AstBuilder) Build(tokens []Token) (Operation, error) {
 				this.operatorStack.Push(token)
 				this.parameterCount.Push(1)
 			} else {
+
+				if this.compiledConstantRegistry != nil {
+					if val, found := this.compiledConstantRegistry.Get(tokenText); found {
+						// constant registry
+						this.resultStack.Push(NewConstantOperation(FloatingPoint, val))
+						break
+					}
+				}
 
 				if val, found := this.constantRegistry.Get(tokenText); found {
 					// constant registry

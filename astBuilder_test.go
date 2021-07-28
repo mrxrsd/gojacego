@@ -18,7 +18,7 @@ func getFunctionRegistry() *FunctionRegistry {
 }
 
 func TestBuildFormula1(test *testing.T) {
-	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry())
+	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
 	params := []Token{
 		{Value: '(', Type: LEFT_BRACKET},
 		{Value: 42, Type: INTEGER},
@@ -53,7 +53,7 @@ func TestBuildFormula1(test *testing.T) {
 }
 
 func TestBuildFormula2(test *testing.T) {
-	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry())
+	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
 	params := []Token{
 		{Value: 2, Type: INTEGER},
 		{Value: '+', Type: OPERATION},
@@ -88,7 +88,7 @@ func TestBuildFormula2(test *testing.T) {
 }
 
 func TestUnaryMinus(test *testing.T) {
-	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry())
+	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
 	params := []Token{
 		{Value: 5.3, Type: FLOATING_POINT},
 		{Value: '*', Type: OPERATION},

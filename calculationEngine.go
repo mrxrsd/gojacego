@@ -2,6 +2,7 @@ package gojacego
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/mrxrsd/gojacego/cache"
@@ -88,17 +89,30 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 		return formula(formulaVariables), nil
 	}
 
-	op, err := this.buildAbstractSyntaxTree(formulaText)
+	op, err := this.buildAbstractSyntaxTree(formulaText, nil)
 	if err != nil {
 		return 0, err
 	}
 
-	formula := this.buildFormula(formulaText, op)
+	formula := this.buildFormula(formulaText, nil, op)
 
 	return formula(formulaVariables), nil
 }
 
-func (this *CalculationEngine) generateFormulaCacheKey(formulaText string) string {
+func (this *CalculationEngine) generateFormulaCacheKey(formulaText string, compiledConstantsRegistry *ConstantRegistry) string {
+	if compiledConstantsRegistry != nil {
+		var data []byte
+
+		data = append(data, formulaText...)
+		for k, p := range compiledConstantsRegistry.constants {
+			data = append(data, "@"...)
+			data = append(data, k...)
+			data = append(data, ":"...)
+			data = append(data, (fmt.Sprint(p.value))...)
+			data = append(data, "@"...)
+		}
+		return string(data)
+	}
 	return formulaText
 }
 
@@ -111,8 +125,8 @@ func (this *CalculationEngine) getFormula(formulaText string) Formula {
 	return nil
 }
 
-func (this *CalculationEngine) buildFormula(formulaText string, operation Operation) Formula {
-	key := this.generateFormulaCacheKey(formulaText)
+func (this *CalculationEngine) buildFormula(formulaText string, compiledConstants *ConstantRegistry, operation Operation) Formula {
+	key := this.generateFormulaCacheKey(formulaText, compiledConstants)
 	formula := this.executor.BuildFormula(operation, this.functionRegistry, this.constantRegistry)
 	this.cache.Add(key, formula)
 
@@ -121,33 +135,43 @@ func (this *CalculationEngine) buildFormula(formulaText string, operation Operat
 }
 
 func (this *CalculationEngine) Build(formulaText string) (Formula, error) {
+	return this.BuildWithConstants(formulaText, nil)
+}
+
+func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[string]interface{}) (Formula, error) {
 
 	if len(strings.TrimSpace(formulaText)) == 0 {
 		return nil, errors.New("the parameter 'formula' is required")
 	}
 
-	item, found := this.cache.Get(formulaText)
+	compiledConstantsRegistry := NewConstantRegistry(this.options.caseSensitive)
+
+	for k, p := range vars {
+		compiledConstantsRegistry.RegisterConstant(k, ToFloat64(p), true)
+	}
+
+	item, found := this.cache.Get(this.generateFormulaCacheKey(formulaText, compiledConstantsRegistry))
 
 	if found {
 		return item.(Formula), nil
 	}
 
-	op, err := this.buildAbstractSyntaxTree(formulaText)
+	op, err := this.buildAbstractSyntaxTree(formulaText, compiledConstantsRegistry)
 	if err != nil {
 		return nil, err
 	}
 
-	return this.buildFormula(formulaText, op), nil
+	return this.buildFormula(formulaText, compiledConstantsRegistry, op), nil
 }
 
 func (this *CalculationEngine) AddFunction(name string, body Delegate, isIdempotent bool) {
 	this.functionRegistry.RegisterFunction(name, body, true, isIdempotent)
 }
 
-func (this *CalculationEngine) buildAbstractSyntaxTree(formula string) (Operation, error) {
+func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledConstants *ConstantRegistry) (Operation, error) {
 
 	tokenReader := NewTokenReader(this.options.decimalSeparator, this.options.argumentSeparador)
-	astBuilder := NewAstBuilder(this.options.caseSensitive, this.functionRegistry, this.constantRegistry)
+	astBuilder := NewAstBuilder(this.options.caseSensitive, this.functionRegistry, this.constantRegistry, compiledConstants)
 
 	tokens, err := tokenReader.Read(formula)
 	if err != nil {
