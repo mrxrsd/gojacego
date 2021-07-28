@@ -14,11 +14,8 @@ type CalculationTestScenario struct {
 
 func TestDebug(test *testing.T) {
 	engine := NewCalculationEngine()
-	result, _ := engine.Calculate("2*pi", nil)
+	engine.Calculate("2*pi", nil)
 
-	if result != math.Sin(14) {
-		test.Errorf("expected: 5.0, got: %f", result)
-	}
 }
 
 func TestCalculationDefaultEngine(t *testing.T) {
