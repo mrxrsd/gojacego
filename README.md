@@ -126,3 +126,16 @@ result, _ := engine.Calculate("addTwo(2)", nil)
 Variables as defined in a formula can be replaced by a constant value at compile time. This feature is useful in case that a number of the parameters don't frequently change and that the formula needs to be executed many times.
 
 ## Benchmark (W.I.P)
+
+### Gojacego vs Govaluate
+
+
+| Test                                   | Gojacego    | Govaluate   |
+| -------------------------------------- | ----------- | ----------- |
+| BenchmarkEvaluationNumericLiteral      | 23.77 ns/op | 71.73 ns/op |
+| BenchmarkEvaluationLiteralModifiers    | 34.33 ns/op | 180.8 ns/op |
+| BenchmarkEvaluationParameter           | 11.25 ns/op | 72.47 ns/op |
+| BenchmarkEvaluationParameters          | 31.91 ns/op | 122.0 ns/op |
+| BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |
+
+Disclaimer: Govaluate has a lot of features and differents operators while Gojacego has only mathematical and logical operators.
