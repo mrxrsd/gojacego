@@ -12,8 +12,8 @@ type CalculationTestScenario struct {
 	fnCallback     func(float64) float64
 }
 
-func TestCalculationFormula1FloatingPoint(test *testing.T) {
-	engine := NewCalculationEngine(nil)
+func TestDebug(test *testing.T) {
+	engine := NewCalculationEngine()
 	result, _ := engine.Calculate("2*pi", nil)
 
 	if result != math.Sin(14) {
@@ -22,7 +22,7 @@ func TestCalculationFormula1FloatingPoint(test *testing.T) {
 }
 
 func TestCalculationDefaultEngine(t *testing.T) {
-	engine := NewCalculationEngine(nil)
+	engine := NewCalculationEngine()
 
 	scenarios := []CalculationTestScenario{
 		{
@@ -46,14 +46,6 @@ func TestCalculationDefaultEngine(t *testing.T) {
 			variables: map[string]interface{}{
 				"var1": 2.5,
 				"var2": 3.4,
-			},
-			expectedResult: 8.5,
-		},
-		{
-			formula: "vAr1*VaR2",
-			variables: map[string]interface{}{
-				"VaR1": 2.5,
-				"vAr2": 3.4,
 			},
 			expectedResult: 8.5,
 		},
@@ -179,7 +171,7 @@ func TestCalculationDefaultEngine(t *testing.T) {
 }
 
 func TestCustomFunctions(test *testing.T) {
-	engine := NewCalculationEngine(nil)
+	engine := NewCalculationEngine()
 
 	engine.AddFunction("addTwo", func(arguments ...float64) (float64, error) {
 		return arguments[0] + 2, nil

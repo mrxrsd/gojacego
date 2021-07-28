@@ -25,7 +25,18 @@ type CalculationEngine struct {
 	functionRegistry *FunctionRegistry
 }
 
-func NewCalculationEngine(options *JaceOptions) *CalculationEngine {
+func NewCalculationEngine() *CalculationEngine {
+	return NewCalculationEngineWithOptions(&JaceOptions{
+		decimalSeparator:  '.',
+		argumentSeparador: ',',
+		caseSensitive:     false,
+		optimizeEnabled:   true,
+		defaultConstants:  true,
+		defaultFunctions:  true,
+	})
+}
+
+func NewCalculationEngineWithOptions(options *JaceOptions) *CalculationEngine {
 	cache := cache.NewCache()
 
 	if options == nil {
