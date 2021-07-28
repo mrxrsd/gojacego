@@ -8,11 +8,12 @@ import (
 )
 
 type JaceOptions struct {
-	decimalSeparator rune
-	caseSensitive    bool
-	optimizeEnabled  bool
-	defaultConstants bool
-	defaultFunctions bool
+	decimalSeparator  rune
+	argumentSeparador rune
+	caseSensitive     bool
+	optimizeEnabled   bool
+	defaultConstants  bool
+	defaultFunctions  bool
 }
 
 type CalculationEngine struct {
@@ -29,11 +30,12 @@ func NewCalculationEngine(options *JaceOptions) *CalculationEngine {
 
 	if options == nil {
 		options = &JaceOptions{
-			decimalSeparator: '.',
-			caseSensitive:    false,
-			optimizeEnabled:  true,
-			defaultConstants: true,
-			defaultFunctions: true,
+			decimalSeparator:  '.',
+			argumentSeparador: ',',
+			caseSensitive:     false,
+			optimizeEnabled:   true,
+			defaultConstants:  true,
+			defaultFunctions:  true,
 		}
 	}
 
@@ -96,7 +98,7 @@ func (this *CalculationEngine) Calculate(formula string, vars map[string]interfa
 
 func (this *CalculationEngine) buildAbstractSyntaxTree(formula string) (Operation, error) {
 
-	tokenReader := NewTokenReader(this.options.decimalSeparator)
+	tokenReader := NewTokenReader(this.options.decimalSeparator, this.options.argumentSeparador)
 	astBuilder := NewAstBuilder(this.options.caseSensitive, this.functionRegistry, this.constantRegistry)
 
 	tokens, err := tokenReader.Read(formula)

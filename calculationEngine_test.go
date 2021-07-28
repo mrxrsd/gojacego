@@ -132,6 +132,17 @@ func TestCalculationDefaultEngine(t *testing.T) {
 			formula:        "sin(14)",
 			expectedResult: math.Sin(14),
 		},
+		{
+			formula:        "max(5,6,3,-4,5,3,7,8,13,100)",
+			expectedResult: 100,
+		},
+		{
+			formula:        "max(sin(67), cos(67))",
+			expectedResult: -0.518,
+			fnCallback: func(f float64) float64 {
+				return math.Round(f*1000) / 1000
+			},
+		},
 	}
 
 	for _, test := range scenarios {

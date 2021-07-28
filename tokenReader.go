@@ -10,9 +10,10 @@ type TokenReader struct {
 	argumentSeparator rune
 }
 
-func NewTokenReader(decimalSeparator rune) *TokenReader {
+func NewTokenReader(decimalSeparator rune, argumentSeparador rune) *TokenReader {
 	return &TokenReader{
-		decimalSeparator: decimalSeparator,
+		decimalSeparator:  decimalSeparator,
+		argumentSeparator: argumentSeparador,
 	}
 }
 

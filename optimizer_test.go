@@ -8,7 +8,7 @@ import (
 func TestOptimizerMultiplicationByZero(test *testing.T) {
 	interpreter := &Interpreter{}
 	optimizer := &Optimizer{executor: *interpreter}
-	reader := NewTokenReader('.')
+	reader := NewTokenReader('.', ',')
 	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry())
 
 	tokens, _ := reader.Read("var1 * 0.0")

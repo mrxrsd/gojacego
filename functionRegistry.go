@@ -65,4 +65,22 @@ func RegistryDefaultFunctions(registry *FunctionRegistry) {
 		return math.Sin(arguments[0]), nil
 	}, false, true)
 
+	registry.RegisterFunction("cos", func(arguments ...float64) (float64, error) {
+		return math.Cos(arguments[0]), nil
+	}, false, true)
+
+	registry.RegisterFunction("max", func(arguments ...float64) (float64, error) {
+		if len(arguments) > 0 {
+			max := arguments[0]
+			for _, v := range arguments {
+				if v > max {
+					max = v
+				}
+			}
+			return max, nil
+		} else {
+			return 0, nil
+		}
+	}, false, true)
+
 }
