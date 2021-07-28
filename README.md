@@ -84,7 +84,7 @@ ret, _ := engine.Calculate("sin(100)+a", vars)
 
 ### Custom Functions (W.I.P)
 
-Custom functions are allow programmers to add additional functions besides the ones already supported (sin, cos, asin, …). Functions are required to have a unique name (this name is case insensitive). The existing functions cannot be overwritten.
+Custom functions allow programmers to add additional functions besides the ones already supported (sin, cos, asin, …). Functions are required to have a unique name (this name is case insensitive). The existing functions cannot be overwritten.
 
 ### Compile Time Constants (W.I.P)
 
