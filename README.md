@@ -82,9 +82,19 @@ ret, _ := engine.Calculate("sin(100)+a", vars)
 // 1.4936343588902412
 ```
 
-### Custom Functions (W.I.P)
+### Custom Functions 
 
-Custom functions allow programmers to add additional functions besides the ones already supported (sin, cos, asin, …). Functions are required to have a unique name (this name is case insensitive). The existing functions cannot be overwritten.
+Custom functions allow programmers to add additional functions besides the ones already supported (sin, cos, asin, …). Functions are required to have a unique name. The existing functions cannot be overwritten.
+
+```go
+engine.AddFunction("addTwo", func(arguments ...float64) (float64, error) {
+		return arguments[0] + 2, nil
+}, true)
+
+result, _ := engine.Calculate("addTwo(2)", nil)
+// 4.0
+
+```
 
 ### Compile Time Constants (W.I.P)
 
