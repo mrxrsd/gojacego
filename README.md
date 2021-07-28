@@ -22,6 +22,10 @@ During the abstract syntax tree creation phase, the tokenized input is converted
 ### Optimization
 During the optimization phase, the abstract syntax tree is optimized for executing.
 
+![image 1](https://github.com/mrxrsd/gojacego/blob/master/.github/imgs/1.png?raw=true)
+
+More Information: https://pieterderycke.wordpress.com/2012/11/04/jace-net-just-another-calculation-engine-for-net/
+
 ## Getting Started 
 
 goJACEgo can be used in a couple of ways:
@@ -164,7 +168,7 @@ result, := formula(vars)
 // 8.0
 ```
 
-## Benchmark (W.I.P)
+## Benchmark 
 
 ### goJACEgo vs Govaluate
 
@@ -178,3 +182,16 @@ result, := formula(vars)
 | BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |
 
 Disclaimer: Govaluate has a lot of features and differents operators while goJACEgo has only mathematical and logical operators.
+
+## Roadmap to the first release
+
+### Alpha
+- [ ] Implement all 'Standard Functions'
+- [ ] Evaluate more optimization points
+- [ ] Analyze issues about pointer dereference
+- [ ] Tests
+
+### 1.0 
+- [ ] Docs
+- [ ] Package
+- [ ] More tests
