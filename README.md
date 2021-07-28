@@ -23,12 +23,7 @@ goJACEgo can be used in a couple of ways:
 To directly execute a given mathematical formula using the provided variables:
 
 ```go
-engine := NewCalculationEngine(&JaceOptions{
-			decimalSeparator: '.',
-			argumentSeparator: ',',
-			caseSensitive:    false,
-			optimizeEnabled:  true,
-		})
+engine := gojacego.NewCalculationEngine()
 
 vars := map[string]interface{}{
    "a":2,
@@ -42,12 +37,14 @@ result, _ := engine.Calculate("a*b", vars)
 To build a Func accepting a map as input containing the values for each variable:
 
 ```go
-engine := NewCalculationEngine(&JaceOptions{
-			decimalSeparator: '.',
-			argumentSeparator: ',',
-			caseSensitive:    false,
-			optimizeEnabled:  true,
-		})
+engine := gojacego.NewCalculationEngineWithOptions(&JaceOptions{
+		                                decimalSeparator:  '.',
+		                                argumentSeparador: ',',
+		                                caseSensitive:     false,
+		                                optimizeEnabled:   true,
+		                                defaultConstants:  true,
+		                                defaultFunctions:  true,
+	})
 
 formula := engine.Build("a*b")
 
