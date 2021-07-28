@@ -255,7 +255,7 @@ func (this TokenReader) isPartOfNumeric(character rune, isFirstCharacter bool, a
 }
 
 func (this TokenReader) isPartOfVariable(character rune, isFirstCharacter bool) bool {
-	return (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || (!isFirstCharacter && character >= '0' && character <= '9') || (!isFirstCharacter && character == '_')
+	return (character == '$') || (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || (!isFirstCharacter && character >= '0' && character <= '9') || (!isFirstCharacter && character == '_')
 }
 
 func (this TokenReader) isScientificNotation(char rune) bool {

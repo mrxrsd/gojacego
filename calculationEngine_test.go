@@ -17,7 +17,7 @@ func TestDebug(test *testing.T) {
 	result, _ := engine.Calculate("2*pi", nil)
 
 	if result != math.Sin(14) {
-		test.Errorf("exptected: 5.0, got: %f", result)
+		test.Errorf("expected: 5.0, got: %f", result)
 	}
 }
 
@@ -150,6 +150,114 @@ func TestCalculationDefaultEngine(t *testing.T) {
 				"requests_succeeded": 90.0,
 			},
 			expectedResult: 0.0,
+		},
+		{
+			formula:        "(0 || 0)",
+			expectedResult: 0.0,
+		},
+		{
+			formula:        "(1 || 0)",
+			expectedResult: 1.0,
+		},
+		{
+			formula:        "(1 && 0)",
+			expectedResult: 0.0,
+		},
+		{
+			formula:        "(1 && 1)",
+			expectedResult: 1.0,
+		},
+		{
+			formula: "var_var_1 + var_var_2",
+			variables: map[string]interface{}{
+				"var_var_1": 1.0,
+				"var_var_2": 2.0,
+			},
+			expectedResult: 3.0,
+		},
+		{
+			formula: "var1 == 2",
+			variables: map[string]interface{}{
+				"var1": 2,
+			},
+			expectedResult: 1.0,
+		},
+		{
+			formula: "var1 != 2",
+			variables: map[string]interface{}{
+				"var1": 2,
+			},
+			expectedResult: 0.0,
+		},
+		{
+			formula: "var1 > 2",
+			variables: map[string]interface{}{
+				"var1": 7,
+			},
+			expectedResult: 1.0,
+		},
+		{
+			formula: "var1 > 2",
+			variables: map[string]interface{}{
+				"var1": 2,
+			},
+			expectedResult: 0.0,
+		},
+		{
+			formula: "var1 >= 2",
+			variables: map[string]interface{}{
+				"var1": 7,
+			},
+			expectedResult: 1.0,
+		},
+		{
+			formula: "var1 >= 2",
+			variables: map[string]interface{}{
+				"var1": 2,
+			},
+			expectedResult: 1.0,
+		},
+		{
+			formula: "var1 >= 2",
+			variables: map[string]interface{}{
+				"var1": -2,
+			},
+			expectedResult: 0.0,
+		},
+		{
+			formula: "var1 < 2",
+			variables: map[string]interface{}{
+				"var1": 2,
+			},
+			expectedResult: 0.0,
+		},
+		{
+			formula: "var1 <= 2",
+			variables: map[string]interface{}{
+				"var1": 2,
+			},
+			expectedResult: 1.0,
+		},
+		{
+			formula: "var1 <= 2",
+			variables: map[string]interface{}{
+				"var1": 1,
+			},
+			expectedResult: 1.0,
+		},
+		{
+			formula:        "1+2-3*4/5+6-7*8/9+0",
+			expectedResult: 0.378,
+			fnCallback: func(f float64) float64 {
+				return math.Round(f*1000) / 1000
+			},
+		},
+		{
+			formula: "$var1 + 2",
+			variables: map[string]interface{}{
+				"$var1": 1,
+			},
+			expectedResult: 3.0,
 		},
 	}
 
