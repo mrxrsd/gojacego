@@ -37,23 +37,35 @@ func TestAddAndGetFunction(test *testing.T) {
 }
 
 func TestFunctionOverwritable(test *testing.T) {
-	registry := NewConstantRegistry(false)
+	registry := NewFunctionRegistry(false)
 
-	registry.RegisterConstant("test", 42, true)
-	registry.RegisterConstant("test", 26.3, true)
+	fnAddTwo := func(args ...float64) (float64, error) {
+		return args[0] + 2, nil
+	}
 
-	val, _ := registry.Get("test")
-	if val != 26.3 {
-		test.Errorf("exptected: 26.3, got: %f", val)
+	fnAddFour := func(args ...float64) (float64, error) {
+		return args[0] + 4, nil
+	}
+
+	registry.RegisterFunction("test", fnAddTwo, true, true)
+	registry.RegisterFunction("test", fnAddFour, true, true)
+
+	fn, _ := registry.Get("test")
+	if item, _ := fn.function(0); item != 4 {
+		test.Errorf("exptected: 4, got: %f", item)
 	}
 }
 
 func TestFunctionNotOverwritable(test *testing.T) {
-	registry := NewConstantRegistry(false)
+	registry := NewFunctionRegistry(false)
 
-	registry.RegisterConstant("test", 42, false)
+	fn := func(args ...float64) (float64, error) {
+		return args[0] + 2, nil
+	}
+
+	registry.RegisterFunction("test", fn, false, true)
 
 	shouldPanic(test, func() {
-		registry.RegisterConstant("test", 26.3, false)
+		registry.RegisterFunction("test", fn, false, true)
 	}, "TestNotOverwritable - Panic expected")
 }

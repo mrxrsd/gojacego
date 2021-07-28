@@ -288,3 +288,55 @@ func TestCustomFunctions(test *testing.T) {
 		test.Errorf("exptected: 4.0, got: %f", result)
 	}
 }
+
+func TestCaseUnsensitive(test *testing.T) {
+	engine := NewCalculationEngineWithOptions(&JaceOptions{
+		decimalSeparator:  '.',
+		argumentSeparador: ',',
+		caseSensitive:     false,
+		optimizeEnabled:   true,
+		defaultConstants:  true,
+		defaultFunctions:  true,
+	})
+
+	engine.AddFunction("addTwo", func(arguments ...float64) (float64, error) {
+		return arguments[0] + 2, nil
+	}, true)
+
+	resultFn, _ := engine.Calculate("addtwo(0)", nil)
+	if resultFn != 2 {
+		test.Errorf("exptected: 2 got: %f", resultFn)
+	}
+
+	resultPi, _ := engine.Calculate("PI", nil)
+
+	if resultPi != math.Pi {
+		test.Errorf("exptected: %f, got: %f", math.Pi, resultPi)
+	}
+
+	resultPilo, _ := engine.Calculate("pi", nil)
+
+	if resultPilo != math.Pi {
+		test.Errorf("exptected: %f, got: %f", math.Pi, resultPilo)
+	}
+
+	resultE, _ := engine.Calculate("E", nil)
+	if resultE != math.E {
+		test.Errorf("exptected: %f, got: %f", math.E, resultE)
+	}
+
+	resultElo, _ := engine.Calculate("e", nil)
+	if resultElo != math.E {
+		test.Errorf("exptected: %f, got: %f", math.E, resultElo)
+	}
+
+	vars := map[string]interface{}{
+		"var1": 1,
+		"var2": 2,
+	}
+
+	result, _ := engine.Calculate("vAr1 + VaR2", vars)
+	if result != 3.0 {
+		test.Errorf("exptected: 3.0, got: %f", result)
+	}
+}
