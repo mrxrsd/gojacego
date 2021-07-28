@@ -1,3 +1,9 @@
+[![Build](https://github.com/mrxrsd/gojacego/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/mrxrsd/gojacego/actions/workflows/build.yml)
+[![Test](https://github.com/mrxrsd/gojacego/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/mrxrsd/gojacego/actions/workflows/test.yml)
+[![GoReportCard](https://goreportcard.com/badge/github.com/mrxrsd/gojacego)](https://goreportcard.com/report/github.com/mrxrsd/gojacego)
+[![Coverage Status](https://coveralls.io/repos/github/mrxrsd/gojacego/badge.svg)](https://coveralls.io/github/mrxrsd/gojacego)
+
+
 # goJACEgo 
 goJACEgo is a high performance calculation engine for Go and it is a port of Jace.NET. 
 
