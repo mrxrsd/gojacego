@@ -1,13 +1,13 @@
-# Gojacego 
-Gojacego is a high performance calculation engine for Go and it is a port of Jace.NET. 
+# goJACEgo 
+goJACEgo is a high performance calculation engine for Go and it is a port of Jace.NET. 
 
 'Jace' stands for "Just Another Calculation Engine".
  
 ### What does it do?
-Gojacego can interprete and execute strings containing mathematical formulas. These formulas can rely on variables. If variables are used, values can be provided for these variables at execution time of the mathematical formula.
+goJACEgo can interprete and execute strings containing mathematical formulas. These formulas can rely on variables. If variables are used, values can be provided for these variables at execution time of the mathematical formula.
 
 ## Architecture
-Gojacego follows a design similar to most of the modern compilers. Interpretation and execution is done in a number of phases:
+goJACEgo follows a design similar to most of the modern compilers. Interpretation and execution is done in a number of phases:
 
 ### Tokenizing
 During the tokenizing phase, the string is converted into the different kind of tokens: variables, operators and constants.
@@ -18,7 +18,7 @@ During the optimization phase, the abstract syntax tree is optimized for executi
 
 ## Getting Started 
 
-Gojacego can be used in a couple of ways:
+goJACEgo can be used in a couple of ways:
 
 To directly execute a given mathematical formula using the provided variables:
 
@@ -39,7 +39,7 @@ result, _ := engine.Calculate("a*b", vars)
 // 10.0
 ```
 
-To build a Func accepting a dictionary as input containing the values for each variable:
+To build a Func accepting a map as input containing the values for each variable:
 
 ```go
 engine := NewCalculationEngine(&JaceOptions{
@@ -127,7 +127,7 @@ Variables as defined in a formula can be replaced by a constant value at compile
 
 ## Benchmark (W.I.P)
 
-### Gojacego vs Govaluate
+### goJACEgo vs Govaluate
 
 
 | Test                                   | Gojacego    | Govaluate   |
@@ -138,4 +138,4 @@ Variables as defined in a formula can be replaced by a constant value at compile
 | BenchmarkEvaluationParameters          | 31.91 ns/op | 122.0 ns/op |
 | BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |
 
-Disclaimer: Govaluate has a lot of features and differents operators while Gojacego has only mathematical and logical operators.
+Disclaimer: Govaluate has a lot of features and differents operators while goJACEgo has only mathematical and logical operators.
