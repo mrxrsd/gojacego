@@ -3,7 +3,7 @@ Gojacego is a high performance calculation engine for Go and it is a port of Jac
 
 'Jace' stands for "Just Another Calculation Engine".
  
-## What does it do?
+### What does it do?
 Gojacego can interprete and execute strings containing mathematical formulas. These formulas can rely on variables. If variables are used, values can be provided for these variables at execution time of the mathematical formula.
 
 ## Architecture
