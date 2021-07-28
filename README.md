@@ -1,4 +1,4 @@
-# Gojacego (W.I.P)
+# Gojacego 
 Gojacego is a high performance calculation engine for Go and it is a port of Jace.NET. 
 
 'Jace' stands for "Just Another Calculation Engine".
@@ -90,3 +90,4 @@ Custom functions allow programmers to add additional functions besides the ones 
 
 Variables as defined in a formula can be replaced by a constant value at compile time. This feature is useful in case that a number of the parameters don't frequently change and that the formula needs to be executed many times.
 
+## Benchmark (W.I.P)
