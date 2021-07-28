@@ -72,6 +72,24 @@ The following mathematical operations are supported:
 * Modulo: %
 * Exponentiation: ^
 
+### Boolean Operations
+
+The following boolean operations are supported:
+
+* Less than: <
+* Less than or equal: <=
+* More than: >
+* More than or equal: >=
+* Equal: ==
+* Not Equal: !=
+
+The boolean operations map true to 1.0 and false to 0.0. All functions accepting a condition will consider 0.0 as false and any other value as true.
+
+```go
+result, _ := engine.Calculate("5 > 1", nil)
+// 1.0
+```
+
 ### Standard Constants
 
 | Constant        |  Description | More Information |
