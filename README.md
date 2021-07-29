@@ -188,7 +188,7 @@ Disclaimer: Govaluate has a lot of features and differents operators while goJAC
 ### Alpha
 - [ ] Implement all 'Standard Functions'
 - [ ] Evaluate more optimization points
-- [ ] Analyze issues about pointer dereference
+- [ ] Analyze possible issues about pointer dereference
 - [ ] Tests
 
 ### 1.0 
