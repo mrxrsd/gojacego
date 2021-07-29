@@ -262,6 +262,107 @@ func TestCalculationDefaultEngine(t *testing.T) {
 		},
 	}
 
+	runScenarios(engine, scenarios, t)
+
+}
+
+func TestStandardFunctions(t *testing.T) {
+	engine := NewCalculationEngine()
+
+	scenarios := []CalculationTestScenario{
+		{
+			formula:        "sin(5)",
+			expectedResult: math.Sin(5),
+		},
+		{
+			formula:        "cos(5)",
+			expectedResult: math.Cos(5),
+		},
+		{
+			formula:        "asin(0.2)",
+			expectedResult: math.Asin(0.2),
+		},
+		{
+			formula:        "acos(0.2)",
+			expectedResult: math.Acos(0.2),
+		},
+		{
+			formula:        "tan(5)",
+			expectedResult: math.Tan(5),
+		},
+		{
+			formula:        "log(5)",
+			expectedResult: math.Log(5),
+		},
+		{
+			formula:        "sqrt(25)",
+			expectedResult: math.Sqrt(25),
+		},
+		{
+			formula:        "trunc(1.234567)",
+			expectedResult: math.Trunc(1.234567),
+		},
+		{
+			formula:        "ceil(1.234567)",
+			expectedResult: math.Ceil(1.234567),
+		},
+		{
+			formula:        "floor(1.234567)",
+			expectedResult: math.Floor(1.234567),
+		},
+		{
+			formula:        "round(1.234567,2)",
+			expectedResult: 1.23,
+		},
+		{
+			formula:        "round(1.234567)",
+			expectedResult: math.Round(1.234567),
+		},
+		{
+			formula:        "random()",
+			expectedResult: 1.0,
+			fnCallback: func(f float64) float64 {
+				if f >= 0.0 && f <= 1.0 {
+					return 1.0
+				} else {
+					return 0.0
+				}
+			},
+		},
+		{
+			formula:        "max(5,6,3,-4,99,67,45,34,-85)",
+			expectedResult: 99,
+		},
+		{
+			formula:        "min(5,6,3,-4,99,67,45,34,-85)",
+			expectedResult: -85,
+		},
+		{
+			formula:        "if(0.57 < (3000-500)/(1500-500), 10, 20)",
+			expectedResult: 10,
+		},
+		{
+			formula:        "if(2+2==$a, 10, 5)",
+			expectedResult: 10,
+			variables: map[string]interface{}{
+				"$a": 4,
+			},
+		},
+		{
+			formula:        "if(2+2==a, 10, 5)",
+			expectedResult: 5,
+			variables: map[string]interface{}{
+				"a": 8,
+			},
+		},
+	}
+
+	runScenarios(engine, scenarios, t)
+
+}
+
+func runScenarios(engine *CalculationEngine, scenarios []CalculationTestScenario, t *testing.T) {
+
 	for _, test := range scenarios {
 		result, err := engine.Calculate(test.formula, test.variables)
 		if err != nil {
