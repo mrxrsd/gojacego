@@ -4,7 +4,6 @@ import (
 	"math"
 	"math/rand"
 	"strings"
-	"time"
 )
 
 type Delegate func(arguments ...float64) (float64, error)
@@ -113,7 +112,7 @@ func RegistryDefaultFunctions(registry *FunctionRegistry) {
 	}, false, true)
 
 	registry.RegisterFunction("random", func(arguments ...float64) (float64, error) {
-		rand.Seed(time.Now().UnixNano())
+		rand.Seed(int64(arguments[0]))
 		return rand.Float64(), nil
 	}, false, false)
 

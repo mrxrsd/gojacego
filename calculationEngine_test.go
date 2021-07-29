@@ -14,10 +14,13 @@ type CalculationTestScenario struct {
 
 func TestDebug(test *testing.T) {
 	engine := NewCalculationEngine()
-	result, _ := engine.Calculate("2*pi", nil)
 
-	if result != 1 {
-
+	vars := map[string]interface{}{
+		"seed": 5,
+	}
+	result, _ := engine.Calculate("random(seed)", vars)
+	if result != 0.0 {
+		test.Logf("test:%f", result)
 	}
 
 }
@@ -271,6 +274,20 @@ func TestStandardFunctions(t *testing.T) {
 
 	scenarios := []CalculationTestScenario{
 		{
+			formula:        "if(2+2==$a, 10, 5)",
+			expectedResult: 10,
+			variables: map[string]interface{}{
+				"$a": 4,
+			},
+		},
+		{
+			formula:        "if(2+2==a, 10, 5)",
+			expectedResult: 5,
+			variables: map[string]interface{}{
+				"a": 8,
+			},
+		},
+		{
 			formula:        "sin(5)",
 			expectedResult: math.Sin(5),
 		},
@@ -289,6 +306,10 @@ func TestStandardFunctions(t *testing.T) {
 		{
 			formula:        "tan(5)",
 			expectedResult: math.Tan(5),
+		},
+		{
+			formula:        "atan(5)",
+			expectedResult: math.Atan(5),
 		},
 		{
 			formula:        "log(5)",
@@ -319,8 +340,22 @@ func TestStandardFunctions(t *testing.T) {
 			expectedResult: math.Round(1.234567),
 		},
 		{
-			formula:        "random()",
+			formula:        "random(5)",
 			expectedResult: 1.0,
+			fnCallback: func(f float64) float64 {
+				if f >= 0.0 && f <= 1.0 {
+					return 1.0
+				} else {
+					return 0.0
+				}
+			},
+		},
+		{
+			formula:        "random(seed)",
+			expectedResult: 1.0,
+			variables: map[string]interface{}{
+				"seed": 8,
+			},
 			fnCallback: func(f float64) float64 {
 				if f >= 0.0 && f <= 1.0 {
 					return 1.0
@@ -340,20 +375,6 @@ func TestStandardFunctions(t *testing.T) {
 		{
 			formula:        "if(0.57 < (3000-500)/(1500-500), 10, 20)",
 			expectedResult: 10,
-		},
-		{
-			formula:        "if(2+2==$a, 10, 5)",
-			expectedResult: 10,
-			variables: map[string]interface{}{
-				"$a": 4,
-			},
-		},
-		{
-			formula:        "if(2+2==a, 10, 5)",
-			expectedResult: 5,
-			variables: map[string]interface{}{
-				"a": 8,
-			},
 		},
 	}
 
