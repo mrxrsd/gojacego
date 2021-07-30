@@ -6,12 +6,12 @@ import (
 
 func createEngine() *CalculationEngine {
 	return NewCalculationEngineWithOptions(JaceOptions{
-		decimalSeparator:  '.',
-		argumentSeparador: ',',
-		caseSensitive:     true,
-		optimizeEnabled:   true,
-		defaultConstants:  false,
-		defaultFunctions:  false,
+		DecimalSeparator:  '.',
+		ArgumentSeparador: ',',
+		CaseSensitive:     true,
+		OptimizeEnabled:   true,
+		DefaultConstants:  false,
+		DefaultFunctions:  false,
 	})
 }
 
@@ -82,6 +82,23 @@ func BenchmarkEvaluationParametersModifiers(bench *testing.B) {
 	parameters := map[string]float64{
 		"requests_made":      99.0,
 		"requests_succeeded": 90.0,
+	}
+
+	bench.ResetTimer()
+	for i := 0; i < bench.N; i++ {
+		formula(parameters)
+	}
+}
+
+func BenchmarkExpr(bench *testing.B) {
+
+	engine := createEngine()
+	formula, _ := engine.Build("(Origin == 1 || Country == 55) && (Value >= 100 || Adults == 1)")
+	parameters := map[string]float64{
+		"Origin":  1,
+		"Country": 55,
+		"Value":   100,
+		"Adults":  1,
 	}
 
 	bench.ResetTimer()

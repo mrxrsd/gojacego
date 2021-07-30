@@ -9,12 +9,12 @@ import (
 )
 
 type JaceOptions struct {
-	decimalSeparator  rune
-	argumentSeparador rune
-	caseSensitive     bool
-	optimizeEnabled   bool
-	defaultConstants  bool
-	defaultFunctions  bool
+	DecimalSeparator  rune
+	ArgumentSeparador rune
+	CaseSensitive     bool
+	OptimizeEnabled   bool
+	DefaultConstants  bool
+	DefaultFunctions  bool
 }
 
 type CalculationEngine struct {
@@ -28,12 +28,12 @@ type CalculationEngine struct {
 
 func NewCalculationEngine() *CalculationEngine {
 	return NewCalculationEngineWithOptions(JaceOptions{
-		decimalSeparator:  '.',
-		argumentSeparador: ',',
-		caseSensitive:     false,
-		optimizeEnabled:   true,
-		defaultConstants:  true,
-		defaultFunctions:  true,
+		DecimalSeparator:  '.',
+		ArgumentSeparador: ',',
+		CaseSensitive:     false,
+		OptimizeEnabled:   true,
+		DefaultConstants:  true,
+		DefaultFunctions:  true,
 	})
 }
 
@@ -42,25 +42,25 @@ func NewCalculationEngineWithOptions(options JaceOptions) *CalculationEngine {
 
 	if options == (JaceOptions{}) {
 		options = JaceOptions{
-			decimalSeparator:  '.',
-			argumentSeparador: ',',
-			caseSensitive:     false,
-			optimizeEnabled:   true,
-			defaultConstants:  true,
-			defaultFunctions:  true,
+			DecimalSeparator:  '.',
+			ArgumentSeparador: ',',
+			CaseSensitive:     false,
+			OptimizeEnabled:   true,
+			DefaultConstants:  true,
+			DefaultFunctions:  true,
 		}
 	}
 
 	interpreter := &interpreter{}
 	optimizer := &optimizer{executor: *interpreter}
-	constantRegistry := newConstantRegistry(options.caseSensitive)
-	functionRegistry := newFunctionRegistry(options.caseSensitive)
+	constantRegistry := newConstantRegistry(options.CaseSensitive)
+	functionRegistry := newFunctionRegistry(options.CaseSensitive)
 
-	if options.defaultConstants {
+	if options.DefaultConstants {
 		registryDefaultConstants(constantRegistry)
 	}
 
-	if options.defaultFunctions {
+	if options.DefaultFunctions {
 		registryDefaultFunctions(functionRegistry)
 	}
 
@@ -80,7 +80,7 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 		return 0, errors.New("the parameter 'formula' is required")
 	}
 
-	formulaVariables := createFormulaVariables(vars, this.options.caseSensitive)
+	formulaVariables := createFormulaVariables(vars, this.options.CaseSensitive)
 
 	item, found := this.cache.Get(formulaText)
 
@@ -144,7 +144,7 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 		return nil, errors.New("the parameter 'formula' is required")
 	}
 
-	compiledConstantsRegistry := newConstantRegistry(this.options.caseSensitive)
+	compiledConstantsRegistry := newConstantRegistry(this.options.CaseSensitive)
 
 	for k, p := range vars {
 		compiledConstantsRegistry.registerConstant(k, toFloat64(p), true)
@@ -176,8 +176,8 @@ func (this *CalculationEngine) AddFunction(name string, body Delegate, isIdempot
 
 func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledConstants *constantRegistry) (operation, error) {
 
-	tokenReader := newTokenReader(this.options.decimalSeparator, this.options.argumentSeparador)
-	astBuilder := newAstBuilder(this.options.caseSensitive, this.functionRegistry, this.constantRegistry, compiledConstants)
+	tokenReader := newTokenReader(this.options.DecimalSeparator, this.options.ArgumentSeparador)
+	astBuilder := newAstBuilder(this.options.CaseSensitive, this.functionRegistry, this.constantRegistry, compiledConstants)
 
 	tokens, err := tokenReader.read(formula)
 	if err != nil {
@@ -189,7 +189,7 @@ func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledC
 		return nil, err
 	}
 
-	if this.options.optimizeEnabled {
+	if this.options.OptimizeEnabled {
 		optimizedOperation := this.optimizer.optimize(operation, this.functionRegistry, this.constantRegistry)
 		return optimizedOperation, nil
 	}

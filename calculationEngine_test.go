@@ -462,12 +462,12 @@ func TestCompiledConstants(test *testing.T) {
 
 func TestCaseUnsensitive(test *testing.T) {
 	engine := NewCalculationEngineWithOptions(JaceOptions{
-		decimalSeparator:  '.',
-		argumentSeparador: ',',
-		caseSensitive:     false,
-		optimizeEnabled:   true,
-		defaultConstants:  true,
-		defaultFunctions:  true,
+		DecimalSeparator:  '.',
+		ArgumentSeparador: ',',
+		CaseSensitive:     false,
+		OptimizeEnabled:   true,
+		DefaultConstants:  true,
+		DefaultFunctions:  true,
 	})
 
 	engine.AddFunction("addTwo", func(arguments ...float64) (float64, error) {
