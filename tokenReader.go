@@ -17,8 +17,8 @@ func newTokenReader(decimalSeparator rune, argumentSeparador rune) *tokenReader 
 	}
 }
 
-func (this tokenReader) read(formula string) ([]Token, error) {
-	ret := make([]Token, 0)
+func (this tokenReader) read(formula string) ([]token, error) {
+	ret := make([]token, 0)
 
 	if formula == "" {
 		return nil, errors.New("formula cannot be empty")
@@ -54,14 +54,14 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 			}
 
 			if intVal, err := strconv.ParseInt(string(buffer), 10, 64); err == nil {
-				ret = append(ret, Token{Type: INTEGER,
+				ret = append(ret, token{Type: tt_INTEGER,
 					Value:         intVal,
 					StartPosition: startPosition,
 					Length:        i - startPosition})
 			} else {
 
 				if floatVal, err := strconv.ParseFloat(string(buffer), 64); err == nil {
-					ret = append(ret, Token{Type: FLOATING_POINT,
+					ret = append(ret, token{Type: tt_FLOATING_POINT,
 						Value:         floatVal,
 						StartPosition: startPosition,
 						Length:        i - startPosition})
@@ -69,7 +69,7 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 					isScientific = false
 					isFormulaSubPart = false
 				} else if string(buffer) == "-" {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '_',
 						StartPosition: startPosition,
 						Length:        i - startPosition})
@@ -98,7 +98,7 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 				i++
 			}
 
-			ret = append(ret, Token{Type: TEXT,
+			ret = append(ret, token{Type: tt_TEXT,
 				Value:         string(buffer),
 				StartPosition: startPosition,
 				Length:        i - startPosition})
@@ -111,7 +111,7 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 		}
 
 		if runes[i] == this.argumentSeparator {
-			ret = append(ret, Token{Type: ARGUMENT_SEPARATOR,
+			ret = append(ret, token{Type: tt_ARGUMENT_SEPARATOR,
 				Value:         runes[i],
 				StartPosition: i,
 				Length:        1})
@@ -122,12 +122,12 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 				continue
 			case '+', '-', '*', '/', '^', '%', '≤', '≥', '≠':
 				if this.isUnaryMinus(runes[i], ret) {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '_',
 						StartPosition: i,
 						Length:        1})
 				} else {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         runes[i],
 						StartPosition: i,
 						Length:        1})
@@ -137,14 +137,14 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 				break
 			case '(':
 
-				ret = append(ret, Token{Type: LEFT_BRACKET,
+				ret = append(ret, token{Type: tt_LEFT_BRACKET,
 					Value:         runes[i],
 					StartPosition: i,
 					Length:        1})
 				isFormulaSubPart = true
 				break
 			case ')':
-				ret = append(ret, Token{Type: RIGHT_BRACKET,
+				ret = append(ret, token{Type: tt_RIGHT_BRACKET,
 					Value:         runes[i],
 					StartPosition: i,
 					Length:        1})
@@ -152,12 +152,12 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 				break
 			case '<':
 				if i+1 < runesLength && runes[i+1] == '=' {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '≤',
 						StartPosition: i,
 						Length:        1})
 				} else {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '<',
 						StartPosition: i,
 						Length:        1})
@@ -166,12 +166,12 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 				break
 			case '>':
 				if i+1 < runesLength && runes[i+1] == '=' {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '≥',
 						StartPosition: i,
 						Length:        1})
 				} else {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '>',
 						StartPosition: i,
 						Length:        1})
@@ -180,7 +180,7 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 				break
 			case '!':
 				if i+1 < runesLength && runes[i+1] == '=' {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '≠',
 						StartPosition: i,
 						Length:        2})
@@ -193,7 +193,7 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 				break
 			case '&':
 				if i+1 < runesLength && runes[i+1] == '&' {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '&',
 						StartPosition: i,
 						Length:        2})
@@ -205,7 +205,7 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 				break
 			case '|':
 				if i+1 < runesLength && runes[i+1] == '|' {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '|',
 						StartPosition: i,
 						Length:        2})
@@ -217,7 +217,7 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 				break
 			case '=':
 				if i+1 < runesLength && runes[i+1] == '=' {
-					ret = append(ret, Token{Type: OPERATION,
+					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '=',
 						StartPosition: i,
 						Length:        2})
@@ -236,15 +236,15 @@ func (this tokenReader) read(formula string) ([]Token, error) {
 	return ret, nil
 }
 
-func (this tokenReader) isUnaryMinus(currentToken rune, tokens []Token) bool {
+func (this tokenReader) isUnaryMinus(currentToken rune, tokens []token) bool {
 
 	if currentToken == '-' {
 		previousToken := tokens[len(tokens)-1]
 
-		return !(previousToken.Type == FLOATING_POINT ||
-			previousToken.Type == INTEGER ||
-			previousToken.Type == TEXT ||
-			previousToken.Type == RIGHT_BRACKET)
+		return !(previousToken.Type == tt_FLOATING_POINT ||
+			previousToken.Type == tt_INTEGER ||
+			previousToken.Type == tt_TEXT ||
+			previousToken.Type == tt_RIGHT_BRACKET)
 	} else {
 		return false
 	}

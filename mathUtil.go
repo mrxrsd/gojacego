@@ -1,6 +1,6 @@
 package gojacego
 
-func ToFloat64(value interface{}) float64 {
+func toFloat64(value interface{}) float64 {
 	switch value.(type) {
 	case int8:
 		return float64(value.(int8))

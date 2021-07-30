@@ -31,7 +31,7 @@ func execute(op operation, vars FormulaVariables, functionRegistry *functionRegi
 
 	if cop, ok := op.(*constantOperation); ok {
 		if cop.Metadata.DataType == integer {
-			return ToFloat64(cop.Value), nil
+			return toFloat64(cop.Value), nil
 		} else {
 			return cop.Value.(float64), nil
 		}

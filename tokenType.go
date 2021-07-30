@@ -1,13 +1,13 @@
 package gojacego
 
-type TokenType int
+type tokenType int
 
 const (
-	INTEGER TokenType = iota
-	FLOATING_POINT
-	TEXT
-	OPERATION
-	LEFT_BRACKET
-	RIGHT_BRACKET
-	ARGUMENT_SEPARATOR
+	tt_INTEGER tokenType = iota
+	tt_FLOATING_POINT
+	tt_TEXT
+	tt_OPERATION
+	tt_LEFT_BRACKET
+	tt_RIGHT_BRACKET
+	tt_ARGUMENT_SEPARATOR
 )

@@ -3,9 +3,9 @@ package gojacego
 /*
 	Represents an input token
 */
-type Token struct {
+type token struct {
 	StartPosition int
 	Length        int
-	Type          TokenType
+	Type          tokenType
 	Value         interface{}
 }

@@ -19,14 +19,14 @@ func getFunctionRegistry() *functionRegistry {
 
 func TestBuildFormula1(test *testing.T) {
 	astBuilder := newAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
-	params := []Token{
-		{Value: '(', Type: LEFT_BRACKET},
-		{Value: 42, Type: INTEGER},
-		{Value: '+', Type: OPERATION},
-		{Value: 8, Type: INTEGER},
-		{Value: ')', Type: RIGHT_BRACKET},
-		{Value: '*', Type: OPERATION},
-		{Value: 2, Type: INTEGER},
+	params := []token{
+		{Value: '(', Type: tt_LEFT_BRACKET},
+		{Value: 42, Type: tt_INTEGER},
+		{Value: '+', Type: tt_OPERATION},
+		{Value: 8, Type: tt_INTEGER},
+		{Value: ')', Type: tt_RIGHT_BRACKET},
+		{Value: '*', Type: tt_OPERATION},
+		{Value: 2, Type: tt_INTEGER},
 	}
 	op, _ := astBuilder.build(params)
 
@@ -54,12 +54,12 @@ func TestBuildFormula1(test *testing.T) {
 
 func TestBuildFormula2(test *testing.T) {
 	astBuilder := newAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
-	params := []Token{
-		{Value: 2, Type: INTEGER},
-		{Value: '+', Type: OPERATION},
-		{Value: 8, Type: INTEGER},
-		{Value: '*', Type: OPERATION},
-		{Value: 3, Type: INTEGER},
+	params := []token{
+		{Value: 2, Type: tt_INTEGER},
+		{Value: '+', Type: tt_OPERATION},
+		{Value: 8, Type: tt_INTEGER},
+		{Value: '*', Type: tt_OPERATION},
+		{Value: 3, Type: tt_INTEGER},
 	}
 	op, _ := astBuilder.build(params)
 
@@ -89,15 +89,15 @@ func TestBuildFormula2(test *testing.T) {
 
 func TestUnaryMinus(test *testing.T) {
 	astBuilder := newAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
-	params := []Token{
-		{Value: 5.3, Type: FLOATING_POINT},
-		{Value: '*', Type: OPERATION},
-		{Value: '_', Type: OPERATION},
-		{Value: '(', Type: LEFT_BRACKET},
-		{Value: 5, Type: INTEGER},
-		{Value: '+', Type: OPERATION},
-		{Value: 42, Type: INTEGER},
-		{Value: ')', Type: RIGHT_BRACKET},
+	params := []token{
+		{Value: 5.3, Type: tt_FLOATING_POINT},
+		{Value: '*', Type: tt_OPERATION},
+		{Value: '_', Type: tt_OPERATION},
+		{Value: '(', Type: tt_LEFT_BRACKET},
+		{Value: 5, Type: tt_INTEGER},
+		{Value: '+', Type: tt_OPERATION},
+		{Value: 42, Type: tt_INTEGER},
+		{Value: ')', Type: tt_RIGHT_BRACKET},
 	}
 
 	op, _ := astBuilder.build(params)

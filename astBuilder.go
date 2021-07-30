@@ -54,25 +54,25 @@ func newAstBuilder(caseSensitive bool, functionRegistry *functionRegistry, const
 	}
 }
 
-func (this astBuilder) popOperations(untilLeftBracket bool, currentToken *Token) error {
+func (this astBuilder) popOperations(untilLeftBracket bool, currentToken *token) error {
 
 	if untilLeftBracket && currentToken == nil {
 		return errors.New("If the parameter \"untillLeftBracket\" is set to true, " +
 			"the parameter \"currentToken\" cannot be null.")
 	}
 
-	for this.operatorStack.Len() > 0 && this.operatorStack.Peek().(Token).Type != LEFT_BRACKET {
+	for this.operatorStack.Len() > 0 && this.operatorStack.Peek().(token).Type != tt_LEFT_BRACKET {
 
-		token := this.operatorStack.Pop().(Token)
+		token := this.operatorStack.Pop().(token)
 
 		switch token.Type {
-		case OPERATION:
+		case tt_OPERATION:
 			t, err := this.convertOperation(token)
 			if err == nil {
 				this.resultStack.Push(t)
 			}
 			break
-		case TEXT:
+		case tt_TEXT:
 			f, err := this.convertFunction(token)
 			if err == nil {
 				this.resultStack.Push(f)
@@ -82,16 +82,16 @@ func (this astBuilder) popOperations(untilLeftBracket bool, currentToken *Token)
 	}
 
 	if untilLeftBracket {
-		if this.operatorStack.Len() > 0 && this.operatorStack.Peek().(Token).Type == LEFT_BRACKET {
+		if this.operatorStack.Len() > 0 && this.operatorStack.Peek().(token).Type == tt_LEFT_BRACKET {
 			this.operatorStack.Pop()
 		} else {
 			return errors.New(fmt.Sprintf("No matching left bracket found for the right "+
 				"bracket at position %d.", currentToken.StartPosition))
 		}
 	} else {
-		if this.operatorStack.Len() > 0 && this.operatorStack.Peek().(Token).Type == LEFT_BRACKET && !(currentToken != nil && currentToken.Type == ARGUMENT_SEPARATOR) {
+		if this.operatorStack.Len() > 0 && this.operatorStack.Peek().(token).Type == tt_LEFT_BRACKET && !(currentToken != nil && currentToken.Type == tt_ARGUMENT_SEPARATOR) {
 			return errors.New(fmt.Sprintf("No matching right bracket found for the left "+
-				"bracket at position %d.", this.operatorStack.Peek().(Token).StartPosition))
+				"bracket at position %d.", this.operatorStack.Peek().(token).StartPosition))
 		}
 	}
 
@@ -105,7 +105,7 @@ func (this astBuilder) verifyResult() error {
 	return nil
 }
 
-func (this astBuilder) convertFunction(operationToken Token) (operation, error) {
+func (this astBuilder) convertFunction(operationToken token) (operation, error) {
 
 	functionName := operationToken.Value.(string)
 
@@ -134,7 +134,7 @@ func (this astBuilder) convertFunction(operationToken Token) (operation, error) 
 	return nil, nil
 }
 
-func (this astBuilder) convertOperation(operationToken Token) (operation, error) {
+func (this astBuilder) convertOperation(operationToken token) (operation, error) {
 
 	var dataType operationDataType
 	var argument1 operation
@@ -218,22 +218,22 @@ func (this astBuilder) convertOperation(operationToken Token) (operation, error)
 	}
 }
 
-func (this astBuilder) build(tokens []Token) (operation, error) {
+func (this astBuilder) build(tokens []token) (operation, error) {
 
-	for _, token := range tokens {
-		val := token.Value
+	for _, tokenItem := range tokens {
+		val := tokenItem.Value
 
-		switch token.Type {
-		case INTEGER:
+		switch tokenItem.Type {
+		case tt_INTEGER:
 			this.resultStack.Push(newConstantOperation(integer, val))
 			break
-		case FLOATING_POINT:
+		case tt_FLOATING_POINT:
 			this.resultStack.Push(newConstantOperation(floatingPoint, val))
 			break
-		case TEXT:
-			tokenText := token.Value.(string)
+		case tt_TEXT:
+			tokenText := tokenItem.Value.(string)
 			if _, found := this.functionRegistry.get(tokenText); found {
-				this.operatorStack.Push(token)
+				this.operatorStack.Push(tokenItem)
 				this.parameterCount.Push(1)
 			} else {
 
@@ -256,28 +256,28 @@ func (this astBuilder) build(tokens []Token) (operation, error) {
 				}
 			}
 			break
-		case LEFT_BRACKET:
-			this.operatorStack.Push(token)
+		case tt_LEFT_BRACKET:
+			this.operatorStack.Push(tokenItem)
 			break
-		case RIGHT_BRACKET:
-			this.popOperations(true, &token)
+		case tt_RIGHT_BRACKET:
+			this.popOperations(true, &tokenItem)
 			break
-		case ARGUMENT_SEPARATOR:
-			this.popOperations(false, &token)
+		case tt_ARGUMENT_SEPARATOR:
+			this.popOperations(false, &tokenItem)
 			this.parameterCount.Push(this.parameterCount.Pop().(int) + 1)
 			break
-		case OPERATION:
-			operation1Token := token
+		case tt_OPERATION:
+			operation1Token := tokenItem
 			// operation1 := []rune(operation1Token.Value.(string))[0]
 			operation1 := rune(operation1Token.Value.(int32))
 
-			for this.operatorStack.Len() > 0 && (this.operatorStack.Peek().(Token).Type == OPERATION || this.operatorStack.Peek().(Token).Type == TEXT) {
+			for this.operatorStack.Len() > 0 && (this.operatorStack.Peek().(token).Type == tt_OPERATION || this.operatorStack.Peek().(token).Type == tt_TEXT) {
 
-				var operation2Token Token
-				operation2Token = this.operatorStack.Peek().(Token)
+				var operation2Token token
+				operation2Token = this.operatorStack.Peek().(token)
 
 				isFunctionOnTopOfStack := false
-				if operation2Token.Type == TEXT {
+				if operation2Token.Type == tt_TEXT {
 					isFunctionOnTopOfStack = true
 				}
 

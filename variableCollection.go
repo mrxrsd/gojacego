@@ -20,7 +20,7 @@ func CreateFormulaVariables(vars map[string]interface{}, caseSensitive bool) For
 		if caseSensitive {
 			name = strings.ToLower(k)
 		}
-		ret[name] = ToFloat64(v)
+		ret[name] = toFloat64(v)
 	}
 
 	return ret

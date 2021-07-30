@@ -147,7 +147,7 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 	compiledConstantsRegistry := newConstantRegistry(this.options.caseSensitive)
 
 	for k, p := range vars {
-		compiledConstantsRegistry.registerConstant(k, ToFloat64(p), true)
+		compiledConstantsRegistry.registerConstant(k, toFloat64(p), true)
 	}
 
 	item, found := this.cache.Get(this.generateFormulaCacheKey(formulaText, compiledConstantsRegistry))
