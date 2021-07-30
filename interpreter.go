@@ -6,17 +6,17 @@ import (
 	"math"
 )
 
-type Interpreter struct {
+type interpreter struct {
 	caseSensitive bool
 }
 
-type Formula func(vars FormulaVariables) float64
+type formula func(vars FormulaVariables) float64
 
-func (*Interpreter) Execute(op operation, vars FormulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (float64, error) {
+func (*interpreter) execute(op operation, vars FormulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (float64, error) {
 	return execute(op, vars, functionRegistry, constantRegistry)
 }
 
-func (*Interpreter) BuildFormula(op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) Formula {
+func (*interpreter) buildFormula(op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) formula {
 	return func(vars FormulaVariables) float64 {
 		ret, _ := execute(op, vars, functionRegistry, constantRegistry)
 		return ret

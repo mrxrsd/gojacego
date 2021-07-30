@@ -21,7 +21,7 @@ type CalculationEngine struct {
 	cache            *cache.Memorycache
 	options          JaceOptions
 	optimizer        *Optimizer
-	executor         *Interpreter
+	executor         *interpreter
 	constantRegistry *constantRegistry
 	functionRegistry *functionRegistry
 }
@@ -51,7 +51,7 @@ func NewCalculationEngineWithOptions(options JaceOptions) *CalculationEngine {
 		}
 	}
 
-	interpreter := &Interpreter{}
+	interpreter := &interpreter{}
 	optimizer := &Optimizer{executor: *interpreter}
 	constantRegistry := newConstantRegistry(options.caseSensitive)
 	functionRegistry := newFunctionRegistry(options.caseSensitive)
@@ -85,7 +85,7 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 	item, found := this.cache.Get(formulaText)
 
 	if found {
-		formula := item.(Formula)
+		formula := item.(formula)
 		return formula(formulaVariables), nil
 	}
 
@@ -116,29 +116,29 @@ func (this *CalculationEngine) generateFormulaCacheKey(formulaText string, compi
 	return formulaText
 }
 
-func (this *CalculationEngine) getFormula(formulaText string) Formula {
+func (this *CalculationEngine) getFormula(formulaText string) formula {
 
 	item, found := this.cache.Get(formulaText)
 	if found {
-		return item.(Formula)
+		return item.(formula)
 	}
 	return nil
 }
 
-func (this *CalculationEngine) buildFormula(formulaText string, compiledConstants *constantRegistry, operation operation) Formula {
+func (this *CalculationEngine) buildFormula(formulaText string, compiledConstants *constantRegistry, operation operation) formula {
 	key := this.generateFormulaCacheKey(formulaText, compiledConstants)
-	formula := this.executor.BuildFormula(operation, this.functionRegistry, this.constantRegistry)
+	formula := this.executor.buildFormula(operation, this.functionRegistry, this.constantRegistry)
 	this.cache.Add(key, formula)
 
 	return formula
 
 }
 
-func (this *CalculationEngine) Build(formulaText string) (Formula, error) {
+func (this *CalculationEngine) Build(formulaText string) (formula, error) {
 	return this.BuildWithConstants(formulaText, nil)
 }
 
-func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[string]interface{}) (Formula, error) {
+func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[string]interface{}) (formula, error) {
 
 	if len(strings.TrimSpace(formulaText)) == 0 {
 		return nil, errors.New("the parameter 'formula' is required")
@@ -153,7 +153,7 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 	item, found := this.cache.Get(this.generateFormulaCacheKey(formulaText, compiledConstantsRegistry))
 
 	if found {
-		return item.(Formula), nil
+		return item.(formula), nil
 	}
 
 	op, err := this.buildAbstractSyntaxTree(formulaText, compiledConstantsRegistry)

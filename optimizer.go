@@ -1,16 +1,16 @@
 package gojacego
 
 type Optimizer struct {
-	executor Interpreter
+	executor interpreter
 }
 
 func (this *Optimizer) Optimize(op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) operation {
 	return optimize(this.executor, op, functionRegistry, constantRegistry)
 }
-func optimize(executor Interpreter, op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) operation {
+func optimize(executor interpreter, op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) operation {
 
 	if _, b := op.(*constantOperation); !op.OperationMetadata().DependsOnVariables && op.OperationMetadata().IsIdempotent && !b {
-		result, _ := executor.Execute(op, nil, functionRegistry, constantRegistry)
+		result, _ := executor.execute(op, nil, functionRegistry, constantRegistry)
 		return newConstantOperation(floatingPoint, result)
 	} else {
 

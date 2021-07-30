@@ -5,9 +5,9 @@ import (
 )
 
 func TestBasicInterpreterSubstraction(test *testing.T) {
-	interpreter := &Interpreter{}
+	interpreter := &interpreter{}
 
-	ret, _ := interpreter.Execute(newSubtractionOperation(integer,
+	ret, _ := interpreter.execute(newSubtractionOperation(integer,
 		newConstantOperation(integer, 6),
 		newConstantOperation(integer, 9)), nil, nil, nil)
 
@@ -17,11 +17,11 @@ func TestBasicInterpreterSubstraction(test *testing.T) {
 }
 
 func TestBasicInterpreter1(test *testing.T) {
-	interpreter := &Interpreter{}
+	interpreter := &interpreter{}
 
 	// 6 + (2 * 4)
 
-	ret, _ := interpreter.Execute(
+	ret, _ := interpreter.execute(
 		newAddOperation(
 			integer,
 			newConstantOperation(integer, 6),
@@ -36,7 +36,7 @@ func TestBasicInterpreter1(test *testing.T) {
 }
 
 func TestBasicInterpreterWithVariables(test *testing.T) {
-	interpreter := &Interpreter{}
+	interpreter := &interpreter{}
 
 	// var1 + 2 * (3 * age)
 
@@ -46,7 +46,7 @@ func TestBasicInterpreterWithVariables(test *testing.T) {
 
 	formulaVariables := CreateFormulaVariables(parameters, false)
 
-	ret, _ := interpreter.Execute(
+	ret, _ := interpreter.execute(
 		newAddOperation(floatingPoint,
 			newVariableOperation("var1"),
 			newMultiplicationOperation(

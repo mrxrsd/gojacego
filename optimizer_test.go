@@ -6,7 +6,7 @@ import (
 )
 
 func TestOptimizerMultiplicationByZero(test *testing.T) {
-	interpreter := &Interpreter{}
+	interpreter := &interpreter{}
 	optimizer := &Optimizer{executor: *interpreter}
 	reader := newTokenReader('.', ',')
 	astBuilder := newAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
