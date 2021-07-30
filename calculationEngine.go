@@ -125,7 +125,7 @@ func (this *CalculationEngine) getFormula(formulaText string) Formula {
 	return nil
 }
 
-func (this *CalculationEngine) buildFormula(formulaText string, compiledConstants *constantRegistry, operation Operation) Formula {
+func (this *CalculationEngine) buildFormula(formulaText string, compiledConstants *constantRegistry, operation operation) Formula {
 	key := this.generateFormulaCacheKey(formulaText, compiledConstants)
 	formula := this.executor.BuildFormula(operation, this.functionRegistry, this.constantRegistry)
 	this.cache.Add(key, formula)
@@ -168,7 +168,7 @@ func (this *CalculationEngine) AddFunction(name string, body Delegate, isIdempot
 	this.functionRegistry.registerFunction(name, body, true, isIdempotent)
 }
 
-func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledConstants *constantRegistry) (Operation, error) {
+func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledConstants *constantRegistry) (operation, error) {
 
 	tokenReader := newTokenReader(this.options.decimalSeparator, this.options.argumentSeparador)
 	astBuilder := newAstBuilder(this.options.caseSensitive, this.functionRegistry, this.constantRegistry, compiledConstants)

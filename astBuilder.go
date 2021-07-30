@@ -105,7 +105,7 @@ func (this astBuilder) verifyResult() error {
 	return nil
 }
 
-func (this astBuilder) convertFunction(operationToken Token) (Operation, error) {
+func (this astBuilder) convertFunction(operationToken Token) (operation, error) {
 
 	functionName := operationToken.Value.(string)
 
@@ -118,9 +118,9 @@ func (this astBuilder) convertFunction(operationToken Token) (Operation, error) 
 			// fixed parameter
 		}
 
-		operations := make([]Operation, numberOfParameters)
+		operations := make([]operation, numberOfParameters)
 		for i := 0; i < numberOfParameters; i++ {
-			operations[i] = this.resultStack.Pop().(Operation)
+			operations[i] = this.resultStack.Pop().(operation)
 		}
 
 		// vscode reverse
@@ -128,107 +128,107 @@ func (this astBuilder) convertFunction(operationToken Token) (Operation, error) 
 			operations[i], operations[j] = operations[j], operations[i]
 		}
 
-		return NewFunctionOperation(FloatingPoint, functionName, operations, item.isIdempotent), nil
+		return newFunctionOperation(floatingPoint, functionName, operations, item.isIdempotent), nil
 	}
 
 	return nil, nil
 }
 
-func (this astBuilder) convertOperation(operationToken Token) (Operation, error) {
+func (this astBuilder) convertOperation(operationToken Token) (operation, error) {
 
-	var dataType OperationDataType
-	var argument1 Operation
-	var argument2 Operation
-	var divisor Operation
-	var divident Operation
+	var dataType operationDataType
+	var argument1 operation
+	var argument2 operation
+	var divisor operation
+	var divident operation
 
 	switch rune(operationToken.Value.(int32)) {
 	case '+':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewAddOperation(dataType, argument1, argument2), nil
+		return newAddOperation(dataType, argument1, argument2), nil
 	case '-':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewSubtractionOperation(dataType, argument1, argument2), nil
+		return newSubtractionOperation(dataType, argument1, argument2), nil
 	case '*':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewMultiplicationOperation(dataType, argument1, argument2), nil
+		return newMultiplicationOperation(dataType, argument1, argument2), nil
 	case '/':
-		divisor = this.resultStack.Pop().(Operation)
-		divident = this.resultStack.Pop().(Operation)
-		return NewDivisorOperation(FloatingPoint, divident, divisor), nil
+		divisor = this.resultStack.Pop().(operation)
+		divident = this.resultStack.Pop().(operation)
+		return newDivisorOperation(floatingPoint, divident, divisor), nil
 	case '%':
-		divisor = this.resultStack.Pop().(Operation)
-		divident = this.resultStack.Pop().(Operation)
-		return NewModuloOperation(FloatingPoint, divident, divisor), nil
+		divisor = this.resultStack.Pop().(operation)
+		divident = this.resultStack.Pop().(operation)
+		return newModuloOperation(floatingPoint, divident, divisor), nil
 	case '_':
-		argument1 = this.resultStack.Pop().(Operation)
+		argument1 = this.resultStack.Pop().(operation)
 		return NewUnaryMinusOperation(argument1.OperationMetadata().DataType, argument1), nil
 	case '^':
-		exponent := this.resultStack.Pop().(Operation)
-		base := this.resultStack.Pop().(Operation)
-		return NewExponentiationOperation(FloatingPoint, base, exponent), nil
+		exponent := this.resultStack.Pop().(operation)
+		base := this.resultStack.Pop().(operation)
+		return newExponentiationOperation(floatingPoint, base, exponent), nil
 	case '&':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
 		return NewAndOperation(dataType, argument1, argument2), nil
 	case '|':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewOrOperation(dataType, argument1, argument2), nil
+		return newOrOperation(dataType, argument1, argument2), nil
 	case '<':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewLessThanOperation(dataType, argument1, argument2), nil
+		return newLessThanOperation(dataType, argument1, argument2), nil
 	case '≤':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewLessOrEqualThanOperation(dataType, argument1, argument2), nil
+		return newLessOrEqualThanOperation(dataType, argument1, argument2), nil
 	case '>':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewGreaterThanOperation(dataType, argument1, argument2), nil
+		return newGreaterThanOperation(dataType, argument1, argument2), nil
 	case '≥':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewGreaterOrEqualThanOperation(dataType, argument1, argument2), nil
+		return newGreaterOrEqualThanOperation(dataType, argument1, argument2), nil
 	case '=':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewEqualOperation(dataType, argument1, argument2), nil
+		return newEqualOperation(dataType, argument1, argument2), nil
 	case '≠':
-		argument2 = this.resultStack.Pop().(Operation)
-		argument1 = this.resultStack.Pop().(Operation)
+		argument2 = this.resultStack.Pop().(operation)
+		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewNotEqualOperation(dataType, argument1, argument2), nil
+		return newNotEqualOperation(dataType, argument1, argument2), nil
 	default:
 		return nil, fmt.Errorf("unknown operation %s", operationToken.Value)
 	}
 }
 
-func (this astBuilder) build(tokens []Token) (Operation, error) {
+func (this astBuilder) build(tokens []Token) (operation, error) {
 
 	for _, token := range tokens {
 		val := token.Value
 
 		switch token.Type {
 		case INTEGER:
-			this.resultStack.Push(NewConstantOperation(Integer, val))
+			this.resultStack.Push(newConstantOperation(integer, val))
 			break
 		case FLOATING_POINT:
-			this.resultStack.Push(NewConstantOperation(FloatingPoint, val))
+			this.resultStack.Push(newConstantOperation(floatingPoint, val))
 			break
 		case TEXT:
 			tokenText := token.Value.(string)
@@ -240,19 +240,19 @@ func (this astBuilder) build(tokens []Token) (Operation, error) {
 				if this.compiledConstantRegistry != nil {
 					if val, found := this.compiledConstantRegistry.get(tokenText); found {
 						// constant registry
-						this.resultStack.Push(NewConstantOperation(FloatingPoint, val))
+						this.resultStack.Push(newConstantOperation(floatingPoint, val))
 						break
 					}
 				}
 
 				if val, found := this.constantRegistry.get(tokenText); found {
 					// constant registry
-					this.resultStack.Push(NewConstantOperation(FloatingPoint, val))
+					this.resultStack.Push(newConstantOperation(floatingPoint, val))
 				} else {
 					if !this.caseSensitive {
 						tokenText = strings.ToLower(tokenText)
 					}
-					this.resultStack.Push(NewVariableOperation(tokenText))
+					this.resultStack.Push(newVariableOperation(tokenText))
 				}
 			}
 			break
@@ -315,7 +315,7 @@ func (this astBuilder) build(tokens []Token) (Operation, error) {
 	if err != nil {
 		return nil, err
 	} else {
-		resultOperation := this.resultStack.Pop().(Operation)
+		resultOperation := this.resultStack.Pop().(operation)
 		return resultOperation, nil
 	}
 }
@@ -324,9 +324,9 @@ func isLeftAssociativeOperation(character rune) bool {
 	return character == '*' || character == '+' || character == '-' || character == '/'
 }
 
-func requiredDataType(argument1 Operation, argument2 Operation) OperationDataType {
-	if argument1.OperationMetadata().DataType == FloatingPoint || argument2.OperationMetadata().DataType == FloatingPoint {
-		return FloatingPoint
+func requiredDataType(argument1 operation, argument2 operation) operationDataType {
+	if argument1.OperationMetadata().DataType == floatingPoint || argument2.OperationMetadata().DataType == floatingPoint {
+		return floatingPoint
 	}
-	return Integer
+	return integer
 }

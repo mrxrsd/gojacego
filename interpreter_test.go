@@ -7,9 +7,9 @@ import (
 func TestBasicInterpreterSubstraction(test *testing.T) {
 	interpreter := &Interpreter{}
 
-	ret, _ := interpreter.Execute(NewSubtractionOperation(Integer,
-		NewConstantOperation(Integer, 6),
-		NewConstantOperation(Integer, 9)), nil, nil, nil)
+	ret, _ := interpreter.Execute(newSubtractionOperation(integer,
+		newConstantOperation(integer, 6),
+		newConstantOperation(integer, 9)), nil, nil, nil)
 
 	if ret != -3.0 {
 		test.Errorf("Expected: -3.0, got: %f", ret)
@@ -22,13 +22,13 @@ func TestBasicInterpreter1(test *testing.T) {
 	// 6 + (2 * 4)
 
 	ret, _ := interpreter.Execute(
-		NewAddOperation(
-			Integer,
-			NewConstantOperation(Integer, 6),
-			NewMultiplicationOperation(
-				Integer,
-				NewConstantOperation(Integer, 2),
-				NewConstantOperation(Integer, 4))), nil, nil, nil)
+		newAddOperation(
+			integer,
+			newConstantOperation(integer, 6),
+			newMultiplicationOperation(
+				integer,
+				newConstantOperation(integer, 2),
+				newConstantOperation(integer, 4))), nil, nil, nil)
 
 	if ret != 14.0 {
 		test.Errorf("Expected: 14.0, got: %f", ret)
@@ -47,15 +47,15 @@ func TestBasicInterpreterWithVariables(test *testing.T) {
 	formulaVariables := CreateFormulaVariables(parameters, false)
 
 	ret, _ := interpreter.Execute(
-		NewAddOperation(FloatingPoint,
-			NewVariableOperation("var1"),
-			NewMultiplicationOperation(
-				FloatingPoint,
-				NewConstantOperation(Integer, 2),
-				NewMultiplicationOperation(
-					FloatingPoint,
-					NewConstantOperation(Integer, 3),
-					NewVariableOperation("age")))), formulaVariables, nil, nil)
+		newAddOperation(floatingPoint,
+			newVariableOperation("var1"),
+			newMultiplicationOperation(
+				floatingPoint,
+				newConstantOperation(integer, 2),
+				newMultiplicationOperation(
+					floatingPoint,
+					newConstantOperation(integer, 3),
+					newVariableOperation("age")))), formulaVariables, nil, nil)
 
 	if ret != 26.0 {
 		test.Errorf("Expected: 26.0, got: %f", ret)

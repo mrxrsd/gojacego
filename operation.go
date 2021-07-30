@@ -1,63 +1,63 @@
 package gojacego
 
-type OperationDataType int
+type operationDataType int
 
 const (
-	Integer OperationDataType = iota
-	FloatingPoint
+	integer operationDataType = iota
+	floatingPoint
 )
 
-type OperationMetadata struct {
-	DataType           OperationDataType
+type operationMetadata struct {
+	DataType           operationDataType
 	DependsOnVariables bool
 	IsIdempotent       bool
 }
 
-type Operation interface {
-	OperationMetadata() OperationMetadata
+type operation interface {
+	OperationMetadata() operationMetadata
 }
 
 // Operations
 
 // Variable
-type VariableOperation struct {
+type variableOperation struct {
 	Name     string
-	Metadata OperationMetadata
+	Metadata operationMetadata
 }
 
-func (op *VariableOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *variableOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewVariableOperation(name string) *VariableOperation {
-	meta := OperationMetadata{
-		DataType:           FloatingPoint,
+func newVariableOperation(name string) *variableOperation {
+	meta := operationMetadata{
+		DataType:           floatingPoint,
 		DependsOnVariables: true,
 		IsIdempotent:       false,
 	}
 
-	return &VariableOperation{
+	return &variableOperation{
 		Name:     name,
 		Metadata: meta,
 	}
 }
 
 // Add
-type AddOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type addOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *AddOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *addOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewAddOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *AddOperation {
+func newAddOperation(dataType operationDataType, operationOne operation, operationTwo operation) *addOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &AddOperation{
+	return &addOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -65,23 +65,23 @@ func NewAddOperation(dataType OperationDataType, operationOne Operation, operati
 }
 
 // And
-type AndOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type andOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *AndOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *andOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewAndOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *AndOperation {
+func NewAndOperation(dataType operationDataType, operationOne operation, operationTwo operation) *andOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &AndOperation{
+	return &andOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -89,44 +89,44 @@ func NewAndOperation(dataType OperationDataType, operationOne Operation, operati
 }
 
 // Constant
-type ConstantOperation struct {
+type constantOperation struct {
 	Value    interface{}
-	Metadata OperationMetadata
+	Metadata operationMetadata
 }
 
-func (op *ConstantOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *constantOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewConstantOperation(dataType OperationDataType, value interface{}) *ConstantOperation {
-	meta := OperationMetadata{
+func newConstantOperation(dataType operationDataType, value interface{}) *constantOperation {
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: false,
 		IsIdempotent:       true,
 	}
 
-	return &ConstantOperation{
+	return &constantOperation{
 		Value:    value,
 		Metadata: meta,
 	}
 }
 
 // Divisor
-type DivisorOperation struct {
-	Dividend Operation
-	Divisor  Operation
-	Metadata OperationMetadata
+type divisorOperation struct {
+	Dividend operation
+	Divisor  operation
+	Metadata operationMetadata
 }
 
-func (op *DivisorOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *divisorOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewDivisorOperation(dataType OperationDataType, dividend Operation, divisor Operation) *DivisorOperation {
+func newDivisorOperation(dataType operationDataType, dividend operation, divisor operation) *divisorOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: dividend.OperationMetadata().DependsOnVariables || divisor.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       dividend.OperationMetadata().IsIdempotent && divisor.OperationMetadata().DependsOnVariables,
 	}
 
-	return &DivisorOperation{
+	return &divisorOperation{
 		Dividend: dividend,
 		Divisor:  divisor,
 		Metadata: meta,
@@ -134,23 +134,23 @@ func NewDivisorOperation(dataType OperationDataType, dividend Operation, divisor
 }
 
 // Equal
-type EqualOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type equalOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *EqualOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *equalOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewEqualOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *EqualOperation {
+func newEqualOperation(dataType operationDataType, operationOne operation, operationTwo operation) *equalOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &EqualOperation{
+	return &equalOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -158,23 +158,23 @@ func NewEqualOperation(dataType OperationDataType, operationOne Operation, opera
 }
 
 // Exponentiation
-type ExponentiationOperation struct {
-	Base     Operation
-	Exponent Operation
-	Metadata OperationMetadata
+type exponentiationOperation struct {
+	Base     operation
+	Exponent operation
+	Metadata operationMetadata
 }
 
-func (op *ExponentiationOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *exponentiationOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewExponentiationOperation(dataType OperationDataType, base Operation, exponent Operation) *ExponentiationOperation {
+func newExponentiationOperation(dataType operationDataType, base operation, exponent operation) *exponentiationOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: base.OperationMetadata().DependsOnVariables || exponent.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       base.OperationMetadata().IsIdempotent && exponent.OperationMetadata().DependsOnVariables,
 	}
 
-	return &ExponentiationOperation{
+	return &exponentiationOperation{
 		Base:     base,
 		Exponent: exponent,
 		Metadata: meta,
@@ -182,15 +182,15 @@ func NewExponentiationOperation(dataType OperationDataType, base Operation, expo
 }
 
 // Function
-type FunctionOperation struct {
+type functionOperation struct {
 	Name      string
-	Arguments []Operation
-	Metadata  OperationMetadata
+	Arguments []operation
+	Metadata  operationMetadata
 }
 
-func (op *FunctionOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *functionOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewFunctionOperation(datatype OperationDataType, name string, arguments []Operation, isIdempotent bool) *FunctionOperation {
+func newFunctionOperation(dataType operationDataType, name string, arguments []operation, isIdempotent bool) *functionOperation {
 
 	anyDependesOnVars := false
 	allIsIdempotent := isIdempotent
@@ -199,13 +199,13 @@ func NewFunctionOperation(datatype OperationDataType, name string, arguments []O
 		allIsIdempotent = allIsIdempotent && v.OperationMetadata().IsIdempotent
 	}
 
-	meta := OperationMetadata{
-		DataType:           datatype,
+	meta := operationMetadata{
+		DataType:           dataType,
 		DependsOnVariables: anyDependesOnVars,
 		IsIdempotent:       allIsIdempotent,
 	}
 
-	return &FunctionOperation{
+	return &functionOperation{
 		Name:      name,
 		Arguments: arguments,
 		Metadata:  meta,
@@ -213,23 +213,23 @@ func NewFunctionOperation(datatype OperationDataType, name string, arguments []O
 }
 
 // GreaterOrEqualThan
-type GreaterOrEqualThanOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type greaterOrEqualThanOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *GreaterOrEqualThanOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *greaterOrEqualThanOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewGreaterOrEqualThanOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *GreaterOrEqualThanOperation {
+func newGreaterOrEqualThanOperation(dataType operationDataType, operationOne operation, operationTwo operation) *greaterOrEqualThanOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &GreaterOrEqualThanOperation{
+	return &greaterOrEqualThanOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -237,23 +237,23 @@ func NewGreaterOrEqualThanOperation(dataType OperationDataType, operationOne Ope
 }
 
 // GreaterThanOperation
-type GreaterThanOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type greaterThanOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *GreaterThanOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *greaterThanOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewGreaterThanOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *GreaterThanOperation {
+func newGreaterThanOperation(dataType operationDataType, operationOne operation, operationTwo operation) *greaterThanOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &GreaterThanOperation{
+	return &greaterThanOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -261,23 +261,23 @@ func NewGreaterThanOperation(dataType OperationDataType, operationOne Operation,
 }
 
 // LessOrEqualThan
-type LessOrEqualThanOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type lessOrEqualThanOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *LessOrEqualThanOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *lessOrEqualThanOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewLessOrEqualThanOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *LessOrEqualThanOperation {
+func newLessOrEqualThanOperation(dataType operationDataType, operationOne operation, operationTwo operation) *lessOrEqualThanOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &LessOrEqualThanOperation{
+	return &lessOrEqualThanOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -285,23 +285,23 @@ func NewLessOrEqualThanOperation(dataType OperationDataType, operationOne Operat
 }
 
 // LessThan
-type LessThanOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type lessThanOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *LessThanOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *lessThanOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewLessThanOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *LessThanOperation {
+func newLessThanOperation(dataType operationDataType, operationOne operation, operationTwo operation) *lessThanOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &LessThanOperation{
+	return &lessThanOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -309,23 +309,23 @@ func NewLessThanOperation(dataType OperationDataType, operationOne Operation, op
 }
 
 //Modulo
-type ModuloOperation struct {
-	Dividend Operation
-	Divisor  Operation
-	Metadata OperationMetadata
+type moduloOperation struct {
+	Dividend operation
+	Divisor  operation
+	Metadata operationMetadata
 }
 
-func (op *ModuloOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *moduloOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewModuloOperation(dataType OperationDataType, dividend Operation, divisor Operation) *ModuloOperation {
+func newModuloOperation(dataType operationDataType, dividend operation, divisor operation) *moduloOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: dividend.OperationMetadata().DependsOnVariables || divisor.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       dividend.OperationMetadata().IsIdempotent && divisor.OperationMetadata().DependsOnVariables,
 	}
 
-	return &ModuloOperation{
+	return &moduloOperation{
 		Dividend: dividend,
 		Divisor:  divisor,
 		Metadata: meta,
@@ -333,23 +333,23 @@ func NewModuloOperation(dataType OperationDataType, dividend Operation, divisor 
 }
 
 //Mutiplication
-type MultiplicationOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type multiplicationOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *MultiplicationOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *multiplicationOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewMultiplicationOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *MultiplicationOperation {
+func newMultiplicationOperation(dataType operationDataType, operationOne operation, operationTwo operation) *multiplicationOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &MultiplicationOperation{
+	return &multiplicationOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -357,23 +357,23 @@ func NewMultiplicationOperation(dataType OperationDataType, operationOne Operati
 }
 
 //Not Equal
-type NotEqualOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type notEqualOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *NotEqualOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *notEqualOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewNotEqualOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *NotEqualOperation {
+func newNotEqualOperation(dataType operationDataType, operationOne operation, operationTwo operation) *notEqualOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &NotEqualOperation{
+	return &notEqualOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -381,23 +381,23 @@ func NewNotEqualOperation(dataType OperationDataType, operationOne Operation, op
 }
 
 //Or
-type OrOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type orOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *OrOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *orOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewOrOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *OrOperation {
+func newOrOperation(dataType operationDataType, operationOne operation, operationTwo operation) *orOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &OrOperation{
+	return &orOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -405,23 +405,23 @@ func NewOrOperation(dataType OperationDataType, operationOne Operation, operatio
 }
 
 //Subtraction
-type SubtractionOperation struct {
-	OperationOne Operation
-	OperationTwo Operation
-	Metadata     OperationMetadata
+type subtractionOperation struct {
+	OperationOne operation
+	OperationTwo operation
+	Metadata     operationMetadata
 }
 
-func (op *SubtractionOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *subtractionOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewSubtractionOperation(dataType OperationDataType, operationOne Operation, operationTwo Operation) *SubtractionOperation {
+func newSubtractionOperation(dataType operationDataType, operationOne operation, operationTwo operation) *subtractionOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
 	}
 
-	return &SubtractionOperation{
+	return &subtractionOperation{
 		OperationOne: operationOne,
 		OperationTwo: operationTwo,
 		Metadata:     meta,
@@ -429,22 +429,22 @@ func NewSubtractionOperation(dataType OperationDataType, operationOne Operation,
 }
 
 //UnaryMinus
-type UnaryMinusOperation struct {
-	Operation Operation
-	Metadata  OperationMetadata
+type unaryMinusOperation struct {
+	Operation operation
+	Metadata  operationMetadata
 }
 
-func (op *UnaryMinusOperation) OperationMetadata() OperationMetadata { return op.Metadata }
+func (op *unaryMinusOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewUnaryMinusOperation(dataType OperationDataType, operation Operation) *UnaryMinusOperation {
+func NewUnaryMinusOperation(dataType operationDataType, operation operation) *unaryMinusOperation {
 
-	meta := OperationMetadata{
+	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operation.OperationMetadata().DependsOnVariables,
 		IsIdempotent:       operation.OperationMetadata().IsIdempotent,
 	}
 
-	return &UnaryMinusOperation{
+	return &unaryMinusOperation{
 		Operation: operation,
 		Metadata:  meta,
 	}

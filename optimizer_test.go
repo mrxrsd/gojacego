@@ -19,7 +19,7 @@ func TestOptimizerMultiplicationByZero(test *testing.T) {
 		test.Errorf("expected: ConstantOperation, got: %s", reflect.TypeOf(optimizedOperation).String())
 	}
 
-	if optimizedOperation.(*ConstantOperation).Value != 0.0 {
-		test.Errorf("Expected: 0.0, got: %f", optimizedOperation.(*ConstantOperation).Value)
+	if optimizedOperation.(*constantOperation).Value != 0.0 {
+		test.Errorf("Expected: 0.0, got: %f", optimizedOperation.(*constantOperation).Value)
 	}
 }

@@ -4,45 +4,45 @@ type Optimizer struct {
 	executor Interpreter
 }
 
-func (this *Optimizer) Optimize(op Operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) Operation {
+func (this *Optimizer) Optimize(op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) operation {
 	return optimize(this.executor, op, functionRegistry, constantRegistry)
 }
-func optimize(executor Interpreter, op Operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) Operation {
+func optimize(executor Interpreter, op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) operation {
 
-	if _, b := op.(*ConstantOperation); !op.OperationMetadata().DependsOnVariables && op.OperationMetadata().IsIdempotent && !b {
+	if _, b := op.(*constantOperation); !op.OperationMetadata().DependsOnVariables && op.OperationMetadata().IsIdempotent && !b {
 		result, _ := executor.Execute(op, nil, functionRegistry, constantRegistry)
-		return NewConstantOperation(FloatingPoint, result)
+		return newConstantOperation(floatingPoint, result)
 	} else {
 
-		if cop, ok := op.(*AddOperation); ok {
+		if cop, ok := op.(*addOperation); ok {
 			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
 			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
 
-		} else if cop, ok := op.(*SubtractionOperation); ok {
+		} else if cop, ok := op.(*subtractionOperation); ok {
 			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
 			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
 
-		} else if cop, ok := op.(*MultiplicationOperation); ok {
+		} else if cop, ok := op.(*multiplicationOperation); ok {
 			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
 			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
 
-			cop1, ok1 := cop.OperationOne.(*ConstantOperation)
-			cop2, ok2 := cop.OperationTwo.(*ConstantOperation)
+			cop1, ok1 := cop.OperationOne.(*constantOperation)
+			cop2, ok2 := cop.OperationTwo.(*constantOperation)
 
 			if ok1 && cop1.Value == 0.0 || ok2 && cop2.Value == 0.0 {
-				return NewConstantOperation(FloatingPoint, 0.0)
+				return newConstantOperation(floatingPoint, 0.0)
 			}
 
-		} else if cop, ok := op.(*DivisorOperation); ok {
+		} else if cop, ok := op.(*divisorOperation); ok {
 			cop.Dividend = optimize(executor, cop.Dividend, functionRegistry, constantRegistry)
 			cop.Divisor = optimize(executor, cop.Divisor, functionRegistry, constantRegistry)
 
-		} else if cop, ok := op.(*ExponentiationOperation); ok {
+		} else if cop, ok := op.(*exponentiationOperation); ok {
 			cop.Base = optimize(executor, cop.Base, functionRegistry, constantRegistry)
 			cop.Exponent = optimize(executor, cop.Exponent, functionRegistry, constantRegistry)
 
-		} else if cop, ok := op.(*FunctionOperation); ok {
-			optimizedArguments := make([]Operation, len(cop.Arguments))
+		} else if cop, ok := op.(*functionOperation); ok {
+			optimizedArguments := make([]operation, len(cop.Arguments))
 
 			for idx, arg := range cop.Arguments {
 				ret := optimize(executor, arg, functionRegistry, constantRegistry)
