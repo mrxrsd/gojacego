@@ -32,12 +32,12 @@ type AstBuilder struct {
 	resultStack              *stack.Stack
 	operatorStack            *stack.Stack
 	parameterCount           *stack.Stack
-	constantRegistry         *ConstantRegistry
-	compiledConstantRegistry *ConstantRegistry
-	functionRegistry         *FunctionRegistry
+	constantRegistry         *constantRegistry
+	compiledConstantRegistry *constantRegistry
+	functionRegistry         *functionRegistry
 }
 
-func NewAstBuilder(caseSensitive bool, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry, compiledConstantRegistry *ConstantRegistry) *AstBuilder {
+func NewAstBuilder(caseSensitive bool, functionRegistry *functionRegistry, constantRegistry *constantRegistry, compiledConstantRegistry *constantRegistry) *AstBuilder {
 
 	resultStack := stack.New()
 	operatorStack := stack.New()
@@ -109,7 +109,7 @@ func (this AstBuilder) convertFunction(operationToken Token) (Operation, error) 
 
 	functionName := operationToken.Value.(string)
 
-	if item, found := this.functionRegistry.Get(functionName); found {
+	if item, found := this.functionRegistry.get(functionName); found {
 
 		var numberOfParameters int
 		if true {
@@ -232,20 +232,20 @@ func (this AstBuilder) Build(tokens []Token) (Operation, error) {
 			break
 		case TEXT:
 			tokenText := token.Value.(string)
-			if _, found := this.functionRegistry.Get(tokenText); found {
+			if _, found := this.functionRegistry.get(tokenText); found {
 				this.operatorStack.Push(token)
 				this.parameterCount.Push(1)
 			} else {
 
 				if this.compiledConstantRegistry != nil {
-					if val, found := this.compiledConstantRegistry.Get(tokenText); found {
+					if val, found := this.compiledConstantRegistry.get(tokenText); found {
 						// constant registry
 						this.resultStack.Push(NewConstantOperation(FloatingPoint, val))
 						break
 					}
 				}
 
-				if val, found := this.constantRegistry.Get(tokenText); found {
+				if val, found := this.constantRegistry.get(tokenText); found {
 					// constant registry
 					this.resultStack.Push(NewConstantOperation(FloatingPoint, val))
 				} else {

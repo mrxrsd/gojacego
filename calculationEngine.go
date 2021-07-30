@@ -19,15 +19,15 @@ type JaceOptions struct {
 
 type CalculationEngine struct {
 	cache            *cache.Memorycache
-	options          *JaceOptions
+	options          JaceOptions
 	optimizer        *Optimizer
 	executor         *Interpreter
-	constantRegistry *ConstantRegistry
-	functionRegistry *FunctionRegistry
+	constantRegistry *constantRegistry
+	functionRegistry *functionRegistry
 }
 
 func NewCalculationEngine() *CalculationEngine {
-	return NewCalculationEngineWithOptions(&JaceOptions{
+	return NewCalculationEngineWithOptions(JaceOptions{
 		decimalSeparator:  '.',
 		argumentSeparador: ',',
 		caseSensitive:     false,
@@ -37,11 +37,11 @@ func NewCalculationEngine() *CalculationEngine {
 	})
 }
 
-func NewCalculationEngineWithOptions(options *JaceOptions) *CalculationEngine {
+func NewCalculationEngineWithOptions(options JaceOptions) *CalculationEngine {
 	cache := cache.NewCache()
 
-	if options == nil {
-		options = &JaceOptions{
+	if options == (JaceOptions{}) {
+		options = JaceOptions{
 			decimalSeparator:  '.',
 			argumentSeparador: ',',
 			caseSensitive:     false,
@@ -53,15 +53,15 @@ func NewCalculationEngineWithOptions(options *JaceOptions) *CalculationEngine {
 
 	interpreter := &Interpreter{}
 	optimizer := &Optimizer{executor: *interpreter}
-	constantRegistry := NewConstantRegistry(options.caseSensitive)
-	functionRegistry := NewFunctionRegistry(options.caseSensitive)
+	constantRegistry := newConstantRegistry(options.caseSensitive)
+	functionRegistry := newFunctionRegistry(options.caseSensitive)
 
 	if options.defaultConstants {
-		RegistryDefaultConstants(constantRegistry)
+		registryDefaultConstants(constantRegistry)
 	}
 
 	if options.defaultFunctions {
-		RegistryDefaultFunctions(functionRegistry)
+		registryDefaultFunctions(functionRegistry)
 	}
 
 	return &CalculationEngine{
@@ -99,7 +99,7 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 	return formula(formulaVariables), nil
 }
 
-func (this *CalculationEngine) generateFormulaCacheKey(formulaText string, compiledConstantsRegistry *ConstantRegistry) string {
+func (this *CalculationEngine) generateFormulaCacheKey(formulaText string, compiledConstantsRegistry *constantRegistry) string {
 	if compiledConstantsRegistry != nil {
 		var data []byte
 
@@ -125,7 +125,7 @@ func (this *CalculationEngine) getFormula(formulaText string) Formula {
 	return nil
 }
 
-func (this *CalculationEngine) buildFormula(formulaText string, compiledConstants *ConstantRegistry, operation Operation) Formula {
+func (this *CalculationEngine) buildFormula(formulaText string, compiledConstants *constantRegistry, operation Operation) Formula {
 	key := this.generateFormulaCacheKey(formulaText, compiledConstants)
 	formula := this.executor.BuildFormula(operation, this.functionRegistry, this.constantRegistry)
 	this.cache.Add(key, formula)
@@ -144,10 +144,10 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 		return nil, errors.New("the parameter 'formula' is required")
 	}
 
-	compiledConstantsRegistry := NewConstantRegistry(this.options.caseSensitive)
+	compiledConstantsRegistry := newConstantRegistry(this.options.caseSensitive)
 
 	for k, p := range vars {
-		compiledConstantsRegistry.RegisterConstant(k, ToFloat64(p), true)
+		compiledConstantsRegistry.registerConstant(k, ToFloat64(p), true)
 	}
 
 	item, found := this.cache.Get(this.generateFormulaCacheKey(formulaText, compiledConstantsRegistry))
@@ -165,10 +165,10 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 }
 
 func (this *CalculationEngine) AddFunction(name string, body Delegate, isIdempotent bool) {
-	this.functionRegistry.RegisterFunction(name, body, true, isIdempotent)
+	this.functionRegistry.registerFunction(name, body, true, isIdempotent)
 }
 
-func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledConstants *ConstantRegistry) (Operation, error) {
+func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledConstants *constantRegistry) (Operation, error) {
 
 	tokenReader := NewTokenReader(this.options.decimalSeparator, this.options.argumentSeparador)
 	astBuilder := NewAstBuilder(this.options.caseSensitive, this.functionRegistry, this.constantRegistry, compiledConstants)

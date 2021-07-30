@@ -4,10 +4,10 @@ type Optimizer struct {
 	executor Interpreter
 }
 
-func (this *Optimizer) Optimize(op Operation, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry) Operation {
+func (this *Optimizer) Optimize(op Operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) Operation {
 	return optimize(this.executor, op, functionRegistry, constantRegistry)
 }
-func optimize(executor Interpreter, op Operation, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry) Operation {
+func optimize(executor Interpreter, op Operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) Operation {
 
 	if _, b := op.(*ConstantOperation); !op.OperationMetadata().DependsOnVariables && op.OperationMetadata().IsIdempotent && !b {
 		result, _ := executor.Execute(op, nil, functionRegistry, constantRegistry)

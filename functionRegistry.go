@@ -8,33 +8,33 @@ import (
 
 type Delegate func(arguments ...float64) (float64, error)
 
-type FunctionRegistry struct {
+type functionRegistry struct {
 	caseSensitive bool
-	functions     map[string]FunctionInfo
+	functions     map[string]functionInfo
 }
 
-type FunctionInfo struct {
+type functionInfo struct {
 	name           string
 	function       Delegate
 	isOverWritable bool
 	isIdempotent   bool
 }
 
-func NewFunctionRegistry(caseSensitive bool) *FunctionRegistry {
-	return &FunctionRegistry{
+func newFunctionRegistry(caseSensitive bool) *functionRegistry {
+	return &functionRegistry{
 		caseSensitive: caseSensitive,
-		functions:     map[string]FunctionInfo{},
+		functions:     map[string]functionInfo{},
 	}
 }
 
-func (this *FunctionRegistry) Get(name string) (*FunctionInfo, bool) {
+func (this *functionRegistry) get(name string) (*functionInfo, bool) {
 	if item, found := this.functions[this.convertFunctionName(name)]; found {
 		return &item, true
 	}
 	return nil, false
 }
 
-func (this *FunctionRegistry) RegisterFunction(name string, function Delegate, isOverWritable bool, isIdempotent bool) {
+func (this *functionRegistry) registerFunction(name string, function Delegate, isOverWritable bool, isIdempotent bool) {
 	handledFunctionName := this.convertFunctionName(name)
 
 	if item, found := this.functions[handledFunctionName]; found {
@@ -43,7 +43,7 @@ func (this *FunctionRegistry) RegisterFunction(name string, function Delegate, i
 		}
 	}
 
-	functionInfo := &FunctionInfo{
+	functionInfo := &functionInfo{
 		name:           handledFunctionName,
 		function:       function,
 		isOverWritable: isOverWritable,
@@ -53,56 +53,56 @@ func (this *FunctionRegistry) RegisterFunction(name string, function Delegate, i
 	this.functions[handledFunctionName] = *functionInfo
 }
 
-func (this *FunctionRegistry) convertFunctionName(name string) string {
+func (this *functionRegistry) convertFunctionName(name string) string {
 	if this.caseSensitive {
 		return name
 	}
 	return strings.ToLower(name)
 }
 
-func RegistryDefaultFunctions(registry *FunctionRegistry) {
+func registryDefaultFunctions(registry *functionRegistry) {
 
-	registry.RegisterFunction("sin", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("sin", func(arguments ...float64) (float64, error) {
 		return math.Sin(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("cos", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("cos", func(arguments ...float64) (float64, error) {
 		return math.Cos(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("asin", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("asin", func(arguments ...float64) (float64, error) {
 		return math.Asin(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("acos", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("acos", func(arguments ...float64) (float64, error) {
 		return math.Acos(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("tan", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("tan", func(arguments ...float64) (float64, error) {
 		return math.Tan(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("atan", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("atan", func(arguments ...float64) (float64, error) {
 		return math.Atan(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("log", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("log", func(arguments ...float64) (float64, error) {
 		return math.Log(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("sqrt", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("sqrt", func(arguments ...float64) (float64, error) {
 		return math.Sqrt(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("trunc", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("trunc", func(arguments ...float64) (float64, error) {
 		return math.Trunc(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("ceil", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("ceil", func(arguments ...float64) (float64, error) {
 		return math.Ceil(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("round", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("round", func(arguments ...float64) (float64, error) {
 		if len(arguments) <= 1 {
 			return math.Round(arguments[0]), nil
 		} else {
@@ -111,16 +111,16 @@ func RegistryDefaultFunctions(registry *FunctionRegistry) {
 		}
 	}, false, true)
 
-	registry.RegisterFunction("random", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("random", func(arguments ...float64) (float64, error) {
 		rand.Seed(int64(arguments[0]))
 		return rand.Float64(), nil
 	}, false, false)
 
-	registry.RegisterFunction("floor", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("floor", func(arguments ...float64) (float64, error) {
 		return math.Floor(arguments[0]), nil
 	}, false, true)
 
-	registry.RegisterFunction("max", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("max", func(arguments ...float64) (float64, error) {
 		if len(arguments) > 0 {
 			max := arguments[0]
 			for _, v := range arguments {
@@ -134,7 +134,7 @@ func RegistryDefaultFunctions(registry *FunctionRegistry) {
 		}
 	}, false, true)
 
-	registry.RegisterFunction("min", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("min", func(arguments ...float64) (float64, error) {
 		if len(arguments) > 0 {
 			min := arguments[0]
 			for _, v := range arguments {
@@ -148,7 +148,7 @@ func RegistryDefaultFunctions(registry *FunctionRegistry) {
 		}
 	}, false, true)
 
-	registry.RegisterFunction("if", func(arguments ...float64) (float64, error) {
+	registry.registerFunction("if", func(arguments ...float64) (float64, error) {
 		if len(arguments) == 3 {
 			if arguments[0] != 0.0 {
 				return arguments[1], nil

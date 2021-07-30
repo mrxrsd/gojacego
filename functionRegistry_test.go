@@ -5,39 +5,39 @@ import (
 )
 
 func TestAddAndGetFunction(test *testing.T) {
-	registryCaseInsensitive := NewFunctionRegistry(false)
-	registryCaseSensitive := NewFunctionRegistry(true)
+	registryCaseInsensitive := newFunctionRegistry(false)
+	registryCaseSensitive := newFunctionRegistry(true)
 
 	fn := func(args ...float64) (float64, error) {
 		return args[0] + args[1], nil
 	}
 
-	registryCaseInsensitive.RegisterFunction("test", fn, true, false)
-	registryCaseSensitive.RegisterFunction("test", fn, true, false)
+	registryCaseInsensitive.registerFunction("test", fn, true, false)
+	registryCaseSensitive.registerFunction("test", fn, true, false)
 
-	_, found := registryCaseInsensitive.Get("test")
+	_, found := registryCaseInsensitive.get("test")
 	if found != true {
 		test.Errorf("exptected: true, got: false")
 	}
 
-	_, found1 := registryCaseInsensitive.Get("TesT")
+	_, found1 := registryCaseInsensitive.get("TesT")
 	if found1 != true {
 		test.Errorf("exptected: true, got: false")
 	}
 
-	_, found2 := registryCaseSensitive.Get("test")
+	_, found2 := registryCaseSensitive.get("test")
 	if found2 != true {
 		test.Errorf("exptected: true, got: false")
 	}
 
-	_, found3 := registryCaseSensitive.Get("TesT")
+	_, found3 := registryCaseSensitive.get("TesT")
 	if found3 != false {
 		test.Errorf("exptected: false, got: true")
 	}
 }
 
 func TestFunctionOverwritable(test *testing.T) {
-	registry := NewFunctionRegistry(false)
+	registry := newFunctionRegistry(false)
 
 	fnAddTwo := func(args ...float64) (float64, error) {
 		return args[0] + 2, nil
@@ -47,25 +47,25 @@ func TestFunctionOverwritable(test *testing.T) {
 		return args[0] + 4, nil
 	}
 
-	registry.RegisterFunction("test", fnAddTwo, true, true)
-	registry.RegisterFunction("test", fnAddFour, true, true)
+	registry.registerFunction("test", fnAddTwo, true, true)
+	registry.registerFunction("test", fnAddFour, true, true)
 
-	fn, _ := registry.Get("test")
+	fn, _ := registry.get("test")
 	if item, _ := fn.function(0); item != 4 {
 		test.Errorf("exptected: 4, got: %f", item)
 	}
 }
 
 func TestFunctionNotOverwritable(test *testing.T) {
-	registry := NewFunctionRegistry(false)
+	registry := newFunctionRegistry(false)
 
 	fn := func(args ...float64) (float64, error) {
 		return args[0] + 2, nil
 	}
 
-	registry.RegisterFunction("test", fn, false, true)
+	registry.registerFunction("test", fn, false, true)
 
 	shouldPanic(test, func() {
-		registry.RegisterFunction("test", fn, false, true)
+		registry.registerFunction("test", fn, false, true)
 	}, "TestNotOverwritable - Panic expected")
 }

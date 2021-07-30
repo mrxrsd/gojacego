@@ -12,18 +12,18 @@ type Interpreter struct {
 
 type Formula func(vars FormulaVariables) float64
 
-func (*Interpreter) Execute(op Operation, vars FormulaVariables, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry) (float64, error) {
+func (*Interpreter) Execute(op Operation, vars FormulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (float64, error) {
 	return execute(op, vars, functionRegistry, constantRegistry)
 }
 
-func (*Interpreter) BuildFormula(op Operation, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry) Formula {
+func (*Interpreter) BuildFormula(op Operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) Formula {
 	return func(vars FormulaVariables) float64 {
 		ret, _ := execute(op, vars, functionRegistry, constantRegistry)
 		return ret
 	}
 }
 
-func execute(op Operation, vars FormulaVariables, functionRegistry *FunctionRegistry, constantRegistry *ConstantRegistry) (float64, error) {
+func execute(op Operation, vars FormulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (float64, error) {
 
 	if op == nil {
 		return 0, errors.New("operation cannot be nil")
@@ -144,7 +144,7 @@ func execute(op Operation, vars FormulaVariables, functionRegistry *FunctionRegi
 		return 0.0, nil
 	} else if cop, ok := op.(*FunctionOperation); ok {
 
-		fn, _ := functionRegistry.Get(cop.Name)
+		fn, _ := functionRegistry.get(cop.Name)
 		arguments := make([]float64, len(cop.Arguments))
 
 		for idx, fnParam := range cop.Arguments {

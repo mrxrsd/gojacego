@@ -5,40 +5,40 @@ import (
 )
 
 func TestAddAndGetConstant(test *testing.T) {
-	registryCaseInsensitive := NewConstantRegistry(false)
-	registryCaseSensitive := NewConstantRegistry(true)
+	registryCaseInsensitive := newConstantRegistry(false)
+	registryCaseSensitive := newConstantRegistry(true)
 
-	registryCaseInsensitive.RegisterConstant("test", 42.0, true)
-	registryCaseSensitive.RegisterConstant("test", 42.0, true)
+	registryCaseInsensitive.registerConstant("test", 42.0, true)
+	registryCaseSensitive.registerConstant("test", 42.0, true)
 
-	val, _ := registryCaseInsensitive.Get("test")
+	val, _ := registryCaseInsensitive.get("test")
 	if val != 42.0 {
 		test.Errorf("exptected: 42.0, got: %f", val)
 	}
 
-	val1, _ := registryCaseInsensitive.Get("TesT")
+	val1, _ := registryCaseInsensitive.get("TesT")
 	if val1 != 42.0 {
 		test.Errorf("exptected: 42.0, got: %f", val1)
 	}
 
-	val2, _ := registryCaseSensitive.Get("test")
+	val2, _ := registryCaseSensitive.get("test")
 	if val != 42.0 {
 		test.Errorf("exptected: 42.0, got: %f", val2)
 	}
 
-	_, found := registryCaseSensitive.Get("TesT")
+	_, found := registryCaseSensitive.get("TesT")
 	if found != false {
 		test.Errorf("exptected: false, got: true")
 	}
 }
 
 func TestOverwritable(test *testing.T) {
-	registry := NewConstantRegistry(false)
+	registry := newConstantRegistry(false)
 
-	registry.RegisterConstant("test", 42, true)
-	registry.RegisterConstant("test", 26.3, true)
+	registry.registerConstant("test", 42, true)
+	registry.registerConstant("test", 26.3, true)
 
-	val, _ := registry.Get("test")
+	val, _ := registry.get("test")
 	if val != 26.3 {
 		test.Errorf("exptected: 26.3, got: %f", val)
 	}
@@ -52,11 +52,11 @@ func shouldPanic(t *testing.T, f func(), message string) {
 }
 
 func TestNotOverwritable(test *testing.T) {
-	registry := NewConstantRegistry(false)
+	registry := newConstantRegistry(false)
 
-	registry.RegisterConstant("test", 42, false)
+	registry.registerConstant("test", 42, false)
 
 	shouldPanic(test, func() {
-		registry.RegisterConstant("test", 26.3, false)
+		registry.registerConstant("test", 26.3, false)
 	}, "TestNotOverwritable - Panic expected")
 }

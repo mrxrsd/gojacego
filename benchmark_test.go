@@ -5,7 +5,7 @@ import (
 )
 
 func createEngine() *CalculationEngine {
-	return NewCalculationEngineWithOptions(&JaceOptions{
+	return NewCalculationEngineWithOptions(JaceOptions{
 		decimalSeparator:  '.',
 		argumentSeparador: ',',
 		caseSensitive:     true,

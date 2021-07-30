@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type ConstantRegistry struct {
+type constantRegistry struct {
 	caseSensitive bool
 	constants     map[string]constantInfo
 }
@@ -16,21 +16,21 @@ type constantInfo struct {
 	isOverWritable bool
 }
 
-func NewConstantRegistry(caseSensitive bool) *ConstantRegistry {
-	return &ConstantRegistry{
+func newConstantRegistry(caseSensitive bool) *constantRegistry {
+	return &constantRegistry{
 		caseSensitive: caseSensitive,
 		constants:     map[string]constantInfo{},
 	}
 }
 
-func (this *ConstantRegistry) Get(name string) (float64, bool) {
+func (this *constantRegistry) get(name string) (float64, bool) {
 	if item, found := this.constants[this.convertConstantName(name)]; found {
 		return item.value, true
 	}
 	return 0, false
 }
 
-func (this *ConstantRegistry) RegisterConstant(name string, value float64, isOverWritable bool) {
+func (this *constantRegistry) registerConstant(name string, value float64, isOverWritable bool) {
 	handledConstantName := this.convertConstantName(name)
 
 	if item, found := this.constants[handledConstantName]; found {
@@ -48,7 +48,7 @@ func (this *ConstantRegistry) RegisterConstant(name string, value float64, isOve
 	this.constants[handledConstantName] = *constantInfo
 }
 
-func (this *ConstantRegistry) convertConstantName(name string) string {
+func (this *constantRegistry) convertConstantName(name string) string {
 	if this.caseSensitive {
 		return name
 	}
@@ -56,7 +56,7 @@ func (this *ConstantRegistry) convertConstantName(name string) string {
 	return strings.ToLower(name)
 }
 
-func RegistryDefaultConstants(registry *ConstantRegistry) {
-	registry.RegisterConstant("e", math.E, false)
-	registry.RegisterConstant("pi", math.Pi, false)
+func registryDefaultConstants(registry *constantRegistry) {
+	registry.registerConstant("e", math.E, false)
+	registry.registerConstant("pi", math.Pi, false)
 }

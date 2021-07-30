@@ -435,7 +435,7 @@ func TestCompiledConstants(test *testing.T) {
 }
 
 func TestCaseUnsensitive(test *testing.T) {
-	engine := NewCalculationEngineWithOptions(&JaceOptions{
+	engine := NewCalculationEngineWithOptions(JaceOptions{
 		decimalSeparator:  '.',
 		argumentSeparador: ',',
 		caseSensitive:     false,

@@ -5,14 +5,14 @@ import (
 	"testing"
 )
 
-func getConstantRegistry() *ConstantRegistry {
-	return &ConstantRegistry{
+func getConstantRegistry() *constantRegistry {
+	return &constantRegistry{
 		caseSensitive: false,
 	}
 }
 
-func getFunctionRegistry() *FunctionRegistry {
-	return &FunctionRegistry{
+func getFunctionRegistry() *functionRegistry {
+	return &functionRegistry{
 		caseSensitive: false,
 	}
 }
