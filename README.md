@@ -219,11 +219,12 @@ Disclaimer: Govaluate has a lot of features and differents operators while goJAC
 - [X] Implement all 'Standard Functions'
 - [X] Analyze possible issues about pointer dereference
 - [X] Struct and methods scopes.
+
+### Beta
 - [ ] Tests
-- [ ] Create develop branch and release alpha package
+- [ ] Evaluate more optimization points
 
 ### 1.0 
-- [ ] Evaluate more optimization points
 - [ ] Handle 'unhappy flow' (errors and panic)
 - [ ] Docs
 - [ ] Package
