@@ -168,7 +168,7 @@ func (this astBuilder) convertOperation(operationToken token) (operation, error)
 		return newModuloOperation(floatingPoint, divident, divisor), nil
 	case '_':
 		argument1 = this.resultStack.Pop().(operation)
-		return NewUnaryMinusOperation(argument1.OperationMetadata().DataType, argument1), nil
+		return newUnaryMinusOperation(argument1.OperationMetadata().DataType, argument1), nil
 	case '^':
 		exponent := this.resultStack.Pop().(operation)
 		base := this.resultStack.Pop().(operation)
@@ -177,7 +177,7 @@ func (this astBuilder) convertOperation(operationToken token) (operation, error)
 		argument2 = this.resultStack.Pop().(operation)
 		argument1 = this.resultStack.Pop().(operation)
 		dataType = requiredDataType(argument1, argument2)
-		return NewAndOperation(dataType, argument1, argument2), nil
+		return newAndOperation(dataType, argument1, argument2), nil
 	case '|':
 		argument2 = this.resultStack.Pop().(operation)
 		argument1 = this.resultStack.Pop().(operation)

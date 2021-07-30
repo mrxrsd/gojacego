@@ -85,7 +85,7 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 	item, found := this.cache.Get(formulaText)
 
 	if found {
-		formula := item.(formula)
+		formula := item.(Formula)
 		return formula(formulaVariables), nil
 	}
 
@@ -116,16 +116,16 @@ func (this *CalculationEngine) generateFormulaCacheKey(formulaText string, compi
 	return formulaText
 }
 
-func (this *CalculationEngine) getFormula(formulaText string) formula {
+func (this *CalculationEngine) getFormula(formulaText string) Formula {
 
 	item, found := this.cache.Get(formulaText)
 	if found {
-		return item.(formula)
+		return item.(Formula)
 	}
 	return nil
 }
 
-func (this *CalculationEngine) buildFormula(formulaText string, compiledConstants *constantRegistry, operation operation) formula {
+func (this *CalculationEngine) buildFormula(formulaText string, compiledConstants *constantRegistry, operation operation) Formula {
 	key := this.generateFormulaCacheKey(formulaText, compiledConstants)
 	formula := this.executor.buildFormula(operation, this.functionRegistry, this.constantRegistry)
 	this.cache.Add(key, formula)
@@ -134,11 +134,11 @@ func (this *CalculationEngine) buildFormula(formulaText string, compiledConstant
 
 }
 
-func (this *CalculationEngine) Build(formulaText string) (formula, error) {
+func (this *CalculationEngine) Build(formulaText string) (Formula, error) {
 	return this.BuildWithConstants(formulaText, nil)
 }
 
-func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[string]interface{}) (formula, error) {
+func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[string]interface{}) (Formula, error) {
 
 	if len(strings.TrimSpace(formulaText)) == 0 {
 		return nil, errors.New("the parameter 'formula' is required")
@@ -153,7 +153,7 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 	item, found := this.cache.Get(this.generateFormulaCacheKey(formulaText, compiledConstantsRegistry))
 
 	if found {
-		return item.(formula), nil
+		return item.(Formula), nil
 	}
 
 	op, err := this.buildAbstractSyntaxTree(formulaText, compiledConstantsRegistry)

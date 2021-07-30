@@ -73,7 +73,7 @@ type andOperation struct {
 
 func (op *andOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewAndOperation(dataType operationDataType, operationOne operation, operationTwo operation) *andOperation {
+func newAndOperation(dataType operationDataType, operationOne operation, operationTwo operation) *andOperation {
 
 	meta := operationMetadata{
 		DataType:           dataType,
@@ -436,7 +436,7 @@ type unaryMinusOperation struct {
 
 func (op *unaryMinusOperation) OperationMetadata() operationMetadata { return op.Metadata }
 
-func NewUnaryMinusOperation(dataType operationDataType, operation operation) *unaryMinusOperation {
+func newUnaryMinusOperation(dataType operationDataType, operation operation) *unaryMinusOperation {
 
 	meta := operationMetadata{
 		DataType:           dataType,

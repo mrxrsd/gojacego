@@ -10,13 +10,13 @@ type interpreter struct {
 	caseSensitive bool
 }
 
-type formula func(vars formulaVariables) float64
+type Formula func(vars formulaVariables) float64
 
 func (*interpreter) execute(op operation, vars formulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (float64, error) {
 	return execute(op, vars, functionRegistry, constantRegistry)
 }
 
-func (*interpreter) buildFormula(op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) formula {
+func (*interpreter) buildFormula(op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) Formula {
 	return func(vars formulaVariables) float64 {
 		ret, _ := execute(op, vars, functionRegistry, constantRegistry)
 		return ret
