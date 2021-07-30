@@ -10,20 +10,20 @@ type interpreter struct {
 	caseSensitive bool
 }
 
-type formula func(vars FormulaVariables) float64
+type formula func(vars formulaVariables) float64
 
-func (*interpreter) execute(op operation, vars FormulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (float64, error) {
+func (*interpreter) execute(op operation, vars formulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (float64, error) {
 	return execute(op, vars, functionRegistry, constantRegistry)
 }
 
 func (*interpreter) buildFormula(op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) formula {
-	return func(vars FormulaVariables) float64 {
+	return func(vars formulaVariables) float64 {
 		ret, _ := execute(op, vars, functionRegistry, constantRegistry)
 		return ret
 	}
 }
 
-func execute(op operation, vars FormulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (float64, error) {
+func execute(op operation, vars formulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (float64, error) {
 
 	if op == nil {
 		return 0, errors.New("operation cannot be nil")

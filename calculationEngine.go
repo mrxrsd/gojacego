@@ -80,7 +80,7 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 		return 0, errors.New("the parameter 'formula' is required")
 	}
 
-	formulaVariables := CreateFormulaVariables(vars, this.options.caseSensitive)
+	formulaVariables := createFormulaVariables(vars, this.options.caseSensitive)
 
 	item, found := this.cache.Get(formulaText)
 

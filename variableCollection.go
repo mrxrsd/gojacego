@@ -5,13 +5,13 @@ import (
 	"strings"
 )
 
-type VariableCollection interface {
+type variableCollection interface {
 	Get(name string) (float64, error)
 }
 
-type FormulaVariables map[string]float64
+type formulaVariables map[string]float64
 
-func CreateFormulaVariables(vars map[string]interface{}, caseSensitive bool) FormulaVariables {
+func createFormulaVariables(vars map[string]interface{}, caseSensitive bool) formulaVariables {
 
 	ret := make(map[string]float64, len(vars))
 
@@ -26,7 +26,7 @@ func CreateFormulaVariables(vars map[string]interface{}, caseSensitive bool) For
 	return ret
 }
 
-func (p FormulaVariables) Get(name string) (float64, error) {
+func (p formulaVariables) Get(name string) (float64, error) {
 
 	value, found := p[name]
 
