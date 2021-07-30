@@ -5,19 +5,19 @@ import (
 	"strconv"
 )
 
-type TokenReader struct {
+type tokenReader struct {
 	decimalSeparator  rune
 	argumentSeparator rune
 }
 
-func NewTokenReader(decimalSeparator rune, argumentSeparador rune) *TokenReader {
-	return &TokenReader{
+func newTokenReader(decimalSeparator rune, argumentSeparador rune) *tokenReader {
+	return &tokenReader{
 		decimalSeparator:  decimalSeparator,
 		argumentSeparator: argumentSeparador,
 	}
 }
 
-func (this TokenReader) Read(formula string) ([]Token, error) {
+func (this tokenReader) read(formula string) ([]Token, error) {
 	ret := make([]Token, 0)
 
 	if formula == "" {
@@ -236,7 +236,7 @@ func (this TokenReader) Read(formula string) ([]Token, error) {
 	return ret, nil
 }
 
-func (this TokenReader) isUnaryMinus(currentToken rune, tokens []Token) bool {
+func (this tokenReader) isUnaryMinus(currentToken rune, tokens []Token) bool {
 
 	if currentToken == '-' {
 		previousToken := tokens[len(tokens)-1]
@@ -250,14 +250,14 @@ func (this TokenReader) isUnaryMinus(currentToken rune, tokens []Token) bool {
 	}
 }
 
-func (this TokenReader) isPartOfNumeric(character rune, isFirstCharacter bool, afterMinus bool, isFormulaSubPart bool) bool {
+func (this tokenReader) isPartOfNumeric(character rune, isFirstCharacter bool, afterMinus bool, isFormulaSubPart bool) bool {
 	return character == this.decimalSeparator || (character >= '0' && character <= '9') || (isFormulaSubPart && isFirstCharacter && character == '-') || (!isFirstCharacter && !afterMinus && character == 'e') || (!isFirstCharacter && character == 'E')
 }
 
-func (this TokenReader) isPartOfVariable(character rune, isFirstCharacter bool) bool {
+func (this tokenReader) isPartOfVariable(character rune, isFirstCharacter bool) bool {
 	return (character == '$') || (character >= 'a' && character <= 'z') || (character >= 'A' && character <= 'Z') || (!isFirstCharacter && character >= '0' && character <= '9') || (!isFirstCharacter && character == '_')
 }
 
-func (this TokenReader) isScientificNotation(char rune) bool {
+func (this tokenReader) isScientificNotation(char rune) bool {
 	return char == 'e' || char == 'E'
 }

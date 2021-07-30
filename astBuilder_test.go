@@ -18,7 +18,7 @@ func getFunctionRegistry() *functionRegistry {
 }
 
 func TestBuildFormula1(test *testing.T) {
-	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
+	astBuilder := newAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
 	params := []Token{
 		{Value: '(', Type: LEFT_BRACKET},
 		{Value: 42, Type: INTEGER},
@@ -28,7 +28,7 @@ func TestBuildFormula1(test *testing.T) {
 		{Value: '*', Type: OPERATION},
 		{Value: 2, Type: INTEGER},
 	}
-	op, _ := astBuilder.Build(params)
+	op, _ := astBuilder.build(params)
 
 	if reflect.TypeOf(op).String() != "*gojacego.MultiplicationOperation" {
 		test.Errorf("expected: MultiplicationOperation, got: %s", reflect.TypeOf(op).String())
@@ -53,7 +53,7 @@ func TestBuildFormula1(test *testing.T) {
 }
 
 func TestBuildFormula2(test *testing.T) {
-	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
+	astBuilder := newAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
 	params := []Token{
 		{Value: 2, Type: INTEGER},
 		{Value: '+', Type: OPERATION},
@@ -61,7 +61,7 @@ func TestBuildFormula2(test *testing.T) {
 		{Value: '*', Type: OPERATION},
 		{Value: 3, Type: INTEGER},
 	}
-	op, _ := astBuilder.Build(params)
+	op, _ := astBuilder.build(params)
 
 	if reflect.TypeOf(op).String() != "*gojacego.AddOperation" {
 		test.Errorf("expected: AddOperation, got: %s", reflect.TypeOf(op).String())
@@ -88,7 +88,7 @@ func TestBuildFormula2(test *testing.T) {
 }
 
 func TestUnaryMinus(test *testing.T) {
-	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
+	astBuilder := newAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
 	params := []Token{
 		{Value: 5.3, Type: FLOATING_POINT},
 		{Value: '*', Type: OPERATION},
@@ -100,7 +100,7 @@ func TestUnaryMinus(test *testing.T) {
 		{Value: ')', Type: RIGHT_BRACKET},
 	}
 
-	op, _ := astBuilder.Build(params)
+	op, _ := astBuilder.build(params)
 
 	if reflect.TypeOf(op).String() != "*gojacego.MultiplicationOperation" {
 		test.Errorf("expected: MultiplicationOperation, got: %s", reflect.TypeOf(op).String())

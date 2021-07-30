@@ -170,15 +170,15 @@ func (this *CalculationEngine) AddFunction(name string, body Delegate, isIdempot
 
 func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledConstants *constantRegistry) (Operation, error) {
 
-	tokenReader := NewTokenReader(this.options.decimalSeparator, this.options.argumentSeparador)
-	astBuilder := NewAstBuilder(this.options.caseSensitive, this.functionRegistry, this.constantRegistry, compiledConstants)
+	tokenReader := newTokenReader(this.options.decimalSeparator, this.options.argumentSeparador)
+	astBuilder := newAstBuilder(this.options.caseSensitive, this.functionRegistry, this.constantRegistry, compiledConstants)
 
-	tokens, err := tokenReader.Read(formula)
+	tokens, err := tokenReader.read(formula)
 	if err != nil {
 		return nil, err
 	}
 
-	operation, err := astBuilder.Build(tokens)
+	operation, err := astBuilder.build(tokens)
 	if err != nil {
 		return nil, err
 	}

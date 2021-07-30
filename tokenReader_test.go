@@ -16,8 +16,8 @@ func errorContains(out error, want string) bool {
 }
 
 func TestTokenReader(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	_, err := reader.Read("")
+	reader := newTokenReader('.', ',')
+	_, err := reader.read("")
 
 	if !errorContains(err, "formula cannot be empty") {
 		test.Errorf("unexpected error: %v", err)
@@ -25,8 +25,8 @@ func TestTokenReader(test *testing.T) {
 }
 
 func TestTokenReader1(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	ret, err := reader.Read("42+31")
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("42+31")
 
 	if err != nil {
 		test.Log(err)
@@ -39,8 +39,8 @@ func TestTokenReader1(test *testing.T) {
 }
 
 func TestTokenReader2(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	ret, err := reader.Read("(42+31)")
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("(42+31)")
 
 	if err != nil {
 		test.Log(err)
@@ -53,8 +53,8 @@ func TestTokenReader2(test *testing.T) {
 }
 
 func TestTokenReader3(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	ret, err := reader.Read("(42+31.0")
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("(42+31.0")
 
 	if err != nil {
 		test.Log(err)
@@ -67,8 +67,8 @@ func TestTokenReader3(test *testing.T) {
 }
 
 func TestTokenReader4(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	ret, err := reader.Read("(42+ 8) *2")
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("(42+ 8) *2")
 
 	if err != nil {
 		test.Log(err)
@@ -81,8 +81,8 @@ func TestTokenReader4(test *testing.T) {
 }
 
 func TestTokenReader5(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	ret, err := reader.Read("(42.87+31.0")
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("(42.87+31.0")
 
 	if err != nil {
 		test.Log(err)
@@ -95,8 +95,8 @@ func TestTokenReader5(test *testing.T) {
 }
 
 func TestTokenReader6(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	ret, err := reader.Read("(var+31.0")
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("(var+31.0")
 
 	if err != nil {
 		test.Log(err)
@@ -109,8 +109,8 @@ func TestTokenReader6(test *testing.T) {
 }
 
 func TestTokenReader12(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	ret, err := reader.Read("-2.1")
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("-2.1")
 
 	if err != nil {
 		test.Log(err)
@@ -123,8 +123,8 @@ func TestTokenReader12(test *testing.T) {
 }
 
 func TestTokenReader32(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	ret, err := reader.Read("-e")
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("-e")
 
 	if err != nil {
 		test.Log(err)
@@ -137,8 +137,8 @@ func TestTokenReader32(test *testing.T) {
 }
 
 func TestTokenReader33(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	ret, err := reader.Read("1-e")
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("1-e")
 
 	if err != nil {
 		test.Log(err)
@@ -151,8 +151,8 @@ func TestTokenReader33(test *testing.T) {
 }
 
 func TestTokenReader34(test *testing.T) {
-	reader := NewTokenReader('.', ',')
-	ret, err := reader.Read("1+e")
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("1+e")
 
 	if err != nil {
 		test.Log(err)

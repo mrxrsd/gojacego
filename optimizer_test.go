@@ -8,11 +8,11 @@ import (
 func TestOptimizerMultiplicationByZero(test *testing.T) {
 	interpreter := &Interpreter{}
 	optimizer := &Optimizer{executor: *interpreter}
-	reader := NewTokenReader('.', ',')
-	astBuilder := NewAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
+	reader := newTokenReader('.', ',')
+	astBuilder := newAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
 
-	tokens, _ := reader.Read("var1 * 0.0")
-	operation, _ := astBuilder.Build(tokens)
+	tokens, _ := reader.read("var1 * 0.0")
+	operation, _ := astBuilder.build(tokens)
 	optimizedOperation := optimizer.Optimize(operation, getFunctionRegistry(), getConstantRegistry())
 
 	if reflect.TypeOf(optimizedOperation).String() != "*gojacego.ConstantOperation" {

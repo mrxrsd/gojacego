@@ -27,7 +27,7 @@ var precedences = map[rune]int{
 	'^': 6,
 }
 
-type AstBuilder struct {
+type astBuilder struct {
 	caseSensitive            bool
 	resultStack              *stack.Stack
 	operatorStack            *stack.Stack
@@ -37,13 +37,13 @@ type AstBuilder struct {
 	functionRegistry         *functionRegistry
 }
 
-func NewAstBuilder(caseSensitive bool, functionRegistry *functionRegistry, constantRegistry *constantRegistry, compiledConstantRegistry *constantRegistry) *AstBuilder {
+func newAstBuilder(caseSensitive bool, functionRegistry *functionRegistry, constantRegistry *constantRegistry, compiledConstantRegistry *constantRegistry) *astBuilder {
 
 	resultStack := stack.New()
 	operatorStack := stack.New()
 	parameterCount := stack.New()
 
-	return &AstBuilder{
+	return &astBuilder{
 		caseSensitive:            caseSensitive,
 		resultStack:              resultStack,
 		operatorStack:            operatorStack,
@@ -54,7 +54,7 @@ func NewAstBuilder(caseSensitive bool, functionRegistry *functionRegistry, const
 	}
 }
 
-func (this AstBuilder) popOperations(untilLeftBracket bool, currentToken *Token) error {
+func (this astBuilder) popOperations(untilLeftBracket bool, currentToken *Token) error {
 
 	if untilLeftBracket && currentToken == nil {
 		return errors.New("If the parameter \"untillLeftBracket\" is set to true, " +
@@ -98,14 +98,14 @@ func (this AstBuilder) popOperations(untilLeftBracket bool, currentToken *Token)
 	return nil
 }
 
-func (this AstBuilder) verifyResult() error {
+func (this astBuilder) verifyResult() error {
 	if this.resultStack.Len() > 1 {
 		return errors.New("The syntax of the provided formula is not valid.")
 	}
 	return nil
 }
 
-func (this AstBuilder) convertFunction(operationToken Token) (Operation, error) {
+func (this astBuilder) convertFunction(operationToken Token) (Operation, error) {
 
 	functionName := operationToken.Value.(string)
 
@@ -134,7 +134,7 @@ func (this AstBuilder) convertFunction(operationToken Token) (Operation, error) 
 	return nil, nil
 }
 
-func (this AstBuilder) convertOperation(operationToken Token) (Operation, error) {
+func (this astBuilder) convertOperation(operationToken Token) (Operation, error) {
 
 	var dataType OperationDataType
 	var argument1 Operation
@@ -218,7 +218,7 @@ func (this AstBuilder) convertOperation(operationToken Token) (Operation, error)
 	}
 }
 
-func (this AstBuilder) Build(tokens []Token) (Operation, error) {
+func (this astBuilder) build(tokens []Token) (Operation, error) {
 
 	for _, token := range tokens {
 		val := token.Value
