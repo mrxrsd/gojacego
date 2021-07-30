@@ -109,27 +109,57 @@ result, _ := engine.Calculate("2*pi", nil)
 // 6.283185307179586
 ```
 
-### Standard Functions (W.I.P)
+### Standard Functions
 
 The following mathematical functions are out of the box supported:
 
-| Function      | Arguments  |  Description | More Information |
-| ------------- |-------------| -------|----|
-| sin | sin(A1)|  Sine  | https://pkg.go.dev/math#Sin |
-| cos | cos(A1)|  Cosine| https://pkg.go.dev/math#Cos |
-| max| max(A1, ..., An)|Maximum||
+| Function | Arguments       | Description         | More Information                                                                               |
+| -------- | --------------- | ------------------- | ---------------------------------------------------------------------------------------------- |
+| sin      | sin(x)          | Sine                | https://pkg.go.dev/math#Sin                                                                    |
+| cos      | cos(x)          | Cosine              | https://pkg.go.dev/math#Cos                                                                    |
+| asin     | asin(x)         | Arcsine             | [https://pkg.go.dev/math#Asin](https://pkg.go.dev/math#Asin)                                   |
+| acos     | acos(x)         | Arccosine           | https://pkg.go.dev/math#Acos                                                                   |
+| tan      | tan(x)          | Tangent             | https://pkg.go.dev/math#Tan                                                                    |
+| atan     | atan(x)         | Arctangent          | https://pkg.go.dev/math#Atan                                                                   |
+| log      | log(x)          | Logarithm           | https://pkg.go.dev/math#Log                                                                    |
+| sqrt     | sqrt(x)         | Square Root         | https://pkg.go.dev/math#Sqrt                                                                   |
+| trunc    | trunc(x)        | Truncate            | https://pkg.go.dev/math#Trunc                                                                  |
+| floor    | floor(x)        | Floor               | https://pkg.go.dev/math#Floor                                                                  |
+| ceil     | ceil(x)         | Ceil                | https://pkg.go.dev/math#Ceil                                                                   |
+| round    | round(x \[,y\]) | Round               | Rounds a number to a specified number of digits where 'x' is the number and 'y' is the digits. |
+| random   | random(x)       | Random              | Generate a random double value between 0.0 and 1.0 where 'x' is the seed.                      |
+| if       | if(a,b,c)       | Excel's IF Function | IF 'a' IS true THEN 'b' ELSE 'c'.                                                              |
+| max      | max(x1,…,xn)    | Maximum             | Return the maximum number of a series.                                                         |
+| min      | min(x1,…,xn)    | Minimum             | Return the minimum number of a series.                                                         |
 
 
 ```go
-max, _ := engine.Calculate("max(5,6,3,-4,5,3,7,8,13,100)", nil)
-// 100.0
 
-
+// Sin (ordinary function)
 vars := map[string]interface{}{
    "a":2,
 }
 ret, _ := engine.Calculate("sin(100)+a", vars)
 // 1.4936343588902412
+
+// Round
+retRound, _ := engine.Calculate("round(1.234567,2)", nil)
+// 1.23
+
+// If
+vars := map[string]interface{}{
+   "a":4,
+}
+
+ifresult, _ := engine.Calculate("if(2+2==a, 10, 5)", varsIf)
+// 1.0
+
+// MAX
+max, _ := engine.Calculate("max(5,6,3,-4,5,3,7,8,13,100)", nil)
+// 100.0
+
+
+
 ```
 
 ### Custom Functions 
@@ -148,7 +178,7 @@ result, _ := engine.Calculate("addTwo(2)", nil)
 
 ### Compile Time Constants
 
-Variables as defined in a formula can be replaced by a constant value at compile time. This feature is useful in case that a number of the parameters don't frequently change and that the formula needs to be executed many times. Thusfore is better because constants could be optimizated.
+Variables as defined in a formula can be replaced by a constant value at compile time. This feature is useful in case that a number of the parameters don't frequently change and that the formula needs to be executed many times. Thusfore it is better because constants could be optimizated on 'Optimization phase'.
 
 
 ```go
@@ -186,12 +216,13 @@ Disclaimer: Govaluate has a lot of features and differents operators while goJAC
 ## Roadmap to the first release
 
 ### Alpha
-- [ ] Implement all 'Standard Functions'
+- [X] Implement all 'Standard Functions'
 - [ ] Evaluate more optimization points
 - [ ] Analyze possible issues about pointer dereference
 - [ ] Tests
 
 ### 1.0 
+- [ ] Handle 'unhappy flow' (errors and panic)
 - [ ] Docs
 - [ ] Package
 - [ ] More tests
