@@ -47,7 +47,7 @@ result, _ := engine.Calculate("a*b", vars)
 To build a Func accepting a map as input containing the values for each variable:
 
 ```go
-engine := gojacego.NewCalculationEngineWithOptions(&JaceOptions{
+engine := gojacego.NewCalculationEngineWithOptions(JaceOptions{
 		                                decimalSeparator:  '.',
 		                                argumentSeparador: ',',
 		                                caseSensitive:     false,
@@ -217,11 +217,13 @@ Disclaimer: Govaluate has a lot of features and differents operators while goJAC
 
 ### Alpha
 - [X] Implement all 'Standard Functions'
-- [ ] Evaluate more optimization points
-- [ ] Analyze possible issues about pointer dereference
+- [X] Analyze possible issues about pointer dereference
+- [X] Struct and methods scopes.
 - [ ] Tests
+- [ ] Create develop branch and release alpha package
 
 ### 1.0 
+- [ ] Evaluate more optimization points
 - [ ] Handle 'unhappy flow' (errors and panic)
 - [ ] Docs
 - [ ] Package
