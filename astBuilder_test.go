@@ -63,7 +63,7 @@ func TestBuildFormula2(test *testing.T) {
 	}
 	op, _ := astBuilder.build(params)
 
-	if reflect.TypeOf(op).String() != "*gojacego.AddOperation" {
+	if reflect.TypeOf(op).String() != "*gojacego.addOperation" {
 		test.Errorf("expected: AddOperation, got: %s", reflect.TypeOf(op).String())
 	}
 

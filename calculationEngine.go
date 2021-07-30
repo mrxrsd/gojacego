@@ -164,8 +164,14 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 	return this.buildFormula(formulaText, compiledConstantsRegistry, op), nil
 }
 
+func (this *CalculationEngine) AddConstant(name string, value float64, isOverwritable bool) {
+	this.constantRegistry.registerConstant(name, value, isOverwritable)
+	this.cache.Invalidate()
+}
+
 func (this *CalculationEngine) AddFunction(name string, body Delegate, isIdempotent bool) {
 	this.functionRegistry.registerFunction(name, body, true, isIdempotent)
+	this.cache.Invalidate()
 }
 
 func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledConstants *constantRegistry) (operation, error) {

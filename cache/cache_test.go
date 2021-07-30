@@ -36,4 +36,9 @@ func TestCache(t *testing.T) {
 	if ret == nil {
 		t.Errorf("cannot overwrite cache entry")
 	}
+
+	c.Invalidate()
+	if len(c.items) != 0 {
+		t.Errorf("cache should be empty")
+	}
 }

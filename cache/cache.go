@@ -22,6 +22,12 @@ func NewCache() *Memorycache {
 	return c
 }
 
+func (c *Memorycache) Invalidate() {
+	c.mu.Lock()
+	c.items = make(map[string]Item)
+	c.mu.Unlock()
+}
+
 func (c *Memorycache) Add(key string, item Item) error {
 	c.mu.Lock()
 	_, found := c.items[key]

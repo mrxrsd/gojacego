@@ -15,7 +15,7 @@ func TestOptimizerMultiplicationByZero(test *testing.T) {
 	operation, _ := astBuilder.build(tokens)
 	optimizedOperation := optimizer.optimize(operation, getFunctionRegistry(), getConstantRegistry())
 
-	if reflect.TypeOf(optimizedOperation).String() != "*gojacego.ConstantOperation" {
+	if reflect.TypeOf(optimizedOperation).String() != "*gojacego.constantOperation" {
 		test.Errorf("expected: ConstantOperation, got: %s", reflect.TypeOf(optimizedOperation).String())
 	}
 

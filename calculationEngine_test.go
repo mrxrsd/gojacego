@@ -12,19 +12,6 @@ type CalculationTestScenario struct {
 	fnCallback     func(float64) float64
 }
 
-func TestDebug(test *testing.T) {
-	engine := NewCalculationEngine()
-
-	vars := map[string]interface{}{
-		"seed": 5,
-	}
-	result, _ := engine.Calculate("random(seed)", vars)
-	if result != 0.0 {
-		test.Logf("test:%f", result)
-	}
-
-}
-
 func TestCalculationDefaultEngine(t *testing.T) {
 	engine := NewCalculationEngine()
 
@@ -401,6 +388,44 @@ func runScenarios(engine *CalculationEngine, scenarios []CalculationTestScenario
 	}
 }
 
+func TestFormulaContext(test *testing.T) {
+
+	engine := NewCalculationEngine()
+
+	engine.AddConstant("teste", 2.0, true)
+
+	fn, _ := engine.Build("teste")
+
+	result := fn(nil)
+
+	if result != 2.0 {
+		test.Errorf("exptected:2.0, got: %f", result)
+	}
+
+	engine.AddConstant("teste", 4.0, true)
+
+	result2 := fn(nil)
+
+	if result2 != 2.0 {
+		test.Errorf("exptected: 2.0, got: %f", result2)
+	}
+
+	fnAfter, _ := engine.Build("teste")
+
+	resultAfter := fnAfter(nil)
+
+	if resultAfter != 4.0 {
+		test.Errorf("exptected: 4.0, got: %f", result2)
+	}
+
+	result3 := fn(nil)
+
+	if result3 != 2.0 {
+		test.Errorf("exptected: 2.0, got: %f", result3)
+	}
+
+}
+
 func TestCustomFunctions(test *testing.T) {
 	engine := NewCalculationEngine()
 
@@ -413,6 +438,7 @@ func TestCustomFunctions(test *testing.T) {
 	if result != 4 {
 		test.Errorf("exptected: 4.0, got: %f", result)
 	}
+
 }
 
 func TestCompiledConstants(test *testing.T) {
