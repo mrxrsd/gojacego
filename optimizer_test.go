@@ -7,13 +7,13 @@ import (
 
 func TestOptimizerMultiplicationByZero(test *testing.T) {
 	interpreter := &interpreter{}
-	optimizer := &Optimizer{executor: *interpreter}
+	optimizer := &optimizer{executor: *interpreter}
 	reader := newTokenReader('.', ',')
 	astBuilder := newAstBuilder(false, getFunctionRegistry(), getConstantRegistry(), nil)
 
 	tokens, _ := reader.read("var1 * 0.0")
 	operation, _ := astBuilder.build(tokens)
-	optimizedOperation := optimizer.Optimize(operation, getFunctionRegistry(), getConstantRegistry())
+	optimizedOperation := optimizer.optimize(operation, getFunctionRegistry(), getConstantRegistry())
 
 	if reflect.TypeOf(optimizedOperation).String() != "*gojacego.ConstantOperation" {
 		test.Errorf("expected: ConstantOperation, got: %s", reflect.TypeOf(optimizedOperation).String())

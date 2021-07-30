@@ -20,7 +20,7 @@ type JaceOptions struct {
 type CalculationEngine struct {
 	cache            *cache.Memorycache
 	options          JaceOptions
-	optimizer        *Optimizer
+	optimizer        *optimizer
 	executor         *interpreter
 	constantRegistry *constantRegistry
 	functionRegistry *functionRegistry
@@ -52,7 +52,7 @@ func NewCalculationEngineWithOptions(options JaceOptions) *CalculationEngine {
 	}
 
 	interpreter := &interpreter{}
-	optimizer := &Optimizer{executor: *interpreter}
+	optimizer := &optimizer{executor: *interpreter}
 	constantRegistry := newConstantRegistry(options.caseSensitive)
 	functionRegistry := newFunctionRegistry(options.caseSensitive)
 
@@ -184,7 +184,7 @@ func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledC
 	}
 
 	if this.options.optimizeEnabled {
-		optimizedOperation := this.optimizer.Optimize(operation, this.functionRegistry, this.constantRegistry)
+		optimizedOperation := this.optimizer.optimize(operation, this.functionRegistry, this.constantRegistry)
 		return optimizedOperation, nil
 	}
 

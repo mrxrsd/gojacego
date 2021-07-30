@@ -1,10 +1,10 @@
 package gojacego
 
-type Optimizer struct {
+type optimizer struct {
 	executor interpreter
 }
 
-func (this *Optimizer) Optimize(op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) operation {
+func (this *optimizer) optimize(op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) operation {
 	return optimize(this.executor, op, functionRegistry, constantRegistry)
 }
 func optimize(executor interpreter, op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) operation {
