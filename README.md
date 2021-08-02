@@ -48,12 +48,12 @@ To build a Func accepting a map as input containing the values for each variable
 
 ```go
 engine := gojacego.NewCalculationEngineWithOptions(JaceOptions{
-		                                decimalSeparator:  '.',
-		                                argumentSeparador: ',',
-		                                caseSensitive:     false,
-		                                optimizeEnabled:   true,
-		                                defaultConstants:  true,
-		                                defaultFunctions:  true,
+		                                DecimalSeparator:  '.',
+		                                ArgumentSeparador: ',',
+		                                CaseSensitive:     false,
+		                                OptimizeEnabled:   true,
+		                                DefaultConstants:  true,
+		                                DefaultFunctions:  true,
 	})
 
 formula := engine.Build("a*b")
@@ -200,8 +200,24 @@ result, := formula(vars)
 
 ## Benchmark 
 
-### goJACEgo vs Govaluate
+### goJACEgo vs Others
 
+https://github.com/mrxrsd/golang-expression-evaluation-comparison
+
+| Test                         |                     | 
+|------------------------------|---------------------| 
+| Benchmark_bexpr-8            |        2278 ns/op   | 
+| Benchmark_celgo-8            |         127.0 ns/op | 
+| Benchmark_evalfilter-8       |        1646 ns/op   | 
+| Benchmark_expr-8             |         119.1 ns/op | 
+| Benchmark_goja-8             |         306.9 ns/op | 
+| Benchmark_gojacego-8         |         117.3 ns/op | 
+| Benchmark_govaluate-8        |         259.9 ns/op | 
+| Benchmark_gval-8             |         295.0 ns/op | 
+| Benchmark_otto-8             |         951.2 ns/op | 
+| Benchmark_starlark-8         |        5971 ns/op   | 
+
+### goJACEgo vs Govaluate
 
 | Test                                   | Gojacego    | Govaluate   |
 | -------------------------------------- | ----------- | ----------- |
@@ -211,7 +227,8 @@ result, := formula(vars)
 | BenchmarkEvaluationParameters          | 31.91 ns/op | 122.0 ns/op |
 | BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |
 
-Disclaimer: Govaluate has a lot of features and differents operators while goJACEgo has only mathematical and logical operators.
+
+Disclaimer: GoJACEgo has only mathematical and logical operators while others has more features. 
 
 ## Roadmap to the first release
 
