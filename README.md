@@ -200,9 +200,9 @@ result, := formula(vars)
 
 ## Benchmark 
 
-### goJACEgo vs Others
-
 https://github.com/mrxrsd/golang-expression-evaluation-comparison
+
+### goJACEgo vs Others
 
 | Test                         |                     | 
 |------------------------------|---------------------| 
@@ -217,15 +217,17 @@ https://github.com/mrxrsd/golang-expression-evaluation-comparison
 | Benchmark_otto-8             |         951.2 ns/op | 
 | Benchmark_starlark-8         |        5971 ns/op   | 
 
-### goJACEgo vs Govaluate
+### goJACEgo vs Govaluate vs Expr
 
-| Test                                   | Gojacego    | Govaluate   |
-| -------------------------------------- | ----------- | ----------- |
-| BenchmarkEvaluationNumericLiteral      | 23.77 ns/op | 71.73 ns/op |
-| BenchmarkEvaluationLiteralModifiers    | 34.33 ns/op | 180.8 ns/op |
-| BenchmarkEvaluationParameter           | 11.25 ns/op | 72.47 ns/op |
-| BenchmarkEvaluationParameters          | 31.91 ns/op | 122.0 ns/op |
-| BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |
+| Test                                   | Gojacego    | Govaluate   |  Expr        |
+| -------------------------------------- | ----------- | ----------- |--------------|
+| BenchmarkEvaluationNumericLiteral      | 23.77 ns/op | 71.73 ns/op |  87.71 ns/op |
+| BenchmarkEvaluationLiteralModifiers    | 34.33 ns/op | 180.8 ns/op |  69.92 ns/op |
+| BenchmarkEvaluationParameter           | 11.25 ns/op | 72.47 ns/op |  69.75 ns/op |
+| BenchmarkEvaluationParameters          | 31.91 ns/op | 122.0 ns/op |  202.2 ns/op |
+| BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |  368.6 ns/op |
+| BenchmarkComplexPrecedenceMath         | 77.83 ns/op | 18.20 ns/op |  67.96 ns/op |
+| BenchmarkMath                          | 39.22 ns/op | 243.7 ns/op |  252.1 ns/op |
 
 
 Disclaimer: GoJACEgo has only mathematical and logical operators while others has more features. 
