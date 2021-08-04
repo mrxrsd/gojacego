@@ -41,6 +41,30 @@ func optimize(executor interpreter, op operation, functionRegistry *functionRegi
 			cop.Base = optimize(executor, cop.Base, functionRegistry, constantRegistry)
 			cop.Exponent = optimize(executor, cop.Exponent, functionRegistry, constantRegistry)
 
+		} else if cop, ok := op.(*greaterThanOperation); ok {
+			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
+			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
+
+		} else if cop, ok := op.(*greaterOrEqualThanOperation); ok {
+			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
+			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
+
+		} else if cop, ok := op.(*andOperation); ok {
+			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
+			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
+
+		} else if cop, ok := op.(*orOperation); ok {
+			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
+			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
+
+		} else if cop, ok := op.(*lessThanOperation); ok {
+			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
+			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
+
+		} else if cop, ok := op.(*lessOrEqualThanOperation); ok {
+			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
+			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
+
 		} else if cop, ok := op.(*functionOperation); ok {
 			optimizedArguments := make([]operation, len(cop.Arguments))
 

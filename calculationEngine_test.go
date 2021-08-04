@@ -12,16 +12,6 @@ type CalculationTestScenario struct {
 	fnCallback     func(float64) float64
 }
 
-func TestDebug(t *testing.T) {
-	engine := NewCalculationEngine()
-	// result, _ := engine.Calculate("1+2-3*4/5+6-7*8/9+0", nil)
-	result, _ := engine.Calculate("2+2", nil)
-
-	if result != 1.0 {
-
-	}
-
-}
 func TestCalculationDefaultEngine(t *testing.T) {
 	engine := NewCalculationEngine()
 
