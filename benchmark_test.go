@@ -106,3 +106,14 @@ func BenchmarkExpr(bench *testing.B) {
 		formula(parameters)
 	}
 }
+
+func BenchmarkComplexPrecendence(bench *testing.B) {
+
+	engine := createEngine()
+	formula, _ := engine.Build("1+2-3*4/5+6-7*8/9+0")
+
+	bench.ResetTimer()
+	for i := 0; i < bench.N; i++ {
+		formula(nil)
+	}
+}
