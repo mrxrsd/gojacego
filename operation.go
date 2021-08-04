@@ -54,7 +54,7 @@ func newAddOperation(dataType operationDataType, operationOne operation, operati
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &addOperation{
@@ -78,7 +78,7 @@ func newAndOperation(dataType operationDataType, operationOne operation, operati
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &andOperation{
@@ -123,7 +123,7 @@ func newDivisorOperation(dataType operationDataType, dividend operation, divisor
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: dividend.OperationMetadata().DependsOnVariables || divisor.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       dividend.OperationMetadata().IsIdempotent && divisor.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       dividend.OperationMetadata().IsIdempotent && divisor.OperationMetadata().IsIdempotent,
 	}
 
 	return &divisorOperation{
@@ -147,7 +147,7 @@ func newEqualOperation(dataType operationDataType, operationOne operation, opera
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &equalOperation{
@@ -171,7 +171,7 @@ func newExponentiationOperation(dataType operationDataType, base operation, expo
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: base.OperationMetadata().DependsOnVariables || exponent.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       base.OperationMetadata().IsIdempotent && exponent.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       base.OperationMetadata().IsIdempotent && exponent.OperationMetadata().IsIdempotent,
 	}
 
 	return &exponentiationOperation{
@@ -226,7 +226,7 @@ func newGreaterOrEqualThanOperation(dataType operationDataType, operationOne ope
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &greaterOrEqualThanOperation{
@@ -250,7 +250,7 @@ func newGreaterThanOperation(dataType operationDataType, operationOne operation,
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &greaterThanOperation{
@@ -274,7 +274,7 @@ func newLessOrEqualThanOperation(dataType operationDataType, operationOne operat
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &lessOrEqualThanOperation{
@@ -298,7 +298,7 @@ func newLessThanOperation(dataType operationDataType, operationOne operation, op
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &lessThanOperation{
@@ -322,7 +322,7 @@ func newModuloOperation(dataType operationDataType, dividend operation, divisor 
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: dividend.OperationMetadata().DependsOnVariables || divisor.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       dividend.OperationMetadata().IsIdempotent && divisor.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       dividend.OperationMetadata().IsIdempotent && divisor.OperationMetadata().IsIdempotent,
 	}
 
 	return &moduloOperation{
@@ -346,7 +346,7 @@ func newMultiplicationOperation(dataType operationDataType, operationOne operati
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &multiplicationOperation{
@@ -370,7 +370,7 @@ func newNotEqualOperation(dataType operationDataType, operationOne operation, op
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &notEqualOperation{
@@ -394,7 +394,7 @@ func newOrOperation(dataType operationDataType, operationOne operation, operatio
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &orOperation{
@@ -418,7 +418,7 @@ func newSubtractionOperation(dataType operationDataType, operationOne operation,
 	meta := operationMetadata{
 		DataType:           dataType,
 		DependsOnVariables: operationOne.OperationMetadata().DependsOnVariables || operationTwo.OperationMetadata().DependsOnVariables,
-		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().DependsOnVariables,
+		IsIdempotent:       operationOne.OperationMetadata().IsIdempotent && operationTwo.OperationMetadata().IsIdempotent,
 	}
 
 	return &subtractionOperation{

@@ -14,6 +14,7 @@ func getConstantRegistry() *constantRegistry {
 func getFunctionRegistry() *functionRegistry {
 	return &functionRegistry{
 		caseSensitive: false,
+		functions:     map[string]functionInfo{},
 	}
 }
 
