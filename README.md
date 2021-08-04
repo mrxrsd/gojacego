@@ -152,7 +152,7 @@ vars := map[string]interface{}{
 }
 
 ifresult, _ := engine.Calculate("if(2+2==a, 10, 5)", varsIf)
-// 1.0
+// 10.0
 
 // MAX
 max, _ := engine.Calculate("max(5,6,3,-4,5,3,7,8,13,100)", nil)
@@ -221,12 +221,12 @@ https://github.com/mrxrsd/golang-expression-evaluation-comparison
 
 | Test                                   | Gojacego    | Govaluate   |  Expr        |
 | -------------------------------------- | ----------- | ----------- |--------------|
-| BenchmarkEvaluationNumericLiteral      | 23.77 ns/op | 71.73 ns/op |  87.71 ns/op |
-| BenchmarkEvaluationLiteralModifiers    | 34.33 ns/op | 180.8 ns/op |  69.92 ns/op |
+| BenchmarkEvaluationNumericLiteral      |  5.42 ns/op | 71.73 ns/op |  87.71 ns/op |
+| BenchmarkEvaluationLiteralModifiers    |  5.63 ns/op | 180.8 ns/op |  69.92 ns/op |
 | BenchmarkEvaluationParameter           | 11.25 ns/op | 72.47 ns/op |  69.75 ns/op |
 | BenchmarkEvaluationParameters          | 31.91 ns/op | 122.0 ns/op |  202.2 ns/op |
 | BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |  368.6 ns/op |
-| BenchmarkComplexPrecedenceMath         | 77.83 ns/op | 18.20 ns/op |  67.96 ns/op |
+| BenchmarkComplexPrecedenceMath         |  4.73 ns/op | 18.20 ns/op |  67.96 ns/op |
 | BenchmarkMath                          | 39.22 ns/op | 243.7 ns/op |  252.1 ns/op |
 
 
