@@ -24,13 +24,27 @@ func optimize(executor interpreter, op operation, functionRegistry *functionRegi
 
 		} else if cop, ok := op.(*multiplicationOperation); ok {
 			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
-			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
-
 			cop1, ok1 := cop.OperationOne.(*constantOperation)
-			cop2, ok2 := cop.OperationTwo.(*constantOperation)
+			if ok1 {
+				if cop1.Metadata.DataType == floatingPoint && cop1.Value == 0.0 {
+					return newConstantOperation(floatingPoint, 0.0)
+				} else {
+					if toFloat64(cop1.Value) == 0.0 {
+						return newConstantOperation(floatingPoint, 0.0)
+					}
+				}
+			}
 
-			if ok1 && cop1.Value == 0.0 || ok2 && cop2.Value == 0.0 {
-				return newConstantOperation(floatingPoint, 0.0)
+			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
+			cop2, ok2 := cop.OperationTwo.(*constantOperation)
+			if ok2 {
+				if cop2.Metadata.DataType == floatingPoint && cop2.Value == 0.0 {
+					return newConstantOperation(floatingPoint, 0.0)
+				} else {
+					if toFloat64(cop2.Value) == 0.0 {
+						return newConstantOperation(floatingPoint, 0.0)
+					}
+				}
 			}
 
 		} else if cop, ok := op.(*divisorOperation); ok {
@@ -50,12 +64,55 @@ func optimize(executor interpreter, op operation, functionRegistry *functionRegi
 			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
 
 		} else if cop, ok := op.(*andOperation); ok {
+
 			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
+			cop1, ok1 := cop.OperationOne.(*constantOperation)
+			if ok1 {
+				if cop1.Metadata.DataType == floatingPoint && cop1.Value == 0.0 {
+					return newConstantOperation(floatingPoint, 0.0)
+				} else {
+					if toFloat64(cop1.Value) == 0.0 {
+						return newConstantOperation(floatingPoint, 0.0)
+					}
+				}
+			}
+
 			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
+			cop2, ok2 := cop.OperationTwo.(*constantOperation)
+			if ok2 {
+				if cop2.Metadata.DataType == floatingPoint && cop2.Value == 0.0 {
+					return newConstantOperation(floatingPoint, 0.0)
+				} else {
+					if toFloat64(cop2.Value) == 0.0 {
+						return newConstantOperation(floatingPoint, 0.0)
+					}
+				}
+			}
 
 		} else if cop, ok := op.(*orOperation); ok {
 			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
+			cop1, ok1 := cop.OperationOne.(*constantOperation)
+			if ok1 {
+				if cop1.Metadata.DataType == floatingPoint && cop1.Value == 1.0 {
+					return newConstantOperation(floatingPoint, 1.0)
+				} else {
+					if toFloat64(cop1.Value) == 1.0 {
+						return newConstantOperation(floatingPoint, 1.0)
+					}
+				}
+			}
+
 			cop.OperationTwo = optimize(executor, cop.OperationTwo, functionRegistry, constantRegistry)
+			cop2, ok2 := cop.OperationTwo.(*constantOperation)
+			if ok2 {
+				if cop2.Metadata.DataType == floatingPoint && cop2.Value == 1.0 {
+					return newConstantOperation(floatingPoint, 1.0)
+				} else {
+					if toFloat64(cop2.Value) == 1.0 {
+						return newConstantOperation(floatingPoint, 1.0)
+					}
+				}
+			}
 
 		} else if cop, ok := op.(*lessThanOperation); ok {
 			cop.OperationOne = optimize(executor, cop.OperationOne, functionRegistry, constantRegistry)
