@@ -122,6 +122,20 @@ func TestTokenReader12(test *testing.T) {
 	}
 }
 
+func TestTokenReader26(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("2.11e3+1.23E4")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	if len(ret) != 3 {
+		test.Errorf("Count - expected: 3, got: %d", len(ret))
+	}
+}
+
 func TestTokenReader32(test *testing.T) {
 	reader := newTokenReader('.', ',')
 	ret, err := reader.read("-e")
@@ -161,5 +175,19 @@ func TestTokenReader34(test *testing.T) {
 
 	if len(ret) != 3 {
 		test.Errorf("Count - expected: 3, got: %d", len(ret))
+	}
+}
+
+func TestTokenReader35(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("1e-3*5+2")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	if len(ret) != 5 {
+		test.Errorf("Count - expected: 5, got: %d", len(ret))
 	}
 }
