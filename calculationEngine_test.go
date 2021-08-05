@@ -273,6 +273,16 @@ func TestCalculationDefaultEngine(t *testing.T) {
 			formula:        "5*-3",
 			expectedResult: -15,
 		},
+		{
+			formula: "$a + b + c_c + d1 + 10",
+			variables: map[string]interface{}{
+				"$a":  1,
+				"b":   2,
+				"c_c": 3,
+				"d1":  4,
+			},
+			expectedResult: 20.0,
+		},
 	}
 
 	runScenarios(engine, scenarios, t)
