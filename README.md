@@ -5,9 +5,9 @@
 
 
 # goJACEgo 
-goJACEgo is a high performance calculation engine for Go and it is a port of Jace.NET. 
+goJACEgo is a high performance calculation engine for Go, written in pure Go. 
 
-'Jace' stands for "Just Another Calculation Engine".
+'Jace' stands for "Just Another Calculation Engine". it is a port of Jace.NET
  
 ### What does it do?
 goJACEgo can interprete and execute strings containing mathematical formulas. These formulas can rely on variables. If variables are used, values can be provided for these variables at execution time of the mathematical formula.
@@ -241,17 +241,17 @@ https://github.com/mrxrsd/golang-expression-evaluation-comparison
 | Benchmark_otto-8             |         951.2 ns/op | 
 | Benchmark_starlark-8         |        5971 ns/op   | 
 
-### goJACEgo vs Govaluate vs Expr
+### goJACEgo vs Govaluate vs Expr vs Gval
 
-| Test                                   | Gojacego    | Govaluate   |  Expr        |
-| -------------------------------------- | ----------- | ----------- |--------------|
-| BenchmarkEvaluationNumericLiteral      |  5.42 ns/op | 71.73 ns/op |  87.71 ns/op |
-| BenchmarkEvaluationLiteralModifiers    |  5.63 ns/op | 180.8 ns/op |  69.92 ns/op |
-| BenchmarkEvaluationParameter           | 11.25 ns/op | 72.47 ns/op |  69.75 ns/op |
-| BenchmarkEvaluationParameters          | 31.91 ns/op | 122.0 ns/op |  202.2 ns/op |
-| BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |  368.6 ns/op |
-| BenchmarkComplexPrecedenceMath         |  4.73 ns/op | 18.20 ns/op |  67.96 ns/op |
-| BenchmarkMath                          | 39.22 ns/op | 243.7 ns/op |  252.1 ns/op |
+| Test                                   | Gojacego    | Govaluate   |  Expr        | Gval         |
+| -------------------------------------- | ----------- | ----------- |--------------|--------------|
+| BenchmarkEvaluationNumericLiteral      |  5.42 ns/op | 71.73 ns/op |  87.71 ns/op |   1.89 ns/op |
+| BenchmarkEvaluationLiteralModifiers    |  5.63 ns/op | 180.8 ns/op |  69.92 ns/op |   1.85 ns/op |
+| BenchmarkEvaluationParameter           | 11.25 ns/op | 72.47 ns/op |  69.75 ns/op |  147.1 ns/op |
+| BenchmarkEvaluationParameters          | 31.91 ns/op | 122.0 ns/op |  202.2 ns/op |  315.6 ns/op |
+| BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |  368.6 ns/op |  378.5 ns/op |
+| BenchmarkComplexPrecedenceMath         |  4.73 ns/op | 18.20 ns/op |  67.96 ns/op |   1.93 ns/op |
+| BenchmarkMath                          | 39.22 ns/op | 243.7 ns/op |  252.1 ns/op |  395.3 ns/op |
 
 
 Disclaimer: GoJACEgo has only mathematical and logical operators while others has more features. 
@@ -267,8 +267,11 @@ Disclaimer: GoJACEgo has only mathematical and logical operators while others ha
 - [ ] Tests
 - [ ] Evaluate more optimization points
 
-### 1.0 
+### RC   
 - [ ] Handle 'unhappy flow' (errors and panic)
 - [ ] Docs
 - [ ] Package
 - [ ] More tests
+
+### 1.0
+- [ ] Publish
