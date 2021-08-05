@@ -264,13 +264,12 @@ Disclaimer: GoJACEgo has only mathematical and logical operators while others ha
 - [X] Struct and methods scopes.
 
 ### Beta
-- [ ] Tests
-- [ ] Evaluate more optimization points
+- [X] Tests
+- [X] Evaluate more optimization points
 
 ### RC   
 - [ ] Handle 'unhappy flow' (errors and panic)
 - [ ] Docs
-- [ ] Package
 - [ ] More tests
 
 ### 1.0
