@@ -2,6 +2,7 @@ package gojacego
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -42,10 +43,14 @@ func (this tokenReader) read(formula string) ([]token, error) {
 				}
 
 				if isScientific && this.isScientificNotation(runes[i]) {
+					return nil, fmt.Errorf("invalid token '%s' detected at position '%d'", string(runes[i]), i)
+				}
+
+				if this.isScientificNotation(runes[i]) {
 					isScientific = true
 					if runes[i+1] == '-' {
-						i++
 						buffer = append(buffer, runes[i])
+						i++
 					}
 				}
 

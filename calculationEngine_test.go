@@ -250,6 +250,39 @@ func TestCalculationDefaultEngine(t *testing.T) {
 			},
 			expectedResult: 3.0,
 		},
+		{
+			formula:        "0-6==-6",
+			expectedResult: 1.0,
+		},
+		{
+			formula:        "32.9<-10",
+			expectedResult: 0.0,
+		},
+		{
+			formula:        "(2766237061056.00--1619439373.00)/17150000000.00",
+			expectedResult: 161.39,
+			fnCallback: func(f float64) float64 {
+				return math.Round(f*100) / 100
+			},
+		},
+		{
+			formula:        "1e-3*5+2",
+			expectedResult: 2.005,
+		},
+		{
+			formula:        "5*-3",
+			expectedResult: -15,
+		},
+		{
+			formula: "$a + b + c_c + d1 + 10",
+			variables: map[string]interface{}{
+				"$a":  1,
+				"b":   2,
+				"c_c": 3,
+				"d1":  4,
+			},
+			expectedResult: 20.0,
+		},
 	}
 
 	runScenarios(engine, scenarios, t)
