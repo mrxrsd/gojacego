@@ -96,6 +96,12 @@ The boolean operations map true to 1.0 and false to 0.0. All functions accepting
 result, _ := engine.Calculate("5 > 1", nil)
 // 1.0
 ```
+### Scientific Notation
+
+```go
+result, _ := engine.Calculate("1E-3*5+2", nil)
+// 2.005
+```
 
 ### Standard Constants
 
