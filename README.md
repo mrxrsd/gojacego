@@ -103,6 +103,24 @@ result, _ := engine.Calculate("1E-3*5+2", nil)
 // 2.005
 ```
 
+### Variables
+
+```go
+vars := map[string]interface{}{
+	"$a":  1,
+	"B":   2,
+	"c_c": 3,
+	"d1":  4,
+	"VaR_vAr": 10
+}
+
+result, _ := engine.Calculate("$a + B + c_c + d1 + 10 + VaR_vAr",
+// 30.0
+```
+- Can contains letters ( a-z | A-Z ), underscore ( _ ), dolar sign ( $ ) or a number ( 0-9 ).
+- Cannot start with a number.
+- Cannot start with underscore.
+
 ### Standard Constants
 
 | Constant        |  Description | More Information |
