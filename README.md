@@ -114,7 +114,7 @@ vars := map[string]interface{}{
 	"VaR_vAr": 10
 }
 
-result, _ := engine.Calculate("$a + B + c_c + d1 + 10 + VaR_vAr",
+result, _ := engine.Calculate("$a + B + c_c + d1 + 10 + VaR_vAr", vars)
 // 30.0
 ```
 - Can contains letters ( a-z | A-Z ), underscore ( _ ), dolar sign ( $ ) or a number ( 0-9 ).
