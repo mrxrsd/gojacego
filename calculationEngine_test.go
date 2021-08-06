@@ -429,7 +429,7 @@ func TestFormulaContext(test *testing.T) {
 
 	fn, _ := engine.Build("teste")
 
-	result := fn(nil)
+	result, _ := fn(nil)
 
 	if result != 2.0 {
 		test.Errorf("exptected:2.0, got: %f", result)
@@ -437,7 +437,7 @@ func TestFormulaContext(test *testing.T) {
 
 	engine.AddConstant("teste", 4.0, true)
 
-	result2 := fn(nil)
+	result2, _ := fn(nil)
 
 	if result2 != 2.0 {
 		test.Errorf("exptected: 2.0, got: %f", result2)
@@ -445,13 +445,13 @@ func TestFormulaContext(test *testing.T) {
 
 	fnAfter, _ := engine.Build("teste")
 
-	resultAfter := fnAfter(nil)
+	resultAfter, _ := fnAfter(nil)
 
 	if resultAfter != 4.0 {
 		test.Errorf("exptected: 4.0, got: %f", result2)
 	}
 
-	result3 := fn(nil)
+	result3, _ := fn(nil)
 
 	if result3 != 2.0 {
 		test.Errorf("exptected: 2.0, got: %f", result3)
@@ -486,7 +486,7 @@ func TestCompiledConstants(test *testing.T) {
 		"b": 2.0,
 		"c": 3.0,
 	}
-	result := fn(input)
+	result, _ := fn(input)
 
 	if result != 6 {
 		test.Errorf("exptected: 6.0, got: %f", result)
@@ -557,4 +557,17 @@ func TestFormulaRequired(test *testing.T) {
 	if err2 == nil {
 		test.Errorf("error should not be null")
 	}
+}
+
+func TestCalculateFormulaVariableNotDefined(test *testing.T) {
+	engine := NewCalculationEngine()
+
+	vars := map[string]interface{}{
+		"var1": 1,
+	}
+	_, err := engine.Calculate("var1*var2", vars)
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+
 }

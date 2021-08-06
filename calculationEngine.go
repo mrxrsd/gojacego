@@ -86,7 +86,7 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 
 	if found {
 		formula := item.(Formula)
-		return formula(formulaVariables), nil
+		return formula(formulaVariables)
 	}
 
 	op, err := this.buildAbstractSyntaxTree(formulaText, nil)
@@ -96,7 +96,7 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 
 	formula := this.buildFormula(formulaText, nil, op)
 
-	return formula(formulaVariables), nil
+	return formula(formulaVariables)
 }
 
 func (this *CalculationEngine) generateFormulaCacheKey(formulaText string, compiledConstantsRegistry *constantRegistry) string {
