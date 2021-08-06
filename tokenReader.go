@@ -48,7 +48,7 @@ func (this tokenReader) read(formula string) ([]token, error) {
 
 				if this.isScientificNotation(runes[i]) {
 					isScientific = true
-					if runes[i+1] == '-' {
+					if len(runes) > i+1 && runes[i+1] == '-' {
 						buffer = append(buffer, runes[i])
 						i++
 					}
@@ -79,7 +79,7 @@ func (this tokenReader) read(formula string) ([]token, error) {
 						StartPosition: startPosition,
 						Length:        i - startPosition})
 				} else {
-					// TODO parse exception
+					return nil, fmt.Errorf("invalid floating point number: %s", string(buffer))
 				}
 			}
 
@@ -139,7 +139,6 @@ func (this tokenReader) read(formula string) ([]token, error) {
 
 				}
 				isFormulaSubPart = true
-				break
 			case '(':
 
 				ret = append(ret, token{Type: tt_LEFT_BRACKET,
@@ -147,20 +146,19 @@ func (this tokenReader) read(formula string) ([]token, error) {
 					StartPosition: i,
 					Length:        1})
 				isFormulaSubPart = true
-				break
 			case ')':
 				ret = append(ret, token{Type: tt_RIGHT_BRACKET,
 					Value:         runes[i],
 					StartPosition: i,
 					Length:        1})
 				isFormulaSubPart = false
-				break
 			case '<':
 				if i+1 < runesLength && runes[i+1] == '=' {
 					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '≤',
 						StartPosition: i,
 						Length:        1})
+					i++
 				} else {
 					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '<',
@@ -168,13 +166,13 @@ func (this tokenReader) read(formula string) ([]token, error) {
 						Length:        1})
 				}
 				isFormulaSubPart = false
-				break
 			case '>':
 				if i+1 < runesLength && runes[i+1] == '=' {
 					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '≥',
 						StartPosition: i,
 						Length:        1})
+					i++
 				} else {
 					ret = append(ret, token{Type: tt_OPERATION,
 						Value:         '>',
@@ -182,7 +180,6 @@ func (this tokenReader) read(formula string) ([]token, error) {
 						Length:        1})
 				}
 				isFormulaSubPart = false
-				break
 			case '!':
 				if i+1 < runesLength && runes[i+1] == '=' {
 					ret = append(ret, token{Type: tt_OPERATION,
@@ -193,9 +190,8 @@ func (this tokenReader) read(formula string) ([]token, error) {
 
 					isFormulaSubPart = false
 				} else {
-					//TODO PARSE EXCEPTION
+					return nil, fmt.Errorf("invalid token '%s' detected at position '%d'", string(runes[i]), i)
 				}
-				break
 			case '&':
 				if i+1 < runesLength && runes[i+1] == '&' {
 					ret = append(ret, token{Type: tt_OPERATION,
@@ -205,9 +201,8 @@ func (this tokenReader) read(formula string) ([]token, error) {
 					i++
 					isFormulaSubPart = false
 				} else {
-					//TODO PARSE EXCEPTION
+					return nil, fmt.Errorf("invalid token '%s' detected at position '%d'", string(runes[i]), i)
 				}
-				break
 			case '|':
 				if i+1 < runesLength && runes[i+1] == '|' {
 					ret = append(ret, token{Type: tt_OPERATION,
@@ -217,9 +212,8 @@ func (this tokenReader) read(formula string) ([]token, error) {
 					i++
 					isFormulaSubPart = false
 				} else {
-					//TODO PARSE EXCEPTION
+					return nil, fmt.Errorf("invalid token '%s' detected at position '%d'", string(runes[i]), i)
 				}
-				break
 			case '=':
 				if i+1 < runesLength && runes[i+1] == '=' {
 					ret = append(ret, token{Type: tt_OPERATION,
@@ -229,12 +223,10 @@ func (this tokenReader) read(formula string) ([]token, error) {
 					i++
 					isFormulaSubPart = false
 				} else {
-					//TODO PARSE EXCEPTION
+					return nil, fmt.Errorf("invalid token '%s' detected at position '%d'", string(runes[i]), i)
 				}
-				break
 			default:
-				//TODO PARSE EXCEPTION
-				//throw new ParseException(string.Format("Invalid token \"{0}\" detected at position {1}.", characters[i], i));
+				return nil, fmt.Errorf("invalid token '%s' detected at position '%d'", string(runes[i]), i)
 			}
 		}
 	}

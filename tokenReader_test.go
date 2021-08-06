@@ -389,6 +389,60 @@ func TestTokenReader26(test *testing.T) {
 	}
 }
 
+func TestTokenReader27(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("-(1)^2")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	testLen(test, ret, 6)
+	testToken(test, ret[0], "_", 0, 1)
+	testToken(test, ret[1], "(", 1, 1)
+	testToken(test, ret[2], "1", 2, 1)
+	testToken(test, ret[3], ")", 3, 1)
+	testToken(test, ret[4], "^", 4, 1)
+	testToken(test, ret[5], "2", 5, 1)
+}
+
+func TestTokenReader28(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	_, err := reader.read(".")
+
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestTokenReader29(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	_, err := reader.read("..")
+
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestTokenReader30(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	_, err := reader.read("..1")
+
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestTokenReader31(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	_, err := reader.read("0..1")
+
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
 func TestTokenReader32(test *testing.T) {
 	reader := newTokenReader('.', ',')
 	ret, err := reader.read("-e")
@@ -442,5 +496,32 @@ func TestTokenReader35(test *testing.T) {
 
 	if len(ret) != 5 {
 		test.Errorf("Count - expected: 5, got: %d", len(ret))
+	}
+}
+
+func TestTokenReader36(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	_, err := reader.read("2.11E-e3")
+
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestTokenReader37(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	_, err := reader.read("2.11E-e")
+
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestTokenReader38(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	_, err := reader.read("3e")
+
+	if err == nil {
+		test.Errorf("error should not be null")
 	}
 }

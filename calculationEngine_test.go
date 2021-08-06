@@ -544,3 +544,17 @@ func TestCaseUnsensitive(test *testing.T) {
 		test.Errorf("exptected: 3.0, got: %f", result)
 	}
 }
+
+func TestFormulaRequired(test *testing.T) {
+	engine := NewCalculationEngine()
+
+	_, err := engine.Calculate("", nil)
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+
+	_, err2 := engine.Build("")
+	if err2 == nil {
+		test.Errorf("error should not be null")
+	}
+}
