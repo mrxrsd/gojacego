@@ -80,7 +80,10 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 		return 0, errors.New("the parameter 'formula' is required")
 	}
 
-	formulaVariables := createFormulaVariables(vars, this.options.CaseSensitive)
+	formulaVariables, err := createFormulaVariables(vars, this.options.CaseSensitive)
+	if err != nil {
+		return 0, err
+	}
 
 	item, found := this.cache.Get(formulaText)
 
@@ -147,7 +150,11 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 	compiledConstantsRegistry := newConstantRegistry(this.options.CaseSensitive)
 
 	for k, p := range vars {
-		compiledConstantsRegistry.registerConstant(k, toFloat64(p), true)
+		retFloat, err := toFloat64(p)
+		if err != nil {
+			return nil, fmt.Errorf("the variable '%s' cannot be converted to float", k)
+		}
+		compiledConstantsRegistry.registerConstant(k, retFloat, true)
 	}
 
 	item, found := this.cache.Get(this.generateFormulaCacheKey(formulaText, compiledConstantsRegistry))

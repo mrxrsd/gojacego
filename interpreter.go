@@ -45,7 +45,7 @@ func execute(op operation, vars formulaVariables, functionRegistry *functionRegi
 
 	if cop, ok := op.(*constantOperation); ok {
 		if cop.Metadata.DataType == integer {
-			return toFloat64(cop.Value)
+			return toFloat64Panic(cop.Value)
 		} else {
 			return cop.Value.(float64)
 		}
@@ -165,13 +165,24 @@ func execute(op operation, vars formulaVariables, functionRegistry *functionRegi
 			arg := execute(fnParam, vars, functionRegistry, constantRegistry)
 			arguments[idx] = arg
 		}
-		ret, err := fn.function(arguments...)
+		ret, err := runDelegate(fn, arguments)
 		if err != nil {
-			panic(err)
+			panic(err.Error())
 		}
-
 		return ret
 	}
 
 	panic(fmt.Sprintf("not implemented %T", op))
+}
+
+func runDelegate(fn *functionInfo, arguments []float64) (ret float64, err error) {
+
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("function '%s': runtime error (%T)", fn.name, r)
+		}
+	}()
+
+	ret = fn.function(arguments...)
+	return ret, err
 }

@@ -11,7 +11,7 @@ type variableCollection interface {
 
 type formulaVariables map[string]float64
 
-func createFormulaVariables(vars map[string]interface{}, caseSensitive bool) formulaVariables {
+func createFormulaVariables(vars map[string]interface{}, caseSensitive bool) (formulaVariables, error) {
 
 	ret := make(map[string]float64, len(vars))
 
@@ -20,10 +20,15 @@ func createFormulaVariables(vars map[string]interface{}, caseSensitive bool) for
 		if caseSensitive {
 			name = strings.ToLower(k)
 		}
-		ret[name] = toFloat64(v)
+		if retFloat, err := toFloat64(v); err == nil {
+			ret[name] = retFloat
+		} else {
+			return nil, err
+		}
+
 	}
 
-	return ret
+	return ret, nil
 }
 
 func (p formulaVariables) Get(name string) (float64, error) {

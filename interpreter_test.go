@@ -44,7 +44,7 @@ func TestBasicInterpreterWithVariables(test *testing.T) {
 	parameters["var1"] = 2
 	parameters["age"] = 4
 
-	formulaVariables := createFormulaVariables(parameters, false)
+	formulaVariables, _ := createFormulaVariables(parameters, false)
 
 	ret, _ := interpreter.execute(
 		newAddOperation(floatingPoint,

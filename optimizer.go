@@ -29,7 +29,7 @@ func optimize(executor interpreter, op operation, functionRegistry *functionRegi
 				if cop1.Metadata.DataType == floatingPoint && cop1.Value == 0.0 {
 					return newConstantOperation(floatingPoint, 0.0)
 				} else {
-					if toFloat64(cop1.Value) == 0.0 {
+					if toFloat64Panic(cop1.Value) == 0.0 {
 						return newConstantOperation(floatingPoint, 0.0)
 					}
 				}
@@ -41,7 +41,7 @@ func optimize(executor interpreter, op operation, functionRegistry *functionRegi
 				if cop2.Metadata.DataType == floatingPoint && cop2.Value == 0.0 {
 					return newConstantOperation(floatingPoint, 0.0)
 				} else {
-					if toFloat64(cop2.Value) == 0.0 {
+					if toFloat64Panic(cop2.Value) == 0.0 {
 						return newConstantOperation(floatingPoint, 0.0)
 					}
 				}
@@ -71,7 +71,7 @@ func optimize(executor interpreter, op operation, functionRegistry *functionRegi
 				if cop1.Metadata.DataType == floatingPoint && cop1.Value == 0.0 {
 					return newConstantOperation(floatingPoint, 0.0)
 				} else {
-					if toFloat64(cop1.Value) == 0.0 {
+					if toFloat64Panic(cop1.Value) == 0.0 {
 						return newConstantOperation(floatingPoint, 0.0)
 					}
 				}
@@ -83,7 +83,7 @@ func optimize(executor interpreter, op operation, functionRegistry *functionRegi
 				if cop2.Metadata.DataType == floatingPoint && cop2.Value == 0.0 {
 					return newConstantOperation(floatingPoint, 0.0)
 				} else {
-					if toFloat64(cop2.Value) == 0.0 {
+					if toFloat64Panic(cop2.Value) == 0.0 {
 						return newConstantOperation(floatingPoint, 0.0)
 					}
 				}
@@ -96,7 +96,7 @@ func optimize(executor interpreter, op operation, functionRegistry *functionRegi
 				if cop1.Metadata.DataType == floatingPoint && cop1.Value == 1.0 {
 					return newConstantOperation(floatingPoint, 1.0)
 				} else {
-					if toFloat64(cop1.Value) == 1.0 {
+					if toFloat64Panic(cop1.Value) == 1.0 {
 						return newConstantOperation(floatingPoint, 1.0)
 					}
 				}
@@ -108,7 +108,7 @@ func optimize(executor interpreter, op operation, functionRegistry *functionRegi
 				if cop2.Metadata.DataType == floatingPoint && cop2.Value == 1.0 {
 					return newConstantOperation(floatingPoint, 1.0)
 				} else {
-					if toFloat64(cop2.Value) == 1.0 {
+					if toFloat64Panic(cop2.Value) == 1.0 {
 						return newConstantOperation(floatingPoint, 1.0)
 					}
 				}
