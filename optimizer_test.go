@@ -11,8 +11,8 @@ func TestOptimizerIdempotentFunction(test *testing.T) {
 	reader := newTokenReader('.', ',')
 
 	fnRegistry := getFunctionRegistry()
-	fnRegistry.registerFunction("test", func(arguments ...float64) (float64, error) {
-		return arguments[0] + arguments[1], nil
+	fnRegistry.registerFunction("test", func(arguments ...float64) float64 {
+		return arguments[0] + arguments[1]
 	}, false, true)
 
 	astBuilder := newAstBuilder(false, fnRegistry, getConstantRegistry(), nil)
@@ -39,8 +39,8 @@ func TestOptimizerNonIdempotentFunction(test *testing.T) {
 	reader := newTokenReader('.', ',')
 
 	fnRegistry := getFunctionRegistry()
-	fnRegistry.registerFunction("test", func(arguments ...float64) (float64, error) {
-		return arguments[0], nil
+	fnRegistry.registerFunction("test", func(arguments ...float64) float64 {
+		return arguments[0]
 	}, false, false)
 
 	astBuilder := newAstBuilder(false, fnRegistry, getConstantRegistry(), nil)

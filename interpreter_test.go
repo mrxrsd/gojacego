@@ -44,8 +44,6 @@ func TestBasicInterpreterWithVariables(test *testing.T) {
 	parameters["var1"] = 2
 	parameters["age"] = 4
 
-	formulaVariables := createFormulaVariables(parameters, false)
-
 	ret, _ := interpreter.execute(
 		newAddOperation(floatingPoint,
 			newVariableOperation("var1"),
@@ -55,7 +53,7 @@ func TestBasicInterpreterWithVariables(test *testing.T) {
 				newMultiplicationOperation(
 					floatingPoint,
 					newConstantOperation(integer, 3),
-					newVariableOperation("age")))), formulaVariables, nil, nil)
+					newVariableOperation("age")))), parameters, nil, nil)
 
 	if ret != 26.0 {
 		test.Errorf("Expected: 26.0, got: %f", ret)

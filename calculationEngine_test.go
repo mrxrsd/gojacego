@@ -12,10 +12,8 @@ type CalculationTestScenario struct {
 	fnCallback     func(float64) float64
 }
 
-func TestCalculationDefaultEngine(t *testing.T) {
-	engine := NewCalculationEngine()
-
-	scenarios := []CalculationTestScenario{
+func getCalculationScenarios() []CalculationTestScenario {
+	return []CalculationTestScenario{
 		{
 			formula:        "2.0+3.0",
 			expectedResult: 5.0,
@@ -284,9 +282,18 @@ func TestCalculationDefaultEngine(t *testing.T) {
 			expectedResult: 20.0,
 		},
 	}
+}
 
-	runScenarios(engine, scenarios, t)
+func TestCalculationDefaultEngine(t *testing.T) {
+	engine := NewCalculationEngine()
+	scenarios := getCalculationScenarios()
+	runScenarios(engine, runCalculate, scenarios, t)
+}
 
+func TestCalculationWithBuildingDefaultEngine(t *testing.T) {
+	engine := NewCalculationEngine()
+	scenarios := getCalculationScenarios()
+	runScenarios(engine, runCalculateWithBuilding, scenarios, t)
 }
 
 func TestStandardFunctions(t *testing.T) {
@@ -398,14 +405,37 @@ func TestStandardFunctions(t *testing.T) {
 		},
 	}
 
-	runScenarios(engine, scenarios, t)
+	runScenarios(engine, runCalculate, scenarios, t)
 
 }
 
-func runScenarios(engine *CalculationEngine, scenarios []CalculationTestScenario, t *testing.T) {
+func runCalculate(engine *CalculationEngine, formula string, vars map[string]interface{}) (float64, error) {
+	return engine.Calculate(formula, vars)
+}
+
+func runCalculateWithBuilding(engine *CalculationEngine, formula string, vars map[string]interface{}) (float64, error) {
+
+	fn, err := engine.Build(formula)
+	if err != nil {
+		return 0, err
+	}
+
+	varsFloat := map[string]interface{}{}
+
+	for k, p := range vars {
+		ret, _ := toFloat64(p)
+		varsFloat[k] = ret
+	}
+
+	return fn(varsFloat)
+}
+
+type fnAction func(*CalculationEngine, string, map[string]interface{}) (float64, error)
+
+func runScenarios(engine *CalculationEngine, fn fnAction, scenarios []CalculationTestScenario, t *testing.T) {
 
 	for _, test := range scenarios {
-		result, err := engine.Calculate(test.formula, test.variables)
+		result, err := fn(engine, test.formula, test.variables)
 		if err != nil {
 			t.Logf("test:%s => Error: %s", test.formula, err.Error())
 		}
@@ -429,7 +459,7 @@ func TestFormulaContext(test *testing.T) {
 
 	fn, _ := engine.Build("teste")
 
-	result := fn(nil)
+	result, _ := fn(nil)
 
 	if result != 2.0 {
 		test.Errorf("exptected:2.0, got: %f", result)
@@ -437,7 +467,7 @@ func TestFormulaContext(test *testing.T) {
 
 	engine.AddConstant("teste", 4.0, true)
 
-	result2 := fn(nil)
+	result2, _ := fn(nil)
 
 	if result2 != 2.0 {
 		test.Errorf("exptected: 2.0, got: %f", result2)
@@ -445,13 +475,13 @@ func TestFormulaContext(test *testing.T) {
 
 	fnAfter, _ := engine.Build("teste")
 
-	resultAfter := fnAfter(nil)
+	resultAfter, _ := fnAfter(nil)
 
 	if resultAfter != 4.0 {
 		test.Errorf("exptected: 4.0, got: %f", result2)
 	}
 
-	result3 := fn(nil)
+	result3, _ := fn(nil)
 
 	if result3 != 2.0 {
 		test.Errorf("exptected: 2.0, got: %f", result3)
@@ -462,8 +492,8 @@ func TestFormulaContext(test *testing.T) {
 func TestCustomFunctions(test *testing.T) {
 	engine := NewCalculationEngine()
 
-	engine.AddFunction("addTwo", func(arguments ...float64) (float64, error) {
-		return arguments[0] + 2, nil
+	engine.AddFunction("addTwo", func(arguments ...float64) float64 {
+		return arguments[0] + 2
 	}, true)
 
 	result, _ := engine.Calculate("addTwo(2)", nil)
@@ -482,11 +512,11 @@ func TestCompiledConstants(test *testing.T) {
 	}
 	var fn, _ = engine.BuildWithConstants("a+b+c", constants)
 
-	input := map[string]float64{
+	input := map[string]interface{}{
 		"b": 2.0,
 		"c": 3.0,
 	}
-	result := fn(input)
+	result, _ := fn(input)
 
 	if result != 6 {
 		test.Errorf("exptected: 6.0, got: %f", result)
@@ -503,8 +533,8 @@ func TestCaseUnsensitive(test *testing.T) {
 		DefaultFunctions:  true,
 	})
 
-	engine.AddFunction("addTwo", func(arguments ...float64) (float64, error) {
-		return arguments[0] + 2, nil
+	engine.AddFunction("addTwo", func(arguments ...float64) float64 {
+		return arguments[0] + 2
 	}, true)
 
 	resultFn, _ := engine.Calculate("addtwo(0)", nil)
@@ -542,5 +572,116 @@ func TestCaseUnsensitive(test *testing.T) {
 	result, _ := engine.Calculate("vAr1 + VaR2", vars)
 	if result != 3.0 {
 		test.Errorf("exptected: 3.0, got: %f", result)
+	}
+}
+
+func TestFormulaRequired(test *testing.T) {
+	engine := NewCalculationEngine()
+
+	_, err := engine.Calculate("", nil)
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+
+	_, err2 := engine.Build("")
+	if err2 == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestCalculateFormulaVariableNotDefined(test *testing.T) {
+	engine := NewCalculationEngine()
+
+	vars := map[string]interface{}{
+		"var1": 1,
+	}
+	_, err := engine.Calculate("var1*var2", vars)
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestCalculateParameterNotNumerical(test *testing.T) {
+	engine := NewCalculationEngine()
+
+	vars := map[string]interface{}{
+		"var1": "a",
+	}
+	_, err := engine.Calculate("var1", vars)
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestFunctionVariableError(test *testing.T) {
+	engine := NewCalculationEngineWithOptions(JaceOptions{
+		DecimalSeparator:  '.',
+		ArgumentSeparador: ',',
+		CaseSensitive:     false,
+		OptimizeEnabled:   true,
+		DefaultConstants:  true,
+		DefaultFunctions:  true,
+	})
+
+	engine.AddFunction("addTwo", func(arguments ...float64) float64 {
+		return arguments[0] + 2
+	}, true)
+
+	vars := map[string]interface{}{
+		"x": "a",
+	}
+
+	_, err := engine.Calculate("addtwo(x)", vars)
+
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestFunctionRuntimeError(test *testing.T) {
+	engine := NewCalculationEngineWithOptions(JaceOptions{
+		DecimalSeparator:  '.',
+		ArgumentSeparador: ',',
+		CaseSensitive:     false,
+		OptimizeEnabled:   true,
+		DefaultConstants:  true,
+		DefaultFunctions:  true,
+	})
+
+	engine.AddFunction("addTwo", func(arguments ...float64) float64 {
+		return arguments[1] + 2
+	}, true)
+
+	vars := map[string]interface{}{
+		"x": 1,
+	}
+
+	_, err := engine.Calculate("addtwo(x)", vars)
+
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestGenerateCacheKey(test *testing.T) {
+	engine := NewCalculationEngine()
+
+	key1 := engine.generateFormulaCacheKey("a+b+c", nil)
+	if key1 != "a+b+c" {
+		test.Errorf(" expected: 'a+b+c', got: %s", key1)
+	}
+
+	key2 := engine.generateFormulaCacheKey("a+2+c", nil)
+	if key2 != "a+2+c" {
+		test.Errorf(" expected: 'a+2+c', got: %s", key2)
+	}
+
+	registry := newConstantRegistry(false)
+	registry.registerConstant("a", 1, true)
+	registry.registerConstant("b", 2.5, true)
+
+	key3 := engine.generateFormulaCacheKey("a+b+c", registry)
+	if key3 != "a+b+c@a:1@@b:2.5@" {
+		test.Errorf(" expected: 'a+b+c@a:1@@b:2.5@', got: %s", key3)
 	}
 }

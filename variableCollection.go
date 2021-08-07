@@ -2,31 +2,15 @@ package gojacego
 
 import (
 	"errors"
-	"strings"
 )
 
 type variableCollection interface {
-	Get(name string) (float64, error)
+	Get(name string) (interface{}, error)
 }
 
-type formulaVariables map[string]float64
+type formulaVariables map[string]interface{}
 
-func createFormulaVariables(vars map[string]interface{}, caseSensitive bool) formulaVariables {
-
-	ret := make(map[string]float64, len(vars))
-
-	for k, v := range vars {
-		name := k
-		if caseSensitive {
-			name = strings.ToLower(k)
-		}
-		ret[name] = toFloat64(v)
-	}
-
-	return ret
-}
-
-func (p formulaVariables) Get(name string) (float64, error) {
+func (p formulaVariables) Get(name string) (interface{}, error) {
 
 	value, found := p[name]
 

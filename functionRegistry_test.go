@@ -8,8 +8,8 @@ func TestAddAndGetFunction(test *testing.T) {
 	registryCaseInsensitive := newFunctionRegistry(false)
 	registryCaseSensitive := newFunctionRegistry(true)
 
-	fn := func(args ...float64) (float64, error) {
-		return args[0] + args[1], nil
+	fn := func(args ...float64) float64 {
+		return args[0] + args[1]
 	}
 
 	registryCaseInsensitive.registerFunction("test", fn, true, false)
@@ -39,19 +39,19 @@ func TestAddAndGetFunction(test *testing.T) {
 func TestFunctionOverwritable(test *testing.T) {
 	registry := newFunctionRegistry(false)
 
-	fnAddTwo := func(args ...float64) (float64, error) {
-		return args[0] + 2, nil
+	fnAddTwo := func(args ...float64) float64 {
+		return args[0] + 2
 	}
 
-	fnAddFour := func(args ...float64) (float64, error) {
-		return args[0] + 4, nil
+	fnAddFour := func(args ...float64) float64 {
+		return args[0] + 4
 	}
 
 	registry.registerFunction("test", fnAddTwo, true, true)
 	registry.registerFunction("test", fnAddFour, true, true)
 
 	fn, _ := registry.get("test")
-	if item, _ := fn.function(0); item != 4 {
+	if item := fn.function(0); item != 4 {
 		test.Errorf("exptected: 4, got: %f", item)
 	}
 }
@@ -59,8 +59,8 @@ func TestFunctionOverwritable(test *testing.T) {
 func TestFunctionNotOverwritable(test *testing.T) {
 	registry := newFunctionRegistry(false)
 
-	fn := func(args ...float64) (float64, error) {
-		return args[0] + 2, nil
+	fn := func(args ...float64) float64 {
+		return args[0] + 2
 	}
 
 	registry.registerFunction("test", fn, false, true)

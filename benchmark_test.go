@@ -44,7 +44,7 @@ func BenchmarkEvaluationParameter(bench *testing.B) {
 
 	engine := createEngine()
 	formula, _ := engine.Build("requests_made")
-	parameters := map[string]float64{
+	parameters := map[string]interface{}{
 		"requests_made": 99.0,
 	}
 
@@ -61,7 +61,7 @@ func BenchmarkEvaluationParameters(bench *testing.B) {
 
 	engine := createEngine()
 	formula, _ := engine.Build("requests_made > requests_succeeded")
-	parameters := map[string]float64{
+	parameters := map[string]interface{}{
 		"requests_made":      99.0,
 		"requests_succeeded": 90.0,
 	}
@@ -79,7 +79,7 @@ func BenchmarkEvaluationParametersModifiers(bench *testing.B) {
 
 	engine := createEngine()
 	formula, _ := engine.Build("(requests_made * requests_succeeded / 100) >= 90")
-	parameters := map[string]float64{
+	parameters := map[string]interface{}{
 		"requests_made":      99.0,
 		"requests_succeeded": 90.0,
 	}
@@ -94,7 +94,7 @@ func BenchmarkExpr(bench *testing.B) {
 
 	engine := createEngine()
 	formula, _ := engine.Build("(Origin == 1 || Country == 55) && (Value >= 100 || Adults == 1)")
-	parameters := map[string]float64{
+	parameters := map[string]interface{}{
 		"Origin":  1,
 		"Country": 55,
 		"Value":   100,
