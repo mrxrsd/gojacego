@@ -269,7 +269,7 @@ Disclaimer: GoJACEgo has only mathematical and logical operators while others ha
 
 ### RC   
 - [X] Handle 'unhappy flow' (errors and panic)
-- [ ] More tests
+- [X] More tests
 
 ### 1.0
 - [ ] Docs
