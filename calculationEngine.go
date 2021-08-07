@@ -3,6 +3,7 @@ package gojacego
 import (
 	"errors"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/mrxrsd/gojacego/cache"
@@ -80,7 +81,9 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 		return 0, errors.New("the parameter 'formula' is required")
 	}
 
-	item, found := this.cache.Get(formulaText)
+	key := this.generateFormulaCacheKey(formulaText, nil)
+
+	item, found := this.cache.Get(key)
 
 	if found {
 		formula := item.(Formula)
@@ -94,22 +97,29 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 
 	formula := this.buildFormula(formulaText, nil, op)
 
+	this.cache.Add(key, formula)
+
 	return formula(vars)
 }
 
 func (this *CalculationEngine) generateFormulaCacheKey(formulaText string, compiledConstantsRegistry *constantRegistry) string {
 	if compiledConstantsRegistry != nil {
 		var data []byte
-
+		var keys []string
+		for k := range compiledConstantsRegistry.constants {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
 		data = append(data, formulaText...)
-		for k, p := range compiledConstantsRegistry.constants {
-			data = append(data, "@"...)
+		data = append(data, "@"...)
+		for _, k := range keys {
 			data = append(data, k...)
 			data = append(data, ":"...)
-			data = append(data, (fmt.Sprint(p.value))...)
+			data = append(data, (fmt.Sprint(compiledConstantsRegistry.constants[k].value))...)
 			data = append(data, "@"...)
 		}
 		return string(data)
+
 	}
 	return formulaText
 }
@@ -124,12 +134,7 @@ func (this *CalculationEngine) getFormula(formulaText string) Formula {
 }
 
 func (this *CalculationEngine) buildFormula(formulaText string, compiledConstants *constantRegistry, operation operation) Formula {
-	key := this.generateFormulaCacheKey(formulaText, compiledConstants)
-	formula := this.executor.buildFormula(operation, this.functionRegistry, this.constantRegistry)
-	this.cache.Add(key, formula)
-
-	return formula
-
+	return this.executor.buildFormula(operation, this.functionRegistry, this.constantRegistry)
 }
 
 func (this *CalculationEngine) Build(formulaText string) (Formula, error) {
@@ -152,7 +157,9 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 		compiledConstantsRegistry.registerConstant(k, retFloat, true)
 	}
 
-	item, found := this.cache.Get(this.generateFormulaCacheKey(formulaText, compiledConstantsRegistry))
+	key := this.generateFormulaCacheKey(formulaText, compiledConstantsRegistry)
+
+	item, found := this.cache.Get(key)
 
 	if found {
 		return item.(Formula), nil
@@ -163,7 +170,11 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 		return nil, err
 	}
 
-	return this.buildFormula(formulaText, compiledConstantsRegistry, op), nil
+	formula := this.buildFormula(formulaText, compiledConstantsRegistry, op)
+
+	this.cache.Add(key, formula)
+
+	return formula, nil
 }
 
 func (this *CalculationEngine) AddConstant(name string, value float64, isOverwritable bool) {
