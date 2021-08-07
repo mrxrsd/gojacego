@@ -51,7 +51,7 @@ func TestFunctionOverwritable(test *testing.T) {
 	registry.registerFunction("test", fnAddFour, true, true)
 
 	fn, _ := registry.get("test")
-	if item := fn.function(0); item != 4 {
+	if item := fn.function(0.0); item != 4 {
 		test.Errorf("exptected: 4, got: %f", item)
 	}
 }
