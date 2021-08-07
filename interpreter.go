@@ -7,10 +7,9 @@ import (
 )
 
 type interpreter struct {
-	caseSensitive bool
 }
 
-type Formula func(vars formulaVariables) (float64, error)
+type Formula func(vars map[string]interface{}) (float64, error)
 
 func (*interpreter) execute(op operation, vars formulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (ret float64, err error) {
 	defer func() {
@@ -24,7 +23,7 @@ func (*interpreter) execute(op operation, vars formulaVariables, functionRegistr
 }
 
 func (*interpreter) buildFormula(op operation, functionRegistry *functionRegistry, constantRegistry *constantRegistry) Formula {
-	return func(vars formulaVariables) (ret float64, err error) {
+	return func(vars map[string]interface{}) (ret float64, err error) {
 
 		defer func() {
 			if r := recover(); r != nil {
@@ -54,7 +53,7 @@ func execute(op operation, vars formulaVariables, functionRegistry *functionRegi
 
 		variableValue, err := vars.Get(cop.Name)
 		if err == nil {
-			return variableValue
+			return toFloat64Panic(variableValue)
 		} else {
 			panic("The variable '" + cop.Name + "' used is not defined.")
 		}

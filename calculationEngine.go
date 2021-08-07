@@ -80,16 +80,11 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 		return 0, errors.New("the parameter 'formula' is required")
 	}
 
-	formulaVariables, err := createFormulaVariables(vars, this.options.CaseSensitive)
-	if err != nil {
-		return 0, err
-	}
-
 	item, found := this.cache.Get(formulaText)
 
 	if found {
 		formula := item.(Formula)
-		return formula(formulaVariables)
+		return formula(vars)
 	}
 
 	op, err := this.buildAbstractSyntaxTree(formulaText, nil)
@@ -99,7 +94,7 @@ func (this *CalculationEngine) Calculate(formulaText string, vars map[string]int
 
 	formula := this.buildFormula(formulaText, nil, op)
 
-	return formula(formulaVariables)
+	return formula(vars)
 }
 
 func (this *CalculationEngine) generateFormulaCacheKey(formulaText string, compiledConstantsRegistry *constantRegistry) string {

@@ -420,7 +420,7 @@ func runCalculateWithBuilding(engine *CalculationEngine, formula string, vars ma
 		return 0, err
 	}
 
-	varsFloat := map[string]float64{}
+	varsFloat := map[string]interface{}{}
 
 	for k, p := range vars {
 		ret, _ := toFloat64(p)
@@ -512,7 +512,7 @@ func TestCompiledConstants(test *testing.T) {
 	}
 	var fn, _ = engine.BuildWithConstants("a+b+c", constants)
 
-	input := map[string]float64{
+	input := map[string]interface{}{
 		"b": 2.0,
 		"c": 3.0,
 	}
@@ -660,5 +660,28 @@ func TestFunctionRuntimeError(test *testing.T) {
 
 	if err == nil {
 		test.Errorf("error should not be null")
+	}
+}
+
+func TestGenerateCacheKey(test *testing.T) {
+	engine := NewCalculationEngine()
+
+	key1 := engine.generateFormulaCacheKey("a+b+c", nil)
+	if key1 != "a+b+c" {
+		test.Errorf(" expected: 'a+b+c', got: %s", key1)
+	}
+
+	key2 := engine.generateFormulaCacheKey("a+2+c", nil)
+	if key2 != "a+2+c" {
+		test.Errorf(" expected: 'a+2+c', got: %s", key2)
+	}
+
+	registry := newConstantRegistry(false)
+	registry.registerConstant("a", 1, true)
+	registry.registerConstant("b", 2.5, true)
+
+	key3 := engine.generateFormulaCacheKey("a+b+c", registry)
+	if key3 != "a+b+c@a:1@@b:2.5@" {
+		test.Errorf(" expected: 'a+b+c@a:1@@b:2.5@', got: %s", key3)
 	}
 }
