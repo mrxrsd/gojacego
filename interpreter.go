@@ -158,7 +158,7 @@ func execute(op operation, vars formulaVariables, functionRegistry *functionRegi
 	} else if cop, ok := op.(*functionOperation); ok {
 
 		fn, _ := functionRegistry.get(cop.Name)
-		arguments := make([]float64, len(cop.Arguments))
+		arguments := make([]interface{}, len(cop.Arguments))
 
 		for idx, fnParam := range cop.Arguments {
 			arg := execute(fnParam, vars, functionRegistry, constantRegistry)
@@ -174,7 +174,7 @@ func execute(op operation, vars formulaVariables, functionRegistry *functionRegi
 	panic(fmt.Sprintf("not implemented %T", op))
 }
 
-func runDelegate(fn *functionInfo, arguments []float64) (ret float64, err error) {
+func runDelegate(fn *functionInfo, arguments []interface{}) (ret float64, err error) {
 
 	defer func() {
 		if r := recover(); r != nil {

@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type Delegate func(arguments ...float64) float64
+type Delegate func(arguments ...interface{}) float64
 
 type functionRegistry struct {
 	caseSensitive bool
@@ -62,70 +62,70 @@ func (this *functionRegistry) convertFunctionName(name string) string {
 
 func registryDefaultFunctions(registry *functionRegistry) {
 
-	registry.registerFunction("sin", func(arguments ...float64) float64 {
-		return math.Sin(arguments[0])
+	registry.registerFunction("sin", func(arguments ...interface{}) float64 {
+		return math.Sin(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("cos", func(arguments ...float64) float64 {
-		return math.Cos(arguments[0])
+	registry.registerFunction("cos", func(arguments ...interface{}) float64 {
+		return math.Cos(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("asin", func(arguments ...float64) float64 {
-		return math.Asin(arguments[0])
+	registry.registerFunction("asin", func(arguments ...interface{}) float64 {
+		return math.Asin(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("acos", func(arguments ...float64) float64 {
-		return math.Acos(arguments[0])
+	registry.registerFunction("acos", func(arguments ...interface{}) float64 {
+		return math.Acos(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("tan", func(arguments ...float64) float64 {
-		return math.Tan(arguments[0])
+	registry.registerFunction("tan", func(arguments ...interface{}) float64 {
+		return math.Tan(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("atan", func(arguments ...float64) float64 {
-		return math.Atan(arguments[0])
+	registry.registerFunction("atan", func(arguments ...interface{}) float64 {
+		return math.Atan(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("log", func(arguments ...float64) float64 {
-		return math.Log(arguments[0])
+	registry.registerFunction("log", func(arguments ...interface{}) float64 {
+		return math.Log(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("sqrt", func(arguments ...float64) float64 {
-		return math.Sqrt(arguments[0])
+	registry.registerFunction("sqrt", func(arguments ...interface{}) float64 {
+		return math.Sqrt(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("trunc", func(arguments ...float64) float64 {
-		return math.Trunc(arguments[0])
+	registry.registerFunction("trunc", func(arguments ...interface{}) float64 {
+		return math.Trunc(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("ceil", func(arguments ...float64) float64 {
-		return math.Ceil(arguments[0])
+	registry.registerFunction("ceil", func(arguments ...interface{}) float64 {
+		return math.Ceil(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("round", func(arguments ...float64) float64 {
+	registry.registerFunction("round", func(arguments ...interface{}) float64 {
 		if len(arguments) <= 1 {
-			return math.Round(arguments[0])
+			return math.Round(arguments[0].(float64))
 		} else {
-			pow := math.Pow(10, arguments[1])
-			return math.Round(arguments[0]*pow) / pow
+			pow := math.Pow(10, arguments[1].(float64))
+			return math.Round(arguments[0].(float64)*pow) / pow
 		}
 	}, false, true)
 
-	registry.registerFunction("random", func(arguments ...float64) float64 {
-		rand.Seed(int64(arguments[0]))
+	registry.registerFunction("random", func(arguments ...interface{}) float64 {
+		rand.Seed(int64(arguments[0].(float64)))
 		return rand.Float64()
 	}, false, false)
 
-	registry.registerFunction("floor", func(arguments ...float64) float64 {
-		return math.Floor(arguments[0])
+	registry.registerFunction("floor", func(arguments ...interface{}) float64 {
+		return math.Floor(arguments[0].(float64))
 	}, false, true)
 
-	registry.registerFunction("max", func(arguments ...float64) float64 {
+	registry.registerFunction("max", func(arguments ...interface{}) float64 {
 		if len(arguments) > 0 {
-			max := arguments[0]
+			max := arguments[0].(float64)
 			for _, v := range arguments {
-				if v > max {
-					max = v
+				if v.(float64) > max {
+					max = v.(float64)
 				}
 			}
 			return max
@@ -134,12 +134,12 @@ func registryDefaultFunctions(registry *functionRegistry) {
 		}
 	}, false, true)
 
-	registry.registerFunction("min", func(arguments ...float64) float64 {
+	registry.registerFunction("min", func(arguments ...interface{}) float64 {
 		if len(arguments) > 0 {
-			min := arguments[0]
+			min := arguments[0].(float64)
 			for _, v := range arguments {
-				if v < min {
-					min = v
+				if v.(float64) < min {
+					min = v.(float64)
 				}
 			}
 			return min
@@ -148,12 +148,12 @@ func registryDefaultFunctions(registry *functionRegistry) {
 		}
 	}, false, true)
 
-	registry.registerFunction("if", func(arguments ...float64) float64 {
+	registry.registerFunction("if", func(arguments ...interface{}) float64 {
 		if len(arguments) == 3 {
-			if arguments[0] != 0.0 {
-				return arguments[1]
+			if arguments[0].(float64) != 0.0 {
+				return arguments[1].(float64)
 			} else {
-				return arguments[2]
+				return arguments[2].(float64)
 			}
 
 		} else {
