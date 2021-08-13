@@ -5,14 +5,15 @@ import (
 )
 
 func createEngine() *CalculationEngine {
-	return NewCalculationEngineWithOptions(JaceOptions{
-		DecimalSeparator:  '.',
-		ArgumentSeparador: ',',
-		CaseSensitive:     true,
-		OptimizeEnabled:   true,
-		DefaultConstants:  false,
-		DefaultFunctions:  false,
-	})
+
+	engine, _ := NewCalculationEngine(WithDecimalSeparator('.'),
+		WithArgumentSeparator(','),
+		WithCaseSensitive(true),
+		WithOptimizeEnabled(true),
+		WithDefaultConstants(false),
+		WithDefaultFunctions(false))
+
+	return engine
 }
 
 func BenchmarkEvaluationNumericLiteral(bench *testing.B) {
