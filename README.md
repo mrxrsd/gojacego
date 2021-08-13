@@ -5,9 +5,9 @@
 
 
 # goJACEgo 
-goJACEgo is a high performance calculation engine for Go and it is a port of Jace.NET. 
+goJACEgo is a high performance calculation engine for Go, written in pure Go. 
 
-'Jace' stands for "Just Another Calculation Engine".
+'Jace' stands for "Just Another Calculation Engine". it is a port of Jace.NET
  
 ### What does it do?
 goJACEgo can interprete and execute strings containing mathematical formulas. These formulas can rely on variables. If variables are used, values can be provided for these variables at execution time of the mathematical formula.
@@ -47,14 +47,13 @@ result, _ := engine.Calculate("a*b", vars)
 To build a Func accepting a map as input containing the values for each variable:
 
 ```go
-engine := gojacego.NewCalculationEngineWithOptions(JaceOptions{
-		                                decimalSeparator:  '.',
-		                                argumentSeparador: ',',
-		                                caseSensitive:     false,
-		                                optimizeEnabled:   true,
-		                                defaultConstants:  true,
-		                                defaultFunctions:  true,
-	})
+
+engine, _ := gojacego.NewCalculationEngine(gojacego.WithDecimalSeparator('.'),
+		                                     gojacego.WithArgumentSeparator(','),
+		                                     gojacego.WithCaseSensitive(false),
+		                                     gojacego.WithOptimizeEnabled(true),
+		                                     gojacego.WithDefaultConstants(true),
+		                                     gojacego.WithDefaultFunctions(true))
 
 formula := engine.Build("a*b")
 
@@ -96,6 +95,30 @@ The boolean operations map true to 1.0 and false to 0.0. All functions accepting
 result, _ := engine.Calculate("5 > 1", nil)
 // 1.0
 ```
+### Scientific Notation
+
+```go
+result, _ := engine.Calculate("1E-3*5+2", nil)
+// 2.005
+```
+
+### Variables
+
+```go
+vars := map[string]interface{}{
+	"$a":  1,
+	"B":   2,
+	"c_c": 3,
+	"d1":  4,
+	"VaR_vAr": 10
+}
+
+result, _ := engine.Calculate("$a + B + c_c + d1 + 10 + VaR_vAr", vars)
+// 30.0
+```
+- Can contains letters ( a-z | A-Z ), underscore ( _ ), dolar sign ( $ ) or a number ( 0-9 ).
+- Cannot start with a number.
+- Cannot start with underscore.
 
 ### Standard Constants
 
@@ -152,7 +175,7 @@ vars := map[string]interface{}{
 }
 
 ifresult, _ := engine.Calculate("if(2+2==a, 10, 5)", varsIf)
-// 1.0
+// 10.0
 
 // MAX
 max, _ := engine.Calculate("max(5,6,3,-4,5,3,7,8,13,100)", nil)
@@ -167,8 +190,8 @@ max, _ := engine.Calculate("max(5,6,3,-4,5,3,7,8,13,100)", nil)
 Custom functions allow programmers to add additional functions besides the ones already supported (sin, cos, asin, …). Functions are required to have a unique name. The existing functions cannot be overwritten.
 
 ```go
-engine.AddFunction("addTwo", func(arguments ...float64) (float64, error) {
-		return arguments[0] + 2, nil
+engine.AddFunction("addTwo", func(arguments ...float64) float64{
+		return arguments[0] + 2
 }, true)
 
 result, _ := engine.Calculate("addTwo(2)", nil)
@@ -200,18 +223,37 @@ result, := formula(vars)
 
 ## Benchmark 
 
-### goJACEgo vs Govaluate
+https://github.com/mrxrsd/golang-expression-evaluation-comparison
+
+### goJACEgo vs Others
+
+| Test                         |                     | 
+|------------------------------|---------------------| 
+| Benchmark_bexpr-8            |        2278 ns/op   | 
+| Benchmark_celgo-8            |         127.0 ns/op | 
+| Benchmark_evalfilter-8       |        1646 ns/op   | 
+| Benchmark_expr-8             |         119.1 ns/op | 
+| Benchmark_goja-8             |         306.9 ns/op | 
+| Benchmark_gojacego-8         |         117.3 ns/op | 
+| Benchmark_govaluate-8        |         259.9 ns/op | 
+| Benchmark_gval-8             |         295.0 ns/op | 
+| Benchmark_otto-8             |         951.2 ns/op | 
+| Benchmark_starlark-8         |        5971 ns/op   | 
+
+### goJACEgo vs Govaluate vs Expr vs Gval
+
+| Test                                   | Gojacego    | Govaluate   |  Expr        | Gval         |
+| -------------------------------------- | ----------- | ----------- |--------------|--------------|
+| BenchmarkEvaluationNumericLiteral      |  5.42 ns/op | 71.73 ns/op |  87.71 ns/op |   1.89 ns/op |
+| BenchmarkEvaluationLiteralModifiers    |  5.63 ns/op | 180.8 ns/op |  69.92 ns/op |   1.85 ns/op |
+| BenchmarkEvaluationParameter           | 11.25 ns/op | 72.47 ns/op |  69.75 ns/op |  147.1 ns/op |
+| BenchmarkEvaluationParameters          | 31.91 ns/op | 122.0 ns/op |  202.2 ns/op |  315.6 ns/op |
+| BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |  368.6 ns/op |  378.5 ns/op |
+| BenchmarkComplexPrecedenceMath         |  4.73 ns/op | 18.20 ns/op |  67.96 ns/op |   1.93 ns/op |
+| BenchmarkMath                          | 39.22 ns/op | 243.7 ns/op |  252.1 ns/op |  395.3 ns/op |
 
 
-| Test                                   | Gojacego    | Govaluate   |
-| -------------------------------------- | ----------- | ----------- |
-| BenchmarkEvaluationNumericLiteral      | 23.77 ns/op | 71.73 ns/op |
-| BenchmarkEvaluationLiteralModifiers    | 34.33 ns/op | 180.8 ns/op |
-| BenchmarkEvaluationParameter           | 11.25 ns/op | 72.47 ns/op |
-| BenchmarkEvaluationParameters          | 31.91 ns/op | 122.0 ns/op |
-| BenchmarkEvaluationParametersModifiers | 56.32 ns/op | 233.3 ns/op |
-
-Disclaimer: Govaluate has a lot of features and differents operators while goJACEgo has only mathematical and logical operators.
+Disclaimer: GoJACEgo has only mathematical and logical operators while others has more features. 
 
 ## Roadmap to the first release
 
@@ -221,11 +263,12 @@ Disclaimer: Govaluate has a lot of features and differents operators while goJAC
 - [X] Struct and methods scopes.
 
 ### Beta
-- [ ] Tests
-- [ ] Evaluate more optimization points
+- [X] Tests
+- [X] Evaluate more optimization points
 
-### 1.0 
-- [ ] Handle 'unhappy flow' (errors and panic)
+### RC   
+- [X] Handle 'unhappy flow' (errors and panic)
+- [X] More tests
+
+### 1.0
 - [ ] Docs
-- [ ] Package
-- [ ] More tests
