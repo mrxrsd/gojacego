@@ -47,14 +47,13 @@ result, _ := engine.Calculate("a*b", vars)
 To build a Func accepting a map as input containing the values for each variable:
 
 ```go
-engine := gojacego.NewCalculationEngineWithOptions(JaceOptions{
-		                                DecimalSeparator:  '.',
-		                                ArgumentSeparador: ',',
-		                                CaseSensitive:     false,
-		                                OptimizeEnabled:   true,
-		                                DefaultConstants:  true,
-		                                DefaultFunctions:  true,
-	})
+
+engine, _ := gojacego.NewCalculationEngine(gojacego.WithDecimalSeparator('.'),
+		                                     gojacego.WithArgumentSeparator(','),
+		                                     gojacego.WithCaseSensitive(false),
+		                                     gojacego.WithOptimizeEnabled(true),
+		                                     gojacego.WithDefaultConstants(true),
+		                                     gojacego.WithDefaultFunctions(true))
 
 formula := engine.Build("a*b")
 

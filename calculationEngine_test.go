@@ -285,19 +285,19 @@ func getCalculationScenarios() []CalculationTestScenario {
 }
 
 func TestCalculationDefaultEngine(t *testing.T) {
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 	scenarios := getCalculationScenarios()
 	runScenarios(engine, runCalculate, scenarios, t)
 }
 
 func TestCalculationWithBuildingDefaultEngine(t *testing.T) {
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 	scenarios := getCalculationScenarios()
 	runScenarios(engine, runCalculateWithBuilding, scenarios, t)
 }
 
 func TestStandardFunctions(t *testing.T) {
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 
 	scenarios := []CalculationTestScenario{
 		{
@@ -453,7 +453,7 @@ func runScenarios(engine *CalculationEngine, fn fnAction, scenarios []Calculatio
 
 func TestFormulaContext(test *testing.T) {
 
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 
 	engine.AddConstant("teste", 2.0, true)
 
@@ -490,7 +490,7 @@ func TestFormulaContext(test *testing.T) {
 }
 
 func TestCustomFunctions(test *testing.T) {
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 
 	engine.AddFunction("addTwo", func(arguments ...interface{}) float64 {
 		return arguments[0].(float64) + 2
@@ -521,7 +521,7 @@ func TestCustomFunctions(test *testing.T) {
 }
 
 func TestCompiledConstants(test *testing.T) {
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 
 	constants := map[string]interface{}{
 		"a": 1.0,
@@ -540,14 +540,13 @@ func TestCompiledConstants(test *testing.T) {
 }
 
 func TestCaseUnsensitive(test *testing.T) {
-	engine := NewCalculationEngineWithOptions(JaceOptions{
-		DecimalSeparator:  '.',
-		ArgumentSeparador: ',',
-		CaseSensitive:     false,
-		OptimizeEnabled:   true,
-		DefaultConstants:  true,
-		DefaultFunctions:  true,
-	})
+
+	engine, _ := NewCalculationEngine(WithDecimalSeparator('.'),
+		WithArgumentSeparator(','),
+		WithCaseSensitive(false),
+		WithOptimizeEnabled(true),
+		WithDefaultConstants(true),
+		WithDefaultFunctions(true))
 
 	engine.AddFunction("addTwo", func(arguments ...interface{}) float64 {
 		return arguments[0].(float64) + 2
@@ -592,7 +591,7 @@ func TestCaseUnsensitive(test *testing.T) {
 }
 
 func TestFormulaRequired(test *testing.T) {
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 
 	_, err := engine.Calculate("", nil)
 	if err == nil {
@@ -606,7 +605,7 @@ func TestFormulaRequired(test *testing.T) {
 }
 
 func TestCalculateFormulaVariableNotDefined(test *testing.T) {
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 
 	vars := map[string]interface{}{
 		"var1": 1,
@@ -618,7 +617,7 @@ func TestCalculateFormulaVariableNotDefined(test *testing.T) {
 }
 
 func TestCalculateParameterNotNumerical(test *testing.T) {
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 
 	vars := map[string]interface{}{
 		"var1": "a",
@@ -630,14 +629,13 @@ func TestCalculateParameterNotNumerical(test *testing.T) {
 }
 
 func TestFunctionVariableError(test *testing.T) {
-	engine := NewCalculationEngineWithOptions(JaceOptions{
-		DecimalSeparator:  '.',
-		ArgumentSeparador: ',',
-		CaseSensitive:     false,
-		OptimizeEnabled:   true,
-		DefaultConstants:  true,
-		DefaultFunctions:  true,
-	})
+
+	engine, _ := NewCalculationEngine(WithDecimalSeparator('.'),
+		WithArgumentSeparator(','),
+		WithCaseSensitive(false),
+		WithOptimizeEnabled(true),
+		WithDefaultConstants(true),
+		WithDefaultFunctions(true))
 
 	engine.AddFunction("addTwo", func(arguments ...interface{}) float64 {
 		return arguments[0].(float64) + 2
@@ -655,14 +653,13 @@ func TestFunctionVariableError(test *testing.T) {
 }
 
 func TestFunctionRuntimeError(test *testing.T) {
-	engine := NewCalculationEngineWithOptions(JaceOptions{
-		DecimalSeparator:  '.',
-		ArgumentSeparador: ',',
-		CaseSensitive:     false,
-		OptimizeEnabled:   true,
-		DefaultConstants:  true,
-		DefaultFunctions:  true,
-	})
+
+	engine, _ := NewCalculationEngine(WithDecimalSeparator('.'),
+		WithArgumentSeparator(','),
+		WithCaseSensitive(false),
+		WithOptimizeEnabled(true),
+		WithDefaultConstants(true),
+		WithDefaultFunctions(true))
 
 	engine.AddFunction("addTwo", func(arguments ...interface{}) float64 {
 		return arguments[1].(float64) + 2
@@ -680,7 +677,7 @@ func TestFunctionRuntimeError(test *testing.T) {
 }
 
 func TestGenerateCacheKey(test *testing.T) {
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 
 	key1 := engine.generateFormulaCacheKey("a+b+c", nil)
 	if key1 != "a+b+c" {
@@ -703,7 +700,7 @@ func TestGenerateCacheKey(test *testing.T) {
 }
 
 func BenchmarkGenerateCacheKey(bench *testing.B) {
-	engine := NewCalculationEngine()
+	engine, _ := NewCalculationEngine()
 
 	registry := newConstantRegistry(false)
 	registry.registerConstant("a", 1, true)

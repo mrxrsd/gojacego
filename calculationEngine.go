@@ -9,70 +9,168 @@ import (
 	"github.com/mrxrsd/gojacego/cache"
 )
 
-type JaceOptions struct {
-	DecimalSeparator  rune
-	ArgumentSeparador rune
-	CaseSensitive     bool
-	OptimizeEnabled   bool
-	DefaultConstants  bool
-	DefaultFunctions  bool
+type jaceOptions struct {
+	decimalSeparator  *rune
+	argumentSeparator *rune
+	caseSensitive     *bool
+	optimizeEnabled   *bool
+	defaultConstants  *bool
+	defaultFunctions  *bool
+}
+
+type JaceOptions interface {
+	apply(*jaceOptions) error
+}
+
+type applyOptions struct {
+	f func(*jaceOptions) error
+}
+
+func (apply *applyOptions) apply(opts *jaceOptions) error {
+	return apply.f(opts)
+}
+
+func WithDecimalSeparator(decimalSeparator rune) JaceOptions {
+	return &applyOptions{
+		f: func(options *jaceOptions) error {
+			if decimalSeparator != '.' && decimalSeparator != ',' {
+				return errors.New("decimal separator should be equals '.' or ','")
+			}
+			options.decimalSeparator = &decimalSeparator
+			return nil
+		},
+	}
+}
+
+func WithArgumentSeparator(argumentSeparator rune) JaceOptions {
+	return &applyOptions{
+		f: func(options *jaceOptions) error {
+			if argumentSeparator != ';' && argumentSeparator != ',' {
+				return errors.New("argument separator should be equals ';' or ','")
+			}
+			options.argumentSeparator = &argumentSeparator
+			return nil
+		},
+	}
+}
+
+func WithCaseSensitive(enabled bool) JaceOptions {
+	return &applyOptions{
+		f: func(options *jaceOptions) error {
+			options.caseSensitive = &enabled
+			return nil
+		},
+	}
+}
+
+func WithOptimizeEnabled(enabled bool) JaceOptions {
+	return &applyOptions{
+		f: func(options *jaceOptions) error {
+			options.optimizeEnabled = &enabled
+			return nil
+		},
+	}
+}
+
+func WithDefaultConstants(enabled bool) JaceOptions {
+	return &applyOptions{
+		f: func(options *jaceOptions) error {
+			options.defaultConstants = &enabled
+			return nil
+		},
+	}
+}
+
+func WithDefaultFunctions(enabled bool) JaceOptions {
+	return &applyOptions{
+		f: func(options *jaceOptions) error {
+			options.defaultFunctions = &enabled
+			return nil
+		},
+	}
 }
 
 type CalculationEngine struct {
 	cache            *cache.Memorycache
-	options          JaceOptions
+	options          *jaceOptions
 	optimizer        *optimizer
 	executor         *interpreter
 	constantRegistry *constantRegistry
 	functionRegistry *functionRegistry
 }
 
-func NewCalculationEngine() *CalculationEngine {
-	return NewCalculationEngineWithOptions(JaceOptions{
-		DecimalSeparator:  '.',
-		ArgumentSeparador: ',',
-		CaseSensitive:     false,
-		OptimizeEnabled:   true,
-		DefaultConstants:  true,
-		DefaultFunctions:  true,
-	})
+func buildOptions(options []JaceOptions) (*jaceOptions, error) {
+
+	var opts jaceOptions
+	for _, opt := range options {
+		err := opt.apply(&opts)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	decimalSeparatorDefault := '.'
+	argumentSeparatorDefault := ','
+	caseSensitiveDefault := false
+	optimizeEnabledDefault := true
+	defaultConstantsDefault := true
+
+	if opts.decimalSeparator == nil {
+		opts.decimalSeparator = &decimalSeparatorDefault
+	}
+
+	if opts.argumentSeparator == nil {
+		opts.argumentSeparator = &argumentSeparatorDefault
+	}
+
+	if opts.caseSensitive == nil {
+		opts.caseSensitive = &caseSensitiveDefault
+	}
+
+	if opts.optimizeEnabled == nil {
+		opts.optimizeEnabled = &optimizeEnabledDefault
+	}
+
+	if opts.defaultConstants == nil {
+		opts.defaultConstants = &defaultConstantsDefault
+	}
+
+	if opts.defaultFunctions == nil {
+		opts.defaultFunctions = &defaultConstantsDefault
+	}
+
+	return &opts, nil
 }
 
-func NewCalculationEngineWithOptions(options JaceOptions) *CalculationEngine {
+func NewCalculationEngine(options ...JaceOptions) (*CalculationEngine, error) {
 	cache := cache.NewCache()
 
-	if options == (JaceOptions{}) {
-		options = JaceOptions{
-			DecimalSeparator:  '.',
-			ArgumentSeparador: ',',
-			CaseSensitive:     false,
-			OptimizeEnabled:   true,
-			DefaultConstants:  true,
-			DefaultFunctions:  true,
-		}
+	opts, err := buildOptions(options)
+	if err != nil {
+		return nil, err
 	}
 
 	interpreter := &interpreter{}
 	optimizer := &optimizer{executor: *interpreter}
-	constantRegistry := newConstantRegistry(options.CaseSensitive)
-	functionRegistry := newFunctionRegistry(options.CaseSensitive)
+	constantRegistry := newConstantRegistry(*opts.caseSensitive)
+	functionRegistry := newFunctionRegistry(*opts.caseSensitive)
 
-	if options.DefaultConstants {
+	if *opts.defaultConstants {
 		registryDefaultConstants(constantRegistry)
 	}
 
-	if options.DefaultFunctions {
+	if *opts.defaultFunctions {
 		registryDefaultFunctions(functionRegistry)
 	}
 
 	return &CalculationEngine{
 		cache:            cache,
-		options:          options,
+		options:          opts,
 		optimizer:        optimizer,
 		executor:         interpreter,
 		constantRegistry: constantRegistry,
 		functionRegistry: functionRegistry,
-	}
+	}, nil
 }
 
 func (this *CalculationEngine) Calculate(formulaText string, vars map[string]interface{}) (float64, error) {
@@ -147,7 +245,7 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 		return nil, errors.New("the parameter 'formula' is required")
 	}
 
-	compiledConstantsRegistry := newConstantRegistry(this.options.CaseSensitive)
+	compiledConstantsRegistry := newConstantRegistry(*this.options.caseSensitive)
 
 	for k, p := range vars {
 		retFloat, err := toFloat64(p)
@@ -189,8 +287,8 @@ func (this *CalculationEngine) AddFunction(name string, body Delegate, isIdempot
 
 func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledConstants *constantRegistry) (operation, error) {
 
-	tokenReader := newTokenReader(this.options.DecimalSeparator, this.options.ArgumentSeparador)
-	astBuilder := newAstBuilder(this.options.CaseSensitive, this.functionRegistry, this.constantRegistry, compiledConstants)
+	tokenReader := newTokenReader(*this.options.decimalSeparator, *this.options.argumentSeparator)
+	astBuilder := newAstBuilder(*this.options.caseSensitive, this.functionRegistry, this.constantRegistry, compiledConstants)
 
 	tokens, err := tokenReader.read(formula)
 	if err != nil {
@@ -202,7 +300,7 @@ func (this *CalculationEngine) buildAbstractSyntaxTree(formula string, compiledC
 		return nil, err
 	}
 
-	if this.options.OptimizeEnabled {
+	if *this.options.optimizeEnabled {
 		optimizedOperation := this.optimizer.optimize(operation, this.functionRegistry, this.constantRegistry)
 		return optimizedOperation, nil
 	}
