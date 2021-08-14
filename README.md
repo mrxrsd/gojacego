@@ -255,20 +255,3 @@ https://github.com/mrxrsd/golang-expression-evaluation-comparison
 
 Disclaimer: GoJACEgo has only mathematical and logical operators while others has more features. 
 
-## Roadmap to the first release
-
-### Alpha
-- [X] Implement all 'Standard Functions'
-- [X] Analyze possible issues about pointer dereference
-- [X] Struct and methods scopes.
-
-### Beta
-- [X] Tests
-- [X] Evaluate more optimization points
-
-### RC   
-- [X] Handle 'unhappy flow' (errors and panic)
-- [X] More tests
-
-### 1.0
-- [ ] Docs
