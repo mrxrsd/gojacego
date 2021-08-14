@@ -190,11 +190,11 @@ max, _ := engine.Calculate("max(5,6,3,-4,5,3,7,8,13,100)", nil)
 Custom functions allow programmers to add additional functions besides the ones already supported (sin, cos, asin, …). Functions are required to have a unique name. The existing functions cannot be overwritten.
 
 ```go
-engine.AddFunction("addTwo", func(arguments ...float64) float64{
+engine.AddFunction("addTwo", func(arguments ...interface{}) float64{
 		return arguments[0] + 2
 }, true)
 
-result, _ := engine.Calculate("addTwo(2)", nil)
+result, _ := engine.Calculate("addTwo(2.0)", nil)
 // 4.0
 
 ```
