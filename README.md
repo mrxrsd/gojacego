@@ -34,7 +34,7 @@ goJACEgo can be used in a couple of ways:
 To directly execute a given mathematical formula using the provided variables:
 
 ```go
-engine := gojacego.NewCalculationEngine()
+engine, _ := gojacego.NewCalculationEngine()
 
 vars := map[string]interface{}{
    "a":2,
