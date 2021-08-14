@@ -9,6 +9,9 @@ import (
 type interpreter struct {
 }
 
+/*
+	A Formula represents a function that will be execution given the input parameters.
+*/
 type Formula func(vars map[string]interface{}) (float64, error)
 
 func (*interpreter) execute(op operation, vars formulaVariables, functionRegistry *functionRegistry, constantRegistry *constantRegistry) (ret float64, err error) {
