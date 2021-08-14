@@ -2,6 +2,7 @@
 [![Test](https://github.com/mrxrsd/gojacego/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/mrxrsd/gojacego/actions/workflows/test.yml)
 [![GoReportCard](https://goreportcard.com/badge/github.com/mrxrsd/gojacego)](https://goreportcard.com/report/github.com/mrxrsd/gojacego)
 [![Coverage Status](https://coveralls.io/repos/github/mrxrsd/gojacego/badge.svg)](https://coveralls.io/github/mrxrsd/gojacego)
+[![Godoc](https://img.shields.io/static/v1?label=godoc&message=reference&color=ff69b4)](https://godoc.org/github.com/mrxrsd/gojacego)
 
 
 # goJACEgo 
