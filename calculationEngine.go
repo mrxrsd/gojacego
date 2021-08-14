@@ -30,6 +30,12 @@ func (apply *applyOptions) apply(opts *jaceOptions) error {
 	return apply.f(opts)
 }
 
+/*
+	Decimal separator is a symbol used to separate the integer part from the fractional part
+	of a number written in decimal form (i.e. '12.45').
+
+	This value should be '.' or ','.
+*/
 func WithDecimalSeparator(decimalSeparator rune) JaceOptions {
 	return &applyOptions{
 		f: func(options *jaceOptions) error {
@@ -42,6 +48,11 @@ func WithDecimalSeparator(decimalSeparator rune) JaceOptions {
 	}
 }
 
+/*
+	Argument separator is a symbol used to separate the variables of a function (i.e. 'foo(a,b)').
+
+	This value should be ',' or ';'.
+*/
 func WithArgumentSeparator(argumentSeparator rune) JaceOptions {
 	return &applyOptions{
 		f: func(options *jaceOptions) error {
@@ -54,6 +65,9 @@ func WithArgumentSeparator(argumentSeparator rune) JaceOptions {
 	}
 }
 
+/*
+	CaseSensitive defines whether uppercase and lowercase letters are treated as distinct  or equivalent.
+*/
 func WithCaseSensitive(enabled bool) JaceOptions {
 	return &applyOptions{
 		f: func(options *jaceOptions) error {
@@ -63,6 +77,9 @@ func WithCaseSensitive(enabled bool) JaceOptions {
 	}
 }
 
+/*
+	Enable or disable optimizing of formulas.
+*/
 func WithOptimizeEnabled(enabled bool) JaceOptions {
 	return &applyOptions{
 		f: func(options *jaceOptions) error {
@@ -72,6 +89,9 @@ func WithOptimizeEnabled(enabled bool) JaceOptions {
 	}
 }
 
+/*
+	Enable or disable the default constants.
+*/
 func WithDefaultConstants(enabled bool) JaceOptions {
 	return &applyOptions{
 		f: func(options *jaceOptions) error {
@@ -81,6 +101,9 @@ func WithDefaultConstants(enabled bool) JaceOptions {
 	}
 }
 
+/*
+	Enable or disable the default functions.
+*/
 func WithDefaultFunctions(enabled bool) JaceOptions {
 	return &applyOptions{
 		f: func(options *jaceOptions) error {
@@ -90,6 +113,9 @@ func WithDefaultFunctions(enabled bool) JaceOptions {
 	}
 }
 
+/*
+	CalculationEngine represents the context of your evaluation engine.
+*/
 type CalculationEngine struct {
 	cache            *cache.Memorycache
 	options          *jaceOptions
@@ -142,6 +168,9 @@ func buildOptions(options []JaceOptions) (*jaceOptions, error) {
 	return &opts, nil
 }
 
+/*
+	Create a new calculation engine with the given options.
+*/
 func NewCalculationEngine(options ...JaceOptions) (*CalculationEngine, error) {
 	cache := cache.NewCache()
 
@@ -173,6 +202,10 @@ func NewCalculationEngine(options ...JaceOptions) (*CalculationEngine, error) {
 	}, nil
 }
 
+/*
+	Parse and calculate from the given [formulaText] string using the given variables [vars].
+	Returns an error if the given expression has invalid syntax.
+*/
 func (this *CalculationEngine) Calculate(formulaText string, vars map[string]interface{}) (float64, error) {
 
 	if len(strings.TrimSpace(formulaText)) == 0 {
@@ -235,10 +268,18 @@ func (this *CalculationEngine) buildFormula(formulaText string, compiledConstant
 	return this.executor.buildFormula(operation, this.functionRegistry, this.constantRegistry)
 }
 
+/*
+	Parse the expression from the given [formulaText] string and build a Formula.
+	Returns an error if the given expression has invalid syntax.
+*/
 func (this *CalculationEngine) Build(formulaText string) (Formula, error) {
 	return this.BuildWithConstants(formulaText, nil)
 }
 
+/*
+	Parse the expression from the given [formulaText] string and build a Formula with the given constants.
+	Returns an error if the given expression has invalid syntax.
+*/
 func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[string]interface{}) (Formula, error) {
 
 	if len(strings.TrimSpace(formulaText)) == 0 {
@@ -275,11 +316,18 @@ func (this *CalculationEngine) BuildWithConstants(formulaText string, vars map[s
 	return formula, nil
 }
 
-func (this *CalculationEngine) AddConstant(name string, value float64, isOverwritable bool) {
-	this.constantRegistry.registerConstant(name, value, isOverwritable)
+/*
+	Add a custom constant to the calculation engine.
+*/
+func (this *CalculationEngine) AddConstant(name string, value interface{}, isOverwritable bool) {
+	val, _ := toFloat64(value)
+	this.constantRegistry.registerConstant(name, val, isOverwritable)
 	this.cache.Invalidate()
 }
 
+/*
+	Add a custom function to the calculation engine.
+*/
 func (this *CalculationEngine) AddFunction(name string, body Delegate, isIdempotent bool) {
 	this.functionRegistry.registerFunction(name, body, true, isIdempotent)
 	this.cache.Invalidate()
