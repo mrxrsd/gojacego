@@ -254,5 +254,5 @@ https://github.com/mrxrsd/golang-expression-evaluation-comparison
 | BenchmarkMath                          | 39.22 ns/op | 243.7 ns/op |  252.1 ns/op |  395.3 ns/op |
 
 
-Disclaimer: GoJACEgo has only mathematical and logical operators while others has more features. 
+Disclaimer: GoJACEgo has only mathematical and logical operators while others has more features.  
 
