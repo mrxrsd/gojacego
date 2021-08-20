@@ -123,6 +123,29 @@ func (this tokenReader) read(formula string) ([]token, error) {
 		} else {
 
 			switch runes[i] {
+			case '\'':
+				startPosition := i
+				isLiteral := true
+				i++
+				buffer := make([]rune, 0)
+				for i < runesLength {
+					if runes[i] == '\'' {
+						isLiteral = false
+						literal := string(buffer)
+						ret = append(ret, token{Type: tt_LITERAL,
+							Value:         literal,
+							StartPosition: startPosition,
+							Length:        len(literal)})
+						break
+					} else {
+						buffer = append(buffer, runes[i])
+					}
+
+					i++
+				}
+				if isLiteral {
+					return nil, errors.New("string literals must be enclosed by single quote (')")
+				}
 			case ' ':
 				continue
 			case '+', '-', '*', '/', '^', '%', '≤', '≥', '≠':

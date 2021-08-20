@@ -525,3 +525,60 @@ func TestTokenReader38(test *testing.T) {
 		test.Errorf("error should not be null")
 	}
 }
+
+func TestTokenReader39(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("1==2")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	testLen(test, ret, 3)
+	testToken(test, ret[0], "1", 0, 1)
+	testToken(test, ret[1], "=", 1, 2)
+	testToken(test, ret[2], "2", 3, 1)
+}
+
+func TestTokenReader40(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	_, err := reader.read("a=='a'")
+
+	if err != nil {
+		test.Errorf("error should be null")
+	}
+}
+
+func TestTokenReader41(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	_, err := reader.read("'a'==a")
+
+	if err != nil {
+		test.Errorf("error should be null")
+	}
+}
+
+func TestTokenReader42(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	_, err := reader.read("a=='a")
+
+	if err == nil {
+		test.Errorf("error should not be null")
+	}
+}
+
+func TestTokenReader43(test *testing.T) {
+	reader := newTokenReader('.', ',')
+	ret, err := reader.read("'abc'==a")
+
+	if err != nil {
+		test.Log(err)
+		test.Fail()
+	}
+
+	testLen(test, ret, 3)
+	testToken(test, ret[0], "abc", 0, 3)
+	testToken(test, ret[1], "=", 5, 2)
+	testToken(test, ret[2], "a", 7, 1)
+}
