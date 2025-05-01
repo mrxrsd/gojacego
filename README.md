@@ -10,6 +10,8 @@
 
 goJACEgo is a high-performance calculation engine that brings the power of dynamic mathematical expressions to your Go applications. Built with pure Go, it delivers blazing-fast performance while maintaining simplicity and ease of use.
 
+'Jace' stands for "Just Another Calculation Engine". it is a port of Jace.NET
+
 ## Why goJACEgo?
 
 ✨ **Ultra-Fast Performance**: Consistently outperforms other expression evaluators in benchmarks
